@@ -57,5 +57,18 @@ template uint32_t LargestFibonacci< uint32_t >();
 template uint64_t LargestFibonacci< uint64_t >();
 
 
+int Mandelbrot( std::complex< float > c, int max_iters )
+{
+    std::complex< float > z{};
+    for (int iter = 0; iter < max_iters; ++iter)
+    {
+        z = z*z + c;
+        if (abs( z ) >= 4.0f) return iter;
+    }
+
+    return -1;
+}
+
+
 } // namespace autotime
 

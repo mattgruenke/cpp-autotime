@@ -17,6 +17,9 @@
 #define AUTOTIME_WORK_HPP
 
 
+#include <complex>
+
+
 namespace autotime
 {
 
@@ -33,6 +36,13 @@ float TrigonometryFunctions( float tangent );
         Instantiated for T: { uint32_t, uint64_t }.
     */
 template< typename T > T LargestFibonacci();
+
+
+    //! Attempts to determine membership of a given number in Mandlebrot set.
+    /*!
+        @returns number of iters needed to reject the parameter; -1 otherwise.
+    */
+int Mandelbrot( std::complex< float > c, int max_iters );
 
 
 } // namespace autotime
