@@ -45,13 +45,6 @@ std::chrono::nanoseconds GetTimeslice()
 }
 
 
-template< typename T > static void Maximize( std::atomic< T > &cur, T newer )
-{
-    T c = cur;
-    while (newer > c && !cur.compare_exchange_weak( c, newer )) c = cur;
-}
-
-
 static bool Matches( std::istream &in, const std::string &expected )
 {
     auto next = expected.begin();
@@ -67,12 +60,12 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
     std::vector< char > buffer; // buffer sholud have a larger scope than file.
     std::ifstream file;
 
-    // If cpuinfo was previously read, configuer the buffer to support a one-shot read.
-    static std::atomic< std::streamsize > max_size{ 0 };
-    if (max_size)
+    // If cpuinfo was previously read, configure the buffer to support a one-shot read.
+    static std::atomic< std::streamsize > prev_size{ 0 };
+    if (prev_size)
     {
-        AUTOTIME_DEBUG( "Configuring buffer based on previous max: " << max_size );
-        buffer.resize( max_size * 5 / 4 );  // Add an extra 25%, for variable length fields.
+        AUTOTIME_DEBUG( "Configuring buffer based on previous max: " << prev_size );
+        buffer.resize( prev_size * 5 / 4 );  // Add an extra 25%, for variable length fields.
         file.rdbuf()->pubsetbuf( buffer.data(), buffer.size() );
     }
 
@@ -99,14 +92,14 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
         }
     }
 
-    if (file && !max_size)  // Don't recompute, since file's size seems the same, every time.
+    if (file && !prev_size)  // Don't recompute, since file's size seems the same, every time.
     {
         // Since file isn't seekable, read to the end, to get the size.
         std::streamsize pos = file.tellg();
         file.ignore( unlimited ); 
 
-        // Remember the largest size we've seen, to optimize future reads.
-        Maximize( max_size, pos + file.gcount() );
+        // Remember the previous size, to optimize future reads.
+        prev_size = pos + file.gcount();
     }
 
     if (!mhz)
