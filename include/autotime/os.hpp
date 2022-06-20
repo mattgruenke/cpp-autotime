@@ -52,7 +52,10 @@ int GetCurrentCoreId();
 
 
     //! Sets the affinity of the current thread to a specified core.
-void SetCoreAffinity(
+    /*!
+        @returns -1, in case of failure.  Otherwise, the ID of the target core.
+    */
+int SetCoreAffinity(
     int core_id=-1  //!< Specifies which core to use (defaults to current).
 );
 

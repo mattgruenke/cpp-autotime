@@ -129,21 +129,25 @@ int GetCurrentCoreId()
 }
 
 
-void SetCoreAffinity( int core_id )
+int SetCoreAffinity( int core_id )
 {
     const int num_cpus = get_nprocs_conf();
     if (num_cpus <= 0)
     {
         AUTOTIME_ERRNO( "failed to query ncpus" );
-        return;
+        return -1;
     }
 
     if (core_id >= num_cpus)
     {
         AUTOTIME_ERROR( "specified out-of-range CPU ID." );
-        return;
+        return -1;
     }
-    else if (core_id < 0) core_id = GetCurrentCoreId();
+    else if (core_id < 0)
+    {
+        core_id = GetCurrentCoreId();
+        if (core_id < 0) return -1;
+    }
 
     cpu_set_t *cpu_set = CPU_ALLOC( num_cpus );
     CPU_SET( core_id, cpu_set );
@@ -155,6 +159,8 @@ void SetCoreAffinity( int core_id )
     }
 
     CPU_FREE( cpu_set );
+
+    return core_id;
 }
 
 
