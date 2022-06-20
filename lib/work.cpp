@@ -14,6 +14,8 @@
 #include "autotime/work.hpp"
 
 #include <cmath>
+#include <cstdint>
+#include <utility>
 
 
 namespace autotime
@@ -34,6 +36,25 @@ float TrigonometryFunctions( float tangent )
     float angle = atanf( tangent );
     return tanf( acosf( sinf( angle ) / tanf( angle ) ) );
 }
+
+
+template< typename T > T LargestFibonacci()
+{
+    T prev = 0;
+    T sum = 1;
+    while (sum >= prev)
+    {
+        prev += sum;
+        std::swap( prev, sum );
+    }
+
+    return prev;
+}
+
+
+template uint32_t LargestFibonacci< uint32_t >();
+
+template uint64_t LargestFibonacci< uint64_t >();
 
 
 } // namespace autotime

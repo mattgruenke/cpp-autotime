@@ -28,6 +28,13 @@ namespace autotime
 float TrigonometryFunctions( float tangent );
 
 
+    //! Computes the largest Fibonacci number that fits a given datatype.
+    /*!
+        Instantiated for T: { uint32_t, uint64_t }.
+    */
+template< typename T > T LargestFibonacci();
+
+
 } // namespace autotime
 
 
