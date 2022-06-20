@@ -47,6 +47,17 @@ cpu_clock_ticks GetCoreClockTick(
 );
 
 
+    //! Queries the minimum duration of a CPU core clock tick, in femtoseconds.
+    /*!
+        Specify -1 to query the core on which the current thread is running.
+
+        @returns 0, if the max clock speed couldn't be determined.
+    */
+cpu_clock_ticks GetCoreMinClockTick(
+    int core_id=-1  //!< Specifies which core to query.
+);
+
+
     //! Returns the ID number of the current CPU core.
 int GetCurrentCoreId();
 

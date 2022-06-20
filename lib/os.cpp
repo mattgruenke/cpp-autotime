@@ -114,6 +114,31 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
 }
 
 
+cpu_clock_ticks GetCoreMinClockTick( int core_id )
+{
+    if (core_id < 0) core_id = GetCurrentCoreId();
+
+    std::string cpu = std::to_string( core_id );
+    std::string filename = "/sys/devices/system/cpu/cpufreq/policy" + cpu + "/scaling_max_freq";
+    std::ifstream file{ filename };
+
+    if (file)
+    {
+        int khz = 0;
+        file >> khz;
+        if (file)
+        {
+            // To convert from kHz, scale by number of clock ticks per millisecond.
+            int64_t scale = std::chrono::milliseconds{ 1 } / cpu_clock_ticks{ 1 };
+            AUTOTIME_DEBUG( "Scaling min clock tick by " << scale );
+            return cpu_clock_ticks{ scale / khz };
+        }
+    }
+
+    return {};
+}
+
+
 int GetCurrentCoreId()
 {
     int core_id = sched_getcpu();
