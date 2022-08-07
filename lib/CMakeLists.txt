@@ -1,6 +1,7 @@
 add_library( autotime SHARED
     log.cpp
     os.cpp
+    time.cpp
     work.cpp
 )
 
@@ -11,7 +12,7 @@ set_target_properties( autotime PROPERTIES
 )
 
 install( TARGETS autotime
-    LIBRARY             DESTINATION lib
+    LIBRARY DESTINATION lib
 )
 
     # TO_DO: switch to target_sources( FILE_SET ) in CMake 3.23
