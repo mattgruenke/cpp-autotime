@@ -18,7 +18,6 @@
 #define AUTOTIME_TIME_HPP
 
 
-#include <autotime/clocks.hpp>
 #include <autotime/types.hpp>
 
 #include <autotime/detail/time_impl.hpp>

@@ -16,6 +16,9 @@
 #define AUTOTIME_DETAIL_TIME_IMPL_HPP
 
 
+#include <autotime/types.hpp>
+
+
 namespace autotime
 {
 
