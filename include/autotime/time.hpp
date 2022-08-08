@@ -70,7 +70,7 @@ Durations Time(
     int num_iter                        //!< Number of iterations to measure.
 )
 {
-    return TimeMember(
+    return detail::TimeMember(
         reinterpret_cast< void(detail::ProxyType::*)() const >( f ),
         reinterpret_cast< const detail::ProxyType * >( inst ),
         num_iter );
