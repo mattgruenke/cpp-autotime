@@ -13,7 +13,7 @@ if( DOXYGEN_FOUND )
     configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cfg.in doxygen.cfg @ONLY )
 
     # TO_DO: would be better to derive this from doxygen.cfg's INPUT field.
-    file( GLOB_RECURSE docs_sources
+    file( GLOB docs_sources
         # CONFIGURE_DEPENDS     - enable in CMake >= 3.12
         LIST_DIRECTORIES false
         "${CMAKE_SOURCE_DIR}/readme.md"
