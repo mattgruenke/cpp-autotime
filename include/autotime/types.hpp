@@ -17,6 +17,8 @@
 
 #include <autotime/clocks.hpp>
 
+#include <chrono>
+
 
 namespace autotime
 {
@@ -27,6 +29,28 @@ struct Durations
 {
     steady_clock::duration real;    //!< Cumulative realtime execution time.
     thread_clock::duration thread;  //!< Cumulative thread execution time.
+};
+
+
+    //! A bundle of timing information normalized by num_iters.
+struct NormDurations
+{
+    // Higher resolution than nanoseconds is needed for cycle-accuracy.
+    using duration = std::chrono::duration< int64_t, std::pico >;
+
+    duration real;
+    duration thread;
+};
+
+
+    //! Bundles both the number of iterations and aggregate measurement.
+struct DurationsForIters
+{
+    int num_iters = 0;
+    Durations durs;
+
+        //! Normalizes the durations by the number of iterations.
+    NormDurations normalize() const;
 };
 
 
