@@ -19,6 +19,7 @@
 
 
 #include <autotime/clocks.hpp>
+#include <autotime/types.hpp>
 
 #include <autotime/detail/time_impl.hpp>
 
@@ -27,14 +28,6 @@
 
 namespace autotime
 {
-
-
-    //! A bundle of timing information returned by Time().
-struct Durations
-{
-    steady_clock::duration real;    //!< Cumulative realtime execution time.
-    thread_clock::duration thread;  //!< Cumulative thread execution time.
-};
 
 
     //! Measures f() over a given number of iterations.
