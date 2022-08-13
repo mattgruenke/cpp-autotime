@@ -35,7 +35,7 @@ if( DOXYGEN_FOUND )
 
     install(
         DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-        DESTINATION share/doc/autotime
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
         OPTIONAL
     )
 
@@ -48,6 +48,6 @@ endif()
 
 install(
     FILES ../readme.md
-    DESTINATION share/doc/autotime
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
 )
 

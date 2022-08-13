@@ -12,7 +12,7 @@ set_target_properties( autotime PROPERTIES
 )
 
 install( TARGETS autotime
-    LIBRARY DESTINATION lib
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
     # TO_DO: switch to target_sources( FILE_SET ) in CMake 3.23
