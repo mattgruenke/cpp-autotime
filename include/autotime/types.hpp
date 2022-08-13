@@ -32,7 +32,7 @@ struct Durations
 };
 
 
-    //! A bundle of timing information normalized by num_iters.
+    //! A bundle of timing information normalized by num_iter.
 struct NormDurations
 {
     // Higher resolution than nanoseconds is needed for cycle-accuracy.
@@ -46,7 +46,7 @@ struct NormDurations
     //! Bundles both the number of iterations and aggregate measurement.
 struct DurationsForIters
 {
-    int num_iters = 0;
+    int num_iter = 0;
     Durations durs;
 
         //! Normalizes the durations by the number of iterations.
