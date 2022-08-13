@@ -17,6 +17,7 @@
 
 
 #include <autotime/types.hpp>
+#include <autotime/detail/types_impl.hpp>
 
 
 namespace autotime
@@ -28,9 +29,6 @@ struct Durations;   // from time.hpp
 
 namespace detail
 {
-
-
-class ProxyType {};
 
 
 Durations TimeMember(
