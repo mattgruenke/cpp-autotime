@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "autotime/os.hpp"
+#include "autotime/version.hpp"
 
 #include <iostream>
 
@@ -21,7 +22,11 @@ int main()
 {
     using msec_double = std::chrono::duration< double, std::milli >;
     double msec = std::chrono::duration_cast< msec_double >( autotime::GetTimeslice() ).count();
+
+    std::cout << "Autotime version: " << AUTOTIME_VERSION_STRING << "\n";
+
     std::cout << "Timeslice is " << msec << " ms.\n";
+
     return 0;
 }
 
