@@ -27,7 +27,7 @@ DurationsForIters Estimate( const Timer &timer, const steady_clock::duration &ta
 
     // Get an initial estimate of f() by exponentially increasing until it exceeds 0.1%
     //  of the target for 2 subsequent iterations.
-    while (durs.real <= prev && prev <= target / 1000)
+    while (durs.real <= prev || prev <= target / 1000)
     {
         num_iters = std::max( 2 * num_iters, 1 );
         prev = durs.real;
