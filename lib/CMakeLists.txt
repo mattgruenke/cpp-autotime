@@ -4,6 +4,7 @@ add_library( autotime SHARED
     log.cpp
     os.cpp
     time.cpp
+    types.cpp
     work.cpp
 )
 
