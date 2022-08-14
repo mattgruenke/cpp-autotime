@@ -18,6 +18,7 @@
 #include <autotime/clocks.hpp>
 
 #include <chrono>
+#include <functional>
 
 
 namespace autotime
@@ -32,7 +33,7 @@ struct Durations
 };
 
 
-    //! A bundle of timing information normalized by num_iter.
+    //! A bundle of timing information normalized by num_iters.
 struct NormDurations
 {
     // Higher resolution than nanoseconds is needed for cycle-accuracy.
@@ -46,12 +47,23 @@ struct NormDurations
     //! Bundles both the number of iterations and aggregate measurement.
 struct DurationsForIters
 {
-    int num_iter = 0;
+    int num_iters;
     Durations durs;
 
         //! Normalizes the durations by the number of iterations.
     NormDurations normalize() const;
 };
+
+
+    //! An abstraction over Time().
+    /*!
+        This mechanism enables the timing subject + any requisite context to be
+        passed into functions like AutoTime() and Estimate().
+
+        Note that it must be callable multiple times, without side effects.
+        So, each invocation must perform any needed initialization and cleanup.
+    */
+using Timer = std::function< Durations( int num_iters ) >;
 
 
 } // namespace autotime
