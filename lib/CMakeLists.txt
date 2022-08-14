@@ -1,4 +1,5 @@
 add_library( autotime SHARED
+    estimate.cpp
     log.cpp
     os.cpp
     time.cpp
