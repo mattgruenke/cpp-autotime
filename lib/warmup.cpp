@@ -26,9 +26,7 @@ class CoreWarmupMonitor: public ICoreWarmupMonitor
 public:
     CoreWarmupMonitor( int coreId );
 
-    status check() override;
-    status peek() const override;
-    std::string details() const override;
+    bool operator()() override;
     float minClockSpeedRatio() const override;
     void minClockSpeedRatio( float ratio ) override;
 
@@ -42,10 +40,7 @@ private:
     // Runtime state:
     const int coreId_ = -1;
     const cpu_clock_ticks minClockTick_;
-
     float ratio_ = 0.0f;
-    status status_ = status::incomplete;
-    std::string details_;
 };
 
 
@@ -84,24 +79,11 @@ float CoreWarmupMonitor::getClockSpeedRatio() const
 }
 
 
-CoreWarmupMonitor::status CoreWarmupMonitor::check()
+bool CoreWarmupMonitor::operator()()
 {
     this->checkCoreId();
     ratio_ = this->getClockSpeedRatio();
-    status_ = (ratio_ >= minClockSpeedRatio_) ? status::complete : status::incomplete;
-    return status_;
-}
-
-
-CoreWarmupMonitor::status CoreWarmupMonitor::peek() const
-{
-    return status_;
-}
-
-
-std::string CoreWarmupMonitor::details() const
-{
-    return details_;
+    return (ratio_ < minClockSpeedRatio_);
 }
 
 

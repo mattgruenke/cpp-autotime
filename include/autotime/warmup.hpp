@@ -17,7 +17,6 @@
 
 
 #include <memory>
-#include <string>
 
 
 namespace autotime
@@ -32,14 +31,6 @@ namespace autotime
 class ICoreWarmupMonitor
 {
 public:
-        //! Indicates the state of the core warmup procedure.
-    enum class status
-    {
-        incomplete, //!< Clockspeed not checked or below minimum ratio.
-        complete,   //!< Clockspeed met or exceeded minimum ratio.
-        aborted     //!< Clockspeed was reduced between consecutive polls.
-    };
-
         //! Constructs a new instance.
     static std::unique_ptr< ICoreWarmupMonitor > create(
         int coreId=-1   //!< Core on which this is to be used (-1 -> current).
@@ -47,25 +38,13 @@ public:
 
     virtual ~ICoreWarmupMonitor();
 
-#if 0
-        //! Whether core is still in warmup phase.
+        //! Indicates whether core is still in warmup phase.
         /*!
-            @returns false if threshold is met or clock speed decreases.
+            @returns false if threshold is met.
+
+            @throws std::runtime_error if warmup process can't be completed.
         */
-    bool operator()() = 0;
-#endif
-
-        //! Checks the warmup status of the current core.
-        /*!
-            @throws std::runtime_error if the process couldn't be completed.
-        */
-    virtual status check() = 0;
-
-        //! Returns the result of the previous call to check().
-    virtual status peek() const = 0;
-
-        //! Returns a detailed message, describing the current status.
-    virtual std::string details() const = 0;
+    virtual bool operator()() = 0;
 
         //! Gets minimum clock speed ratio.
     virtual float minClockSpeedRatio() const = 0;
