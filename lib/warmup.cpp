@@ -67,7 +67,8 @@ void CoreWarmupMonitor::checkCoreId() const
 
 float CoreWarmupMonitor::getClockSpeedRatio() const
 {
-    const float current = GetCoreClockTick( coreId_ ) / minClockTick_;
+    const float min_tick_float = static_cast< float >( minClockTick_.count() );
+    const float current = min_tick_float / GetCoreClockTick( coreId_ ).count();
     if (current < ratio_)
     {
         std::string message =
