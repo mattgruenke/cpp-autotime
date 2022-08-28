@@ -21,6 +21,9 @@ namespace autotime
 {
 
 
+using cpu_clock_ticks_dbl = std::chrono::duration< double, std::nano >;
+
+
 class CoreWarmupMonitor: public ICoreWarmupMonitor
 {
 public:
@@ -39,8 +42,8 @@ private:
 
     // Runtime state:
     const int coreId_ = -1;
-    const cpu_clock_ticks minClockTick_;
-    float ratio_ = 0.0f;
+    const cpu_clock_ticks_dbl minClockTick_;
+    double ratio_ = 0.0;
 };
 
 
@@ -67,16 +70,16 @@ void CoreWarmupMonitor::checkCoreId() const
 
 float CoreWarmupMonitor::getClockSpeedRatio() const
 {
-    const float min_tick_float = static_cast< float >( minClockTick_.count() );
-    const float current = min_tick_float / GetCoreClockTick( coreId_ ).count();
-    if (current < ratio_)
+    const double current = minClockTick_ / GetCoreClockTick( coreId_ );
+    constexpr double tolerance = 0.01;
+    if (current < ratio_ - tolerance)
     {
         std::string message =
             "During warmup, core clock speed ratio dropped from " + std::to_string( ratio_ )
             + " to " + std::to_string( current );
         throw std::runtime_error( message );
     }
-    return current;
+    return static_cast< float >( current );
 }
 
 
