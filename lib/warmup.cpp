@@ -14,6 +14,7 @@
 #include "autotime/warmup.hpp"
 #include "autotime/os.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -30,20 +31,25 @@ public:
     CoreWarmupMonitor( int coreId );
 
     bool operator()() override;
-    float minClockSpeedRatio() const override;
-    void minClockSpeedRatio( float ratio ) override;
+
+    double minClockSpeed() const override;
+    void minClockSpeed( double thresh ) override;
+
+    double maxClockSpeedDecrease() const override;
+    void maxClockSpeedDecrease( double thresh ) override;
 
 private:
     void checkCoreId() const;
-    float getClockSpeedRatio() const;
+    double getClockSpeedRatio() const;
 
     // Parameters:
-    float minClockSpeedRatio_ = 0.0f;
+    double minClockSpeed_ = 0.0;
+    double maxDecrease_ = 0.01;
 
     // Runtime state:
     const int coreId_ = -1;
     const cpu_clock_ticks_dbl minClockTick_;
-    double ratio_ = 0.0;
+    double peak_ = 0.0;
 };
 
 
@@ -68,38 +74,49 @@ void CoreWarmupMonitor::checkCoreId() const
 }
 
 
-float CoreWarmupMonitor::getClockSpeedRatio() const
+double CoreWarmupMonitor::getClockSpeedRatio() const
 {
     const double current = minClockTick_ / GetCoreClockTick( coreId_ );
-    constexpr double tolerance = 0.01;
-    if (current < ratio_ - tolerance)
+    if (current < peak_ - maxDecrease_)
     {
         std::string message =
-            "During warmup, core clock speed ratio dropped from " + std::to_string( ratio_ )
+            "During warmup, core clock speed ratio dropped from " + std::to_string( peak_ )
             + " to " + std::to_string( current );
         throw std::runtime_error( message );
     }
-    return static_cast< float >( current );
+    return current;
 }
 
 
 bool CoreWarmupMonitor::operator()()
 {
     this->checkCoreId();
-    ratio_ = this->getClockSpeedRatio();
-    return (ratio_ < minClockSpeedRatio_);
+    peak_ = std::max( peak_, this->getClockSpeedRatio() );
+    return (peak_ < minClockSpeed_);
 }
 
 
-float CoreWarmupMonitor::minClockSpeedRatio() const
+double CoreWarmupMonitor::minClockSpeed() const
 {
-    return minClockSpeedRatio_;
+    return minClockSpeed_;
 }
 
 
-void CoreWarmupMonitor::minClockSpeedRatio( float ratio )
+void CoreWarmupMonitor::minClockSpeed( double thresh )
 {
-    minClockSpeedRatio_ = ratio;
+    minClockSpeed_ = thresh;
+}
+
+
+double CoreWarmupMonitor::maxClockSpeedDecrease() const
+{
+    return maxDecrease_;
+}
+
+
+void CoreWarmupMonitor::maxClockSpeedDecrease( double thresh )
+{
+    maxDecrease_ = thresh;
 }
 
 

@@ -27,6 +27,9 @@ namespace autotime
     /*!
         This is intended primarily to be used as the predicate function of
         IterateUntil().
+
+        The interface of this class usses clock speeds normalized by the
+        reported peak turbo speed of the CPU.
     */
 class ICoreWarmupMonitor
 {
@@ -46,12 +49,20 @@ public:
         */
     virtual bool operator()() = 0;
 
-        //! Gets minimum clock speed ratio.
-    virtual float minClockSpeedRatio() const = 0;
+        //! Gets minimum normalized clock speed threshold.
+    virtual double minClockSpeed() const = 0;
 
-        //! Sets minimum clock speed ratio.
-    virtual void minClockSpeedRatio(
-        float ratio     //!< Minimum ratio of clock speed to peak turbo.
+        //! Sets minimum normalized clock speed threshold.
+    virtual void minClockSpeed(
+        double thresh   //!< Minimum threshold as normalized value.
+    ) = 0;
+
+        //! Gets maximum allowable clock speed regression from peak sample.
+    virtual double maxClockSpeedDecrease() const = 0;
+
+        //! Sets maximum allowable clock speed regression from peak sample.
+    virtual void maxClockSpeedDecrease(
+        double thresh   //!< Maximum threshold as normalized value.
     ) = 0;
 };
 
