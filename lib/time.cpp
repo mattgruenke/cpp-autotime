@@ -12,6 +12,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "autotime/time.hpp"
+#include "autotime/autotime.hpp"
+#include "internal.hpp"
 
 #include <mutex>
 
@@ -35,10 +37,22 @@ static Durations GetOverhead()
     {
         called = true;
 
-        // TO_DO: replace this with a call to AutoTime().
-        const int num_iter = 1024;
-        Durations d = Time( &clock_type::now, num_iter );
-        overhead = { d.real / num_iter, d.thread / num_iter };
+        autotime::Timer timer =
+            []( int num_iters )
+            {
+                return autotime::Time( &clock_type::now, num_iters );
+            };
+
+        auto dfi = autotime::AutoTime( timer );
+
+        NormDurations norm = dfi.normalize();
+        overhead =
+            {
+                std::chrono::duration_cast< steady_clock::duration >( norm.real ),
+                std::chrono::duration_cast< steady_clock::duration >( norm.thread )
+            };
+
+        AUTOTIME_DEBUG( AUTOTIME_TYPENAME( clock_type ) << ": " << overhead.real.count() << " ns" );
     }
 
     return overhead;
