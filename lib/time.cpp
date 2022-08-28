@@ -28,11 +28,10 @@ template<
 static Durations GetOverhead()
 {
     static std::recursive_mutex mutex;
-    static bool called = false;
-    static Durations overhead{};
-
     std::lock_guard< std::recursive_mutex > lock{ mutex };
 
+    static Durations overhead{};
+    static bool called = false;
     if (!called)
     {
         called = true;
