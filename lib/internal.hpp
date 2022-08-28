@@ -19,6 +19,9 @@
 #include "autotime/log.hpp"
 
 #include <cstring>
+#include <ostream>
+#include <string>
+#include <typeinfo>
 
 
 #define AUTOTIME_DEBUG( expr ) \
@@ -31,6 +34,23 @@
 
 #define AUTOTIME_ERRNO( expr ) \
     ErrorLog() << "Error: " << expr << " (" << strerror( errno ) << ")\n"
+
+
+#define AUTOTIME_TYPENAME( type_expr ) \
+    DemangledName( typeid( type_expr ) )
+
+
+namespace autotime
+{
+
+
+    //! Internal helper function for computing demangled type name.
+std::string DemangledName(
+    const std::type_info &type_info     //!< From which to get demanlged name.
+);
+
+
+} // namespace autotime
 
 
 #endif // ndef AUTOTIME_INTERNAL_HPP
