@@ -1,0 +1,5 @@
+install(
+    DIRECTORY Modules
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/cmake"
+)
+

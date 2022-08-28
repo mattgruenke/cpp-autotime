@@ -4,6 +4,7 @@ project( autotime )
 
 include( GNUInstallDirs )
 
+add_subdirectory( cmake )
 add_subdirectory( lib )
 add_subdirectory( tools )
 
