@@ -64,7 +64,6 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
     static std::atomic< std::streamsize > prev_size{ 0 };
     if (prev_size)
     {
-        AUTOTIME_DEBUG( "Configuring buffer based on previous max: " << prev_size );
         buffer.resize( prev_size * 5 / 4 );  // Add an extra 25%, for variable length fields.
         file.rdbuf()->pubsetbuf( buffer.data(), buffer.size() );
     }
@@ -87,7 +86,7 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
         {
             file.ignore( unlimited, ':' );
             file >> mhz;
-            AUTOTIME_DEBUG( "Raw value: " << mhz );
+            AUTOTIME_DEBUG( "(double) cpu MHz: " << mhz );
             break;
         }
     }
@@ -100,6 +99,7 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
 
         // Remember the previous size, to optimize future reads.
         prev_size = pos + file.gcount();
+        AUTOTIME_DEBUG( "Size of /proc/cpuinfo is " << prev_size );
     }
 
     if (!mhz)
