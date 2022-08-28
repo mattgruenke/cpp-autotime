@@ -13,8 +13,6 @@
 
 #include "autotime/iterate.hpp"
 
-#include <cmath>
-
 
 namespace autotime
 {
@@ -51,13 +49,9 @@ steady_clock::time_point IterateUntil(
 
     while (t < t_limit && predicate())
     {
-#if 0
-        const double rate = static_cast< double >( num_iters ) / dur.count();
-        num_iters = static_cast< int >( lrint( rate * (t_next - t).count() ) );
-#else
         const steady_clock::duration round = dur / 2;
         num_iters = static_cast< int >( (num_iters * (t_next - t) + round) / dur );
-#endif
+
         for (int i = 0; i < num_iters; ++i) work();
 
         dur = steady_clock::now() - t;
