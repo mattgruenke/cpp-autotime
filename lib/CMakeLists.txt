@@ -15,6 +15,8 @@ target_include_directories( autotime PUBLIC ../include )
 
 set_target_properties( autotime PROPERTIES
     CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
 )
 
 install( TARGETS autotime
