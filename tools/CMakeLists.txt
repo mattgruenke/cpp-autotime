@@ -11,3 +11,8 @@ target_link_libraries( sysinfo
     autotime
 )
 
+
+install( TARGETS sysinfo
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
+
