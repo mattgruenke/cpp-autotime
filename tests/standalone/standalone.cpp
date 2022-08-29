@@ -12,12 +12,12 @@
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "autotime/autotime.hpp"
-#include "autotime/iterate.hpp"
-#include "autotime/os.hpp"
-#include "autotime/time.hpp"
-#include "autotime/warmup.hpp"
-#include "autotime/work.hpp"
+#include <autotime/autotime.hpp>
+#include <autotime/iterate.hpp>
+#include <autotime/os.hpp>
+#include <autotime/time.hpp>
+#include <autotime/warmup.hpp>
+#include <autotime/work.hpp>
 
 #include <iostream>
 
@@ -42,8 +42,8 @@ int main()
             std::bind( &autotime::ICoreWarmupMonitor::operator(), warmupMonitor.get() ) );
 
     autotime::steady_clock::duration warmup_dur = warmup_finish - warmup_start;
-    int64_t warmup_dur_ms = std::chrono::duration_cast< std::chrono::microseconds >( warmup_dur ).count();
-    std::cout << "\nWarmup completed after " << warmup_dur_ms / 1000.0 << " ms.\n";
+    auto warmup_dur_us = std::chrono::duration_cast< std::chrono::microseconds >( warmup_dur );
+    std::cout << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
 
     // Time a simple function.
     autotime::Timer mandle_timer =
