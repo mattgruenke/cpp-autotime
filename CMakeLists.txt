@@ -15,6 +15,7 @@ if( BUILD_DOCS )
 endif()
 
 if( BUILD_TOOLS )
+    add_subdirectory( bench )
     add_subdirectory( tools )
 endif()
 
