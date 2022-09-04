@@ -25,58 +25,11 @@
 
 #include <boost/program_options.hpp>
 
+#include "output.hpp"
+
 
 using namespace autotime;
-
-
-enum class Format
-{
-    pretty,
-    csv
-};
-
-
-const char *ToString( Format f )
-{
-    switch (f)
-    {
-    case Format::pretty:
-        return "pretty";
-
-    case Format::csv:
-        return "CSV";
-    }
-
-    return nullptr;
-}
-
-
-std::istream &operator>>( std::istream &istream, Format &f )
-{
-    std::string str;
-    istream >> str;
-
-    for (Format val: { Format::pretty, Format::csv })
-    {
-        if (str == ToString( val ))
-        {
-            f = val;
-            return istream;
-        }
-    }
-
-    istream.clear( std::ostream::failbit );
-    return istream;
-}
-
-
-std::ostream &operator<<( std::ostream &ostream, Format f )
-{
-    if (const char *c_str = ToString( f )) ostream << c_str;
-    else ostream.clear( std::ostream::failbit );
-
-    return ostream;
-}
+using namespace bench;
 
 
 int main( int argc, char *argv[] )
@@ -93,6 +46,7 @@ int main( int argc, char *argv[] )
     // Parse commandline options.
     namespace prog_opts = boost::program_options;
     prog_opts::options_description desc( "Allowed options" );
+    std::string format_help = "Output format (supported values: " + List< Format >( ", " ) + ").";
     desc.add_options()
         ( "help", "Show help message and exit." )
         ( "verbose",
@@ -120,7 +74,7 @@ int main( int argc, char *argv[] )
           "Run the specified benchmarks." )
         ( "output-format",
           prog_opts::value( &format )->value_name( "fmt" )->default_value( format ),
-          "Output format (supported values: pretty, CSV)." )
+          format_help.c_str() )
     ;
 
     namespace cli_style = prog_opts::command_line_style;

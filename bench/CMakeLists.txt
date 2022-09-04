@@ -11,6 +11,7 @@ find_package( Boost
 
 add_executable( autotime-bench
     main.cpp
+    output.cpp
 )
 
 target_link_libraries( autotime-bench
