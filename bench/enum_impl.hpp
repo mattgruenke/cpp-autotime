@@ -16,6 +16,8 @@
 #define BENCH_ENUM_IMPL_HPP
 
 
+#include <unordered_map>
+
 #include <boost/optional.hpp>
 
 
@@ -38,10 +40,17 @@ template<
 >
 boost::optional< enum_t > FromString( const std::string &str )
 {
-    for (enum_t val: RangeOf< enum_t >())
-    {
-        if (str == ToString( val )) return val;
-    }
+    // Initializes index only on first call.
+    const static auto index =
+        []()
+        {
+            std::unordered_map< std::string, enum_t > result;
+            for (enum_t val: RangeOf< enum_t >()) result[ToString( val )] = val;
+            return result;
+        }();
+
+    const auto iter = index.find( str );
+    if (iter != index.end()) return iter->second;
 
     return {};
 }
