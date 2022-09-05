@@ -157,5 +157,109 @@ std::ostream &operator<<( std::ostream &ostream, Benchmark b )
 }
 
 
+
+// CategoryBenchmarkMap():
+const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
+{
+    static const std::map< Category, std::set< Benchmark > > map =
+        {
+            { Category::memory,
+                { Benchmark::memcpy, Benchmark::memread, Benchmark::memset },
+            },
+        };
+
+    return map;
+}
+
+
+
+// enum class ListMode:
+ListMode operator++( ListMode &mode )
+{
+    mode = Next< ListMode >( mode );
+    return mode;
+}
+
+
+template<> EnumRange< ListMode > RangeOf< ListMode >()
+{
+    return boost::irange< ListMode >( ListMode::first, boost::next( ListMode::last ) );
+}
+
+
+const char *ToString( ListMode mode )
+{
+    switch (mode)
+    {
+    case ListMode::benchmarks:
+        return "benchmarks";
+
+    case ListMode::categories:
+        return "categories";
+
+    case ListMode::joint:
+        return "joint";
+    }
+
+    return nullptr;
+}
+
+
+std::istream &operator>>( std::istream &istream, ListMode &mode )
+{
+    std::string str;
+    if (istream >> str)
+    {
+        if (boost::optional< ListMode > opt = FromString< ListMode >( str ))
+        {
+            mode = *opt;
+            return istream;
+        }
+        istream.clear( std::ostream::failbit );
+    }
+
+    return istream;
+}
+
+
+std::ostream &operator<<( std::ostream &ostream, ListMode mode )
+{
+    if (const char *c_str = ToString( mode )) ostream << c_str;
+    else ostream.clear( std::ostream::failbit );
+
+    return ostream;
+}
+
+
+
+// Print():
+std::ostream &PrintList( std::ostream &ostream, ListMode mode )
+{
+    switch (mode)
+    {
+    case ListMode::benchmarks:
+        for (auto val: RangeOf< Benchmark >()) ostream << "  " << val << "\n";
+        break;
+
+    case ListMode::categories:
+        for (auto val: RangeOf< Category >()) ostream << "  " << val << "\n";
+        break;
+
+    case ListMode::joint:
+        for (auto category_benchmarks: CategoryBenchmarkMap())
+        {
+            ostream << category_benchmarks.first << ":\n";
+            for (auto benchmark: category_benchmarks.second)
+            {
+                ostream << "  " << benchmark << "\n";
+            }
+        }
+        break;
+    }
+
+    return ostream;
+}
+
+
 } // namespace bench
 

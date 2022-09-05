@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 
+#include <boost/optional.hpp>
 #include <boost/program_options.hpp>
 
 #include "list.hpp"
@@ -42,14 +43,15 @@ int main( int argc, char *argv[] )
     double warmup_slop = 0.125;
     int warmup_limit_ms = 125;
     std::string spec = "all";
-    bool list = false;
+    boost::optional< ListMode > list;
     bool run = false;
     Format format = Format::pretty;
 
     // Parse commandline options.
     namespace prog_opts = boost::program_options;
     prog_opts::options_description desc( "Allowed options" );
-    std::string format_help = "Output format (supported values: " + List< Format >( ", " ) + ").";
+    std::string list_help = "Print the complete list.  (options: " + List< ListMode >( ", " ) + ").";
+    std::string format_help = "Output format (options: " + List< Format >( ", " ) + ").";
     desc.add_options()
         ( "help", "Show help message and exit." )
         ( "verbose",
@@ -76,8 +78,9 @@ int main( int argc, char *argv[] )
           prog_opts::value( &spec )->value_name( "spec" )->default_value( spec ),
           "Specifies the set of benchmarks (see below)." )
         ( "list",
-          prog_opts::bool_switch( &list ),
-          "Print a detailed list of benchmarks." )
+          prog_opts::value< ListMode >()->value_name( "mode" )->implicit_value( ListMode::joint )->
+            notifier( [&list]( const ListMode &mode ){ list = mode; } ),
+          list_help.c_str() )
         ( "run",
           prog_opts::bool_switch( &run ),
           "Perform the benchmarks." )
@@ -106,13 +109,7 @@ int main( int argc, char *argv[] )
 
     if (list)
     {
-        std::cout << "\nCategories:\n";
-        for (auto val: RangeOf< Category >()) std::cout << "  " << val << "\n";
-
-        std::cout << "\nBenchmarks:\n";
-        for (auto val: RangeOf< Benchmark >()) std::cout << "  " << val << "\n";
-
-        std::cout << "\n";
+        PrintList( std::cout, *list ) << "\n";
 
         // Only execute benchmarks by default if not --list.
         if (!run) return 0;

@@ -17,6 +17,8 @@
 
 
 #include <iosfwd>
+#include <map>
+#include <set>
 
 #include "enum_utils.hpp"
 
@@ -68,6 +70,29 @@ template<> EnumRange< Benchmark > RangeOf< Benchmark >();
 
 std::istream &operator>>( std::istream &istream, Benchmark &b );
 std::ostream &operator<<( std::ostream &ostream, Benchmark b );
+
+
+    //! Returns a categorized list of all benchmarks.
+const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap();
+
+
+enum class ListMode
+{
+    benchmarks, first = benchmarks,
+    categories,
+    joint,      last = joint
+};
+
+ListMode operator++( ListMode &mode );
+
+template<> EnumRange< ListMode > RangeOf< ListMode >();
+
+std::istream &operator>>( std::istream &istream, ListMode &mode );
+std::ostream &operator<<( std::ostream &ostream, ListMode mode );
+
+
+    //! Prints a list of benchmarks/categories to an ostream.
+std::ostream &PrintList( std::ostream &ostream, ListMode mode );
 
 
 } // namespace bench
