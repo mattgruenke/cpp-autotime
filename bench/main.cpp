@@ -19,9 +19,12 @@
 #include "autotime/warmup.hpp"
 #include "autotime/work.hpp"
 
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <string>
+
+#include <sys/ioctl.h>
 
 #include <boost/optional.hpp>
 #include <boost/program_options.hpp>
@@ -32,6 +35,13 @@
 
 using namespace autotime;
 using namespace bench;
+
+
+static int GetTermWidth()
+{
+    winsize ws;
+    return (ioctl( fileno( stdout ), TIOCGWINSZ, &ws ) == 0) ? ws.ws_col : 80;
+}
 
 
 int main( int argc, char *argv[] )
@@ -49,7 +59,7 @@ int main( int argc, char *argv[] )
 
     // Parse commandline options.
     namespace prog_opts = boost::program_options;
-    prog_opts::options_description desc( "Allowed options" );
+    prog_opts::options_description desc( "Allowed options", GetTermWidth() );
     std::string list_help = "Print the complete list.  (options: " + List< ListMode >( ", " ) + ").";
     std::string format_help = "Output format (options: " + List< Format >( ", " ) + ").";
     desc.add_options()
