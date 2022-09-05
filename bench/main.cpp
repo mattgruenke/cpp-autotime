@@ -25,6 +25,7 @@
 
 #include <boost/program_options.hpp>
 
+#include "list.hpp"
 #include "output.hpp"
 
 
@@ -41,6 +42,8 @@ int main( int argc, char *argv[] )
     double warmup_slop = 0.125;
     int warmup_limit_ms = 125;
     std::string spec = "all";
+    bool list = false;
+    bool run = false;
     Format format = Format::pretty;
 
     // Parse commandline options.
@@ -69,9 +72,15 @@ int main( int argc, char *argv[] )
         ( "warmup-slop",
           prog_opts::value( &warmup_slop )->value_name( "F" )->default_value( warmup_slop ),
           "Core warmup normalized frequency regression limit." )
-        ( "run",
+        ( "select",
           prog_opts::value( &spec )->value_name( "spec" )->default_value( spec ),
-          "Run the specified benchmarks." )
+          "Specifies the set of benchmarks (see below)." )
+        ( "list",
+          prog_opts::bool_switch( &list ),
+          "Print a detailed list of benchmarks." )
+        ( "run",
+          prog_opts::bool_switch( &run ),
+          "Perform the benchmarks." )
         ( "output-format",
           prog_opts::value( &format )->value_name( "fmt" )->default_value( format ),
           format_help.c_str() )
@@ -93,6 +102,20 @@ int main( int argc, char *argv[] )
             << "\nUsage: " << basename( argv[0] ) << " [options]\n"
             << "\n" << desc << "\n";
         return 0;
+    }
+
+    if (list)
+    {
+        std::cout << "\nCategories:\n";
+        for (auto val: RangeOf< Category >()) std::cout << "  " << val << "\n";
+
+        std::cout << "\nBenchmarks:\n";
+        for (auto val: RangeOf< Benchmark >()) std::cout << "  " << val << "\n";
+
+        std::cout << "\n";
+
+        // Only execute benchmarks by default if not --list.
+        if (!run) return 0;
     }
 
     // Try to stay on a specific core.
