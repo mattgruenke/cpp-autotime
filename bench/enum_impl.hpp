@@ -30,7 +30,8 @@ template<
 >
 enum_t Next( enum_t val )
 {
-    int next = static_cast< int >( val ) + 1;
+    using underlying_t = typename std::underlying_type< enum_t >::type;
+    underlying_t next = static_cast< underlying_t >( val ) + 1;
     return static_cast< enum_t >( next );
 }
 
