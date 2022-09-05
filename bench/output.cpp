@@ -28,9 +28,7 @@ Format operator++( Format &f )
 
 template<> EnumRange< Format > RangeOf< Format >()
 {
-    Format begin = Format::pretty;
-    Format end = boost::next( Format::csv );
-    return boost::irange< Format >( begin, end );
+    return boost::irange< Format >( Format::first, boost::next( Format::last ) );
 }
 
 

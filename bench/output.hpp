@@ -27,8 +27,8 @@ namespace bench
 
 enum class Format
 {
-    pretty,
-    csv
+    pretty, first = pretty,
+    csv,    last = csv
 };
 
 Format operator++( Format &f );
