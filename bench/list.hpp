@@ -76,6 +76,10 @@ std::ostream &operator<<( std::ostream &ostream, Benchmark b );
 const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap();
 
 
+    //! Returns an index of each benchmark's category.
+const std::map< Benchmark, Category > &BenchmarkCategoryMap();
+
+
     //! Parses a specification string into a set of benchmarks to run.
 std::set< Benchmark > ParseSpecification( const std::string &spec );
 
