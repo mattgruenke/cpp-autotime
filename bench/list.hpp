@@ -96,7 +96,8 @@ std::ostream &operator<<( std::ostream &ostream, ListMode mode );
 
 
     //! Prints a list of benchmarks/categories to an ostream.
-std::ostream &PrintList( std::ostream &ostream, ListMode mode );
+std::ostream &PrintList(
+    std::ostream &ostream, const std::set< Benchmark > &list, ListMode mode );
 
 
 } // namespace bench

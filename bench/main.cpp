@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
     double warmup_slop = 0.125;
     int warmup_limit_ms = 125;
     std::string spec = "all";
-    boost::optional< ListMode > list;
+    boost::optional< ListMode > list_mode;
     bool run = false;
     Format format = Format::pretty;
 
@@ -89,7 +89,7 @@ int main( int argc, char *argv[] )
           "Specifies the set of benchmarks (see below)." )
         ( "list",
           prog_opts::value< ListMode >()->value_name( "mode" )->implicit_value( ListMode::joint )->
-            notifier( [&list]( const ListMode &mode ){ list = mode; } ),
+            notifier( [&list_mode]( const ListMode &mode ){ list_mode = mode; } ),
           list_help.c_str() )
         ( "run",
           prog_opts::bool_switch( &run ),
@@ -117,11 +117,12 @@ int main( int argc, char *argv[] )
         return 0;
     }
 
-    if (list)
+    std::set< Benchmark > benchmarks = ParseSpecification( spec );
+    if (list_mode)
     {
-        PrintList( std::cout, *list ) << "\n";
+        PrintList( std::cout, benchmarks, *list_mode ) << "\n";
 
-        // Only execute benchmarks by default if not --list.
+        // --run is implied only if --list is absent.
         if (!run) return 0;
     }
 
