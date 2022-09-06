@@ -14,6 +14,8 @@
 #include "list.hpp"
 #include "enum_impl.hpp"
 
+#include <stdexcept>
+
 #ifdef CASE
 #   undef CASE
 #endif
@@ -169,6 +171,47 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
         };
 
     return map;
+}
+
+
+// ParseSpecification():
+std::set< Benchmark > ParseSpecification( const std::string &spec )
+{
+    const auto &map = CategoryBenchmarkMap();
+
+    std::set< Benchmark > result;
+    std::string::size_type ofs = 0;
+    do
+    {
+        std::string::size_type begin = spec.find_first_not_of( ',', ofs );
+        if (begin == std::string::npos) break;
+
+        ofs = spec.find_first_of( ',', begin );
+        std::string::size_type len = (ofs != std::string::npos) ? ofs - begin : std::string::npos;
+        std::string name = spec.substr( begin, len );
+
+        if (name == "all")
+        {
+            for (Benchmark benchmark: RangeOf< Benchmark >()) result.insert( benchmark );
+        }
+        else if (boost::optional< Category > cat = FromString< Category >( name ))
+        {
+            auto category_iter = map.find( *cat );
+            if (category_iter != map.end())
+            {
+                const auto &benchmarks = category_iter->second;
+                result.insert( benchmarks.begin(), benchmarks.end() );
+            }
+        }
+        else if (boost::optional< Benchmark > bench = FromString< Benchmark >( name ))
+        {
+            result.insert( *bench );
+        }
+        else throw std::runtime_error( "Invalid name in spec: " + name );
+    }
+    while (ofs != std::string::npos);
+
+    return result;
 }
 
 

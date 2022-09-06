@@ -76,6 +76,10 @@ std::ostream &operator<<( std::ostream &ostream, Benchmark b );
 const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap();
 
 
+    //! Parses a specification string into a set of benchmarks to run.
+std::set< Benchmark > ParseSpecification( const std::string &spec );
+
+
 enum class ListMode
 {
     benchmarks, first = benchmarks,
