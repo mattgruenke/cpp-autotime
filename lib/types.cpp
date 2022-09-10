@@ -18,6 +18,14 @@ namespace autotime
 {
 
 
+// struct NormDurations:
+NormDurations NormDurations::operator-( const NormDurations &rhs ) const
+{
+    return { this->real - rhs.real, this->thread - rhs.thread };
+}
+
+
+
 // struct DurationsForIters:
 NormDurations DurationsForIters::normalize() const
 {

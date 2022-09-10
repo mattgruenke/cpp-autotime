@@ -41,6 +41,8 @@ struct NormDurations
 
     duration real;
     duration thread;
+
+    NormDurations operator-( const NormDurations &rhs ) const;
 };
 
 
