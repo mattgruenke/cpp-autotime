@@ -44,9 +44,8 @@ template<
 >
 std::string ToStr( enum_t val )
 {
-    std::ostringstream oss;
-    oss << val;
-    return oss.str();
+    if (const char *c_str = ToCStr( val )) return c_str;
+    return {};
 }
 
 
