@@ -46,7 +46,7 @@ boost::optional< enum_t > FromString( const std::string &str )
         []()
         {
             std::unordered_map< std::string, enum_t > result;
-            for (enum_t val: RangeOf< enum_t >()) result[ToString( val )] = val;
+            for (enum_t val: RangeOf< enum_t >()) result[ToStr( val )] = val;
             return result;
         }();
 

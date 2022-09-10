@@ -39,7 +39,7 @@ template<> EnumRange< Category > RangeOf< Category >()
 }
 
 
-const char *ToString( Category c )
+const char *ToCStr( Category c )
 {
     switch (c)
     {
@@ -93,7 +93,7 @@ std::istream &operator>>( std::istream &istream, Category &c )
 
 std::ostream &operator<<( std::ostream &ostream, Category c )
 {
-    if (const char *c_str = ToString( c )) ostream << c_str;
+    if (const char *c_str = ToCStr( c )) ostream << c_str;
     else ostream.clear( std::ostream::failbit );
 
     return ostream;
@@ -115,7 +115,7 @@ template<> EnumRange< Benchmark > RangeOf< Benchmark >()
 }
 
 
-const char *ToString( Benchmark b )
+const char *ToCStr( Benchmark b )
 {
     switch (b)
     {
@@ -157,7 +157,7 @@ std::istream &operator>>( std::istream &istream, Benchmark &b )
 
 std::ostream &operator<<( std::ostream &ostream, Benchmark b )
 {
-    if (const char *c_str = ToString( b )) ostream << c_str;
+    if (const char *c_str = ToCStr( b )) ostream << c_str;
     else ostream.clear( std::ostream::failbit );
 
     return ostream;
@@ -272,7 +272,7 @@ template<> EnumRange< ListMode > RangeOf< ListMode >()
 }
 
 
-const char *ToString( ListMode mode )
+const char *ToCStr( ListMode mode )
 {
     switch (mode)
     {
@@ -309,7 +309,7 @@ std::istream &operator>>( std::istream &istream, ListMode &mode )
 
 std::ostream &operator<<( std::ostream &ostream, ListMode mode )
 {
-    if (const char *c_str = ToString( mode )) ostream << c_str;
+    if (const char *c_str = ToCStr( mode )) ostream << c_str;
     else ostream.clear( std::ostream::failbit );
 
     return ostream;

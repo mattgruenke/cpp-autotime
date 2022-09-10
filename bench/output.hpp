@@ -40,6 +40,8 @@ Format operator++( Format &f );
 
 template<> EnumRange< Format > RangeOf< Format >();
 
+const char *ToCStr( Format f );
+
 std::istream &operator>>( std::istream &istream, Format &f );
 std::ostream &operator<<( std::ostream &ostream, Format f );
 

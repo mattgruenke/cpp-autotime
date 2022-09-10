@@ -50,7 +50,7 @@ template<> EnumRange< Format > RangeOf< Format >()
 }
 
 
-const char *ToString( Format f )
+const char *ToCStr( Format f )
 {
     switch (f)
     {
@@ -84,7 +84,7 @@ std::istream &operator>>( std::istream &istream, Format &f )
 
 std::ostream &operator<<( std::ostream &ostream, Format f )
 {
-    if (const char *c_str = ToString( f )) ostream << c_str;
+    if (const char *c_str = ToCStr( f )) ostream << c_str;
     else ostream.clear( std::ostream::failbit );
 
     return ostream;

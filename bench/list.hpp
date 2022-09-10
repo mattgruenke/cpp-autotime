@@ -54,6 +54,8 @@ Category operator++( Category &c );
 
 template<> EnumRange< Category > RangeOf< Category >();
 
+const char *ToCStr( Category c );
+
 std::istream &operator>>( std::istream &istream, Category &c );
 std::ostream &operator<<( std::ostream &ostream, Category c );
 
@@ -74,6 +76,8 @@ enum class Benchmark
 Benchmark operator++( Benchmark &b );
 
 template<> EnumRange< Benchmark > RangeOf< Benchmark >();
+
+const char *ToCStr( Benchmark b );
 
 std::istream &operator>>( std::istream &istream, Benchmark &b );
 std::ostream &operator<<( std::ostream &ostream, Benchmark b );
@@ -101,6 +105,8 @@ enum class ListMode
 ListMode operator++( ListMode &mode );
 
 template<> EnumRange< ListMode > RangeOf< ListMode >();
+
+const char *ToCStr( ListMode mode );
 
 std::istream &operator>>( std::istream &istream, ListMode &mode );
 std::ostream &operator<<( std::ostream &ostream, ListMode mode );
