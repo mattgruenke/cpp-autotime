@@ -17,8 +17,13 @@
 
 
 #include <iosfwd>
+#include <memory>
 
 #include "enum_utils.hpp"
+#include "list.hpp"
+
+#include "autotime/types.hpp"
+#include "autotime/os.hpp"
 
 
 namespace bench
@@ -37,6 +42,28 @@ template<> EnumRange< Format > RangeOf< Format >();
 
 std::istream &operator>>( std::istream &istream, Format &f );
 std::ostream &operator<<( std::ostream &ostream, Format f );
+
+
+    //! Output formatting interface.
+class IOutputFormatter
+{
+public:
+        //! Creates corresponding instance & prints header (if applicable).
+    static std::unique_ptr< IOutputFormatter > create(
+        std::ostream &ostream,
+        Format format );
+
+        //! Prints footer (if applicable).
+    virtual ~IOutputFormatter();
+
+        //! Writes a single result.
+    virtual void write(
+        Benchmark benchmark,
+        autotime::NormDurations norm,
+        int num_iters,
+        autotime::cpu_clock_ticks clockspeed
+    ) = 0;
+};
 
 
 } // namespace bench

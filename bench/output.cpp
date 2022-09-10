@@ -14,11 +14,29 @@
 #include "output.hpp"
 #include "enum_impl.hpp"
 
+#include <stdexcept>
+
+
+using namespace autotime;
+
 
 namespace bench
 {
 
 
+class PrettyOutputFormatter final: public IOutputFormatter
+{
+public:
+    explicit PrettyOutputFormatter( std::ostream &ostream );
+    void write( Benchmark, NormDurations, int, cpu_clock_ticks ) override;
+
+private:
+    std::ostream &ostream_;
+};
+
+
+
+// enum class Format:
 Format operator++( Format &f )
 {
     f = Next< Format >( f );
@@ -70,6 +88,49 @@ std::ostream &operator<<( std::ostream &ostream, Format f )
     else ostream.clear( std::ostream::failbit );
 
     return ostream;
+}
+
+
+
+// class PrettyOutputFormatter:
+PrettyOutputFormatter::PrettyOutputFormatter( std::ostream &ostream )
+:
+    ostream_( ostream )
+{
+}
+
+
+void PrettyOutputFormatter::write(
+    Benchmark benchmark, NormDurations norm, int num_iters, cpu_clock_ticks )
+{
+    double real_ns   = norm.real.count()   / 1000.0;
+    double thread_ns = norm.thread.count() / 1000.0;
+    ostream_ << benchmark << ": "
+        << "{ " << real_ns << " ns, " << thread_ns << " ns }"
+        << " in " << num_iters << " iters\n";
+}
+
+
+
+// class IOutputFormatter:
+std::unique_ptr< IOutputFormatter > IOutputFormatter::create(
+    std::ostream &ostream, Format format )
+{
+    switch (format)
+    {
+    case Format::pretty:
+        return std::unique_ptr< PrettyOutputFormatter >( new PrettyOutputFormatter( ostream ) );
+
+    case Format::csv:
+        break;
+    }
+
+    throw std::runtime_error( "Unsupported output format: " + ToStr( format ) );
+}
+
+
+IOutputFormatter::~IOutputFormatter()
+{
 }
 
 
