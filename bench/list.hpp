@@ -46,7 +46,8 @@ enum class Category
     std_string,
     std_vector,
     syscall,
-    thread, last = thread
+    thread,
+    warmup, last = warmup
 };
 
 Category operator++( Category &c );
@@ -59,9 +60,15 @@ std::ostream &operator<<( std::ostream &ostream, Category c );
 
 enum class Benchmark
 {
+    // memory:
     memcpy, first = memcpy,
     memread,
-    memset, last = memset
+    memset,
+
+    // warmup:
+    fibonacci_u64,
+    mandelbrot_256,
+    trigonometry, last = trigonometry
 };
 
 Benchmark operator++( Benchmark &b );

@@ -65,6 +65,7 @@ const char *ToString( Category c )
     CASE( std_vector );
     CASE( syscall );
     CASE( thread );
+    CASE( warmup );
 
 #undef CASE
     }
@@ -126,6 +127,10 @@ const char *ToString( Benchmark b )
     CASE( memread );
     CASE( memset );
 
+    CASE( fibonacci_u64 );
+    CASE( mandelbrot_256 );
+    CASE( trigonometry );
+
 #undef CASE
     }
 
@@ -165,8 +170,21 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
 {
     static const std::map< Category, std::set< Benchmark > > map =
         {
-            { Category::memory,
-                { Benchmark::memcpy, Benchmark::memread, Benchmark::memset },
+            {
+                Category::memory,
+                {
+                    Benchmark::memcpy,
+                    Benchmark::memread,
+                    Benchmark::memset,
+                },
+            },
+            {
+                Category::warmup,
+                {
+                    Benchmark::fibonacci_u64,
+                    Benchmark::mandelbrot_256,
+                    Benchmark::trigonometry,
+                },
             },
         };
 
