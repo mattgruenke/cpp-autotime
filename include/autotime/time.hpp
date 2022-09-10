@@ -69,6 +69,18 @@ Durations Time(
 }
 
 
+    //! Convenience function for creating a timer object for f().
+Timer MakeTimer(
+    const std::function< void() > f     //!< Function to measure.
+);
+
+
+    //! Convenience function for creating a timer object for f().
+Timer MakeTimer(
+    void (*f)()                         //!< Function to measure.
+);
+
+
 } // namespace autotime
 
 

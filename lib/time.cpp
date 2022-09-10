@@ -124,5 +124,23 @@ Durations detail::TimeMember(
 }
 
 
+Timer MakeTimer( const std::function< void() > f )
+{
+    return [f]( int num_iters )
+        {
+            return Time( f, num_iters );
+        };
+}
+
+
+Timer MakeTimer( void (*f)() )
+{   
+    return [f]( int num_iters )
+        {   
+            return Time( f, num_iters );
+        };
+}
+
+
 } // namespace autotime
 
