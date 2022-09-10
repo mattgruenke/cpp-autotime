@@ -31,9 +31,12 @@ NormDurations DurationsForIters::normalize() const
 {
     const NormDurations::duration round = NormDurations::duration{ num_iters } / 2;
 
-    NormDurations result;
-    result.real   = (durs.real   + round) / num_iters;
-    result.thread = (durs.thread + round) / num_iters;
+    NormDurations result{};
+    if (num_iters)
+    {
+        result.real   = (durs.real   + round) / num_iters;
+        result.thread = (durs.thread + round) / num_iters;
+    }
 
     return result;
 }
