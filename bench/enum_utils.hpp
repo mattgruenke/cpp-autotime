@@ -42,6 +42,17 @@ EnumRange< enum_t > RangeOf();
 template<
     typename enum_t
 >
+std::string ToStr( enum_t val )
+{
+    std::ostringstream oss;
+    oss << val;
+    return oss.str();
+}
+
+
+template<
+    typename enum_t
+>
 std::ostream &List( std::ostream &ostream, const std::string &sep )
 {
     const char *s = "";
