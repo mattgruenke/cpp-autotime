@@ -14,6 +14,7 @@ add_executable( autotime-bench
     list.cpp
     main.cpp
     output.cpp
+    overhead_benchmarks.cpp
     work_benchmarks.cpp
 )
 

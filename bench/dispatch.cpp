@@ -28,6 +28,10 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     case Benchmark::n: \
         return MakeTimers< Benchmark::n >()
 
+    CASE__MAKE_TIMERS( overhead_nullary );
+    CASE__MAKE_TIMERS( overhead_nullary_fn );
+    CASE__MAKE_TIMERS( overhead_nullary_ptr );
+
     CASE__MAKE_TIMERS( fibonacci_u64 );
     CASE__MAKE_TIMERS( mandelbrot_256 );
     CASE__MAKE_TIMERS( trigonometry );
