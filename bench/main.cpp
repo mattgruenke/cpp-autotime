@@ -149,6 +149,9 @@ int main( int argc, char *argv[] )
     auto warmup_dur_us = std::chrono::duration_cast< std::chrono::microseconds >( warmup_dur );
     if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
 
+    // Setup output handler.
+    std::unique_ptr< IOutputFormatter > output = IOutputFormatter::create( std::cout, format );
+
     // Run the specified benchmarks.
     for (Benchmark benchmark: benchmarks)
     {
@@ -158,6 +161,11 @@ int main( int argc, char *argv[] )
         DurationsForIters exp_dfi = AutoTime( timers.primary );
         DurationsForIters ovh_dfi{};
         if (timers.overhead) ovh_dfi = AutoTime( timers.overhead );
+
+        // Postprocess and display the results.
+        CpuClockPeriod core_speed = GetCoreClockTick( coreId );
+        NormDurations norm = exp_dfi.normalize() - ovh_dfi.normalize();
+        output->write( benchmark, norm, exp_dfi.num_iters, core_speed /*, warnings */ );
     }
 
     return 0;
