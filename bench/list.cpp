@@ -56,6 +56,7 @@ const char *ToCStr( Category c )
     CASE( memory );
     CASE( mutex );
     CASE( network );
+    CASE( overhead );
     CASE( process );
     CASE( socket );
     CASE( std_hashset );

@@ -38,6 +38,7 @@ enum class Category
     memory,
     mutex,
     network,
+    overhead,
     process,
     socket,
     std_hashset,
