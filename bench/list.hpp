@@ -47,7 +47,7 @@ enum class Category
     std_vector,
     syscall,
     thread,
-    warmup, last = warmup
+    work, last = work
 };
 
 Category operator++( Category &c );
@@ -67,7 +67,7 @@ enum class Benchmark
     memread,
     memset,
 
-    // warmup:
+    // work:
     fibonacci_u64,
     mandelbrot_256,
     trigonometry, last = trigonometry

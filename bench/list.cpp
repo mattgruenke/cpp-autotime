@@ -65,7 +65,7 @@ const char *ToCStr( Category c )
     CASE( std_vector );
     CASE( syscall );
     CASE( thread );
-    CASE( warmup );
+    CASE( work );
 
 #undef CASE
     }
@@ -179,7 +179,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                 },
             },
             {
-                Category::warmup,
+                Category::work,
                 {
                     Benchmark::fibonacci_u64,
                     Benchmark::mandelbrot_256,
