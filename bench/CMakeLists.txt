@@ -14,6 +14,7 @@ add_executable( autotime-bench
     list.cpp
     main.cpp
     output.cpp
+    work_benchmarks.cpp
 )
 
 target_link_libraries( autotime-bench
