@@ -118,6 +118,7 @@ int main( int argc, char *argv[] )
     }
 
     std::set< Benchmark > benchmarks = ParseSpecification( spec );
+
     if (list_mode)
     {
         PrintList( std::cout, benchmarks, *list_mode ) << "\n";
