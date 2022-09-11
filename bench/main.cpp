@@ -29,6 +29,7 @@
 #include <boost/optional.hpp>
 #include <boost/program_options.hpp>
 
+#include "dispatch.hpp"
 #include "list.hpp"
 #include "output.hpp"
 
@@ -147,6 +148,17 @@ int main( int argc, char *argv[] )
     steady_clock::duration warmup_dur = warmup_finish - warmup_start;
     auto warmup_dur_us = std::chrono::duration_cast< std::chrono::microseconds >( warmup_dur );
     if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
+
+    // Run the specified benchmarks.
+    for (Benchmark benchmark: benchmarks)
+    {
+        BenchTimers timers = MakeTimers( benchmark );
+
+        // Time the function & its overhead.
+        DurationsForIters exp_dfi = AutoTime( timers.primary );
+        DurationsForIters ovh_dfi{};
+        if (timers.overhead) ovh_dfi = AutoTime( timers.overhead );
+    }
 
     return 0;
 }
