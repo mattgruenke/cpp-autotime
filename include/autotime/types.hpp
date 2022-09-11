@@ -72,6 +72,19 @@ struct DurationsForIters
 using Timer = std::function< Durations( int num_iters ) >;
 
 
+    //! Pairs a primary timer with another timer to measure its overhead.
+    /*!
+        Since each benchmark can potentially have a different amount of
+        overhead, it's defined not only by a primary timer, but also the
+        timer for characterizing its overhead.
+    */
+struct BenchTimers
+{
+    Timer primary;
+    Timer overhead;     //!< In rare cases, this may be null.
+};
+
+
 } // namespace autotime
 
 
