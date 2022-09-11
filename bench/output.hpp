@@ -23,7 +23,6 @@
 #include "list.hpp"
 
 #include "autotime/types.hpp"
-#include "autotime/os.hpp"
 
 
 namespace bench
@@ -63,7 +62,7 @@ public:
         Benchmark benchmark,
         autotime::NormDurations norm,
         int num_iters,
-        autotime::cpu_clock_ticks clockspeed
+        autotime::CpuClockPeriod clockspeed
     ) = 0;
 };
 

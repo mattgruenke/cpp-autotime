@@ -28,7 +28,7 @@ class PrettyOutputFormatter final: public IOutputFormatter
 {
 public:
     explicit PrettyOutputFormatter( std::ostream &ostream );
-    void write( Benchmark, NormDurations, int, cpu_clock_ticks ) override;
+    void write( Benchmark, NormDurations, int, CpuClockPeriod ) override;
 
 private:
     std::ostream &ostream_;
@@ -101,7 +101,7 @@ PrettyOutputFormatter::PrettyOutputFormatter( std::ostream &ostream )
 
 
 void PrettyOutputFormatter::write(
-    Benchmark benchmark, NormDurations norm, int num_iters, cpu_clock_ticks )
+    Benchmark benchmark, NormDurations norm, int num_iters, CpuClockPeriod )
 {
     double real_ns   = norm.real.count()   / 1000.0;
     double thread_ns = norm.thread.count() / 1000.0;

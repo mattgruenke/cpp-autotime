@@ -20,6 +20,8 @@
 
 #include <chrono>
 
+#include <autotime/types.hpp>
+
 
 namespace autotime
 {
@@ -32,17 +34,13 @@ namespace autotime
 std::chrono::nanoseconds GetTimeslice();
 
 
-    //! Clock tick representation with enough range for 0.5 MHz to 1 THz.
-using cpu_clock_ticks = std::chrono::duration< int32_t, std::femto >;
-
-
     //! Queries the duration of a CPU core clock tick, in femtoseconds.
     /*!
         Specify -1 to query the core on which the current thread is running.
 
         @returns 0, if the clock speed couldn't be determined.
     */
-cpu_clock_ticks GetCoreClockTick(
+CpuClockPeriod GetCoreClockTick(
     int core_id=-1  //!< Specifies which core to query.
 );
 
@@ -53,7 +51,7 @@ cpu_clock_ticks GetCoreClockTick(
 
         @returns 0, if the max clock speed couldn't be determined.
     */
-cpu_clock_ticks GetCoreMinClockTick(
+CpuClockPeriod GetCoreMinClockTick(
     int core_id=-1  //!< Specifies which core to query.
 );
 

@@ -53,7 +53,7 @@ static bool Matches( std::istream &in, const std::string &expected )
 }
 
 
-cpu_clock_ticks GetCoreClockTick( int core_id )
+CpuClockPeriod GetCoreClockTick( int core_id )
 {
     if (core_id < 0) core_id = GetCurrentCoreId();
 
@@ -109,12 +109,12 @@ cpu_clock_ticks GetCoreClockTick( int core_id )
     }
 
     // To convert from MHz, scale by number of clock ticks per microsecond.
-    double scale = std::chrono::microseconds{ 1 } / cpu_clock_ticks{ 1 };
-    return cpu_clock_ticks{ lrint( scale / mhz ) };
+    double scale = std::chrono::microseconds{ 1 } / CpuClockPeriod{ 1 };
+    return CpuClockPeriod{ lrint( scale / mhz ) };
 }
 
 
-cpu_clock_ticks GetCoreMinClockTick( int core_id )
+CpuClockPeriod GetCoreMinClockTick( int core_id )
 {
     if (core_id < 0) core_id = GetCurrentCoreId();
 
@@ -129,9 +129,9 @@ cpu_clock_ticks GetCoreMinClockTick( int core_id )
         if (file)
         {
             // To convert from kHz, scale by number of clock ticks per millisecond.
-            int64_t scale = std::chrono::milliseconds{ 1 } / cpu_clock_ticks{ 1 };
+            int64_t scale = std::chrono::milliseconds{ 1 } / CpuClockPeriod{ 1 };
             AUTOTIME_DEBUG( "Scaling min clock tick by " << scale );
-            return cpu_clock_ticks{ scale / khz };
+            return CpuClockPeriod{ scale / khz };
         }
     }
 

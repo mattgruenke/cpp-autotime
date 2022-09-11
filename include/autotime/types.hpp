@@ -15,14 +15,18 @@
 #define AUTOTIME_TYPES_HPP
 
 
-#include <autotime/clocks.hpp>
-
 #include <chrono>
 #include <functional>
+
+#include <autotime/clocks.hpp>
 
 
 namespace autotime
 {
+
+
+    //! CPU clock tick representation with enough range for 0.5 MHz to 1 THz.
+using CpuClockPeriod = std::chrono::duration< int32_t, std::femto >;
 
 
     //! A bundle of timing information returned by Time().
