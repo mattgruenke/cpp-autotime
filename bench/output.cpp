@@ -14,7 +14,9 @@
 #include "output.hpp"
 #include "enum_impl.hpp"
 
+#include <cmath>
 #include <stdexcept>
+#include <vector>
 
 
 using namespace autotime;
@@ -100,14 +102,27 @@ PrettyOutputFormatter::PrettyOutputFormatter( std::ostream &ostream )
 }
 
 
+static std::ostream &PrettyPrint( std::ostream &ostream, const NormDurations::duration &d )
+{
+    const std::vector< char > prefixes = { 'n', 'u', 'm' };
+    double ns = d.count() / 1000.0;
+    double exp = log10( std::max( ns, 0.0 ) );
+    long int prefix_idx = lrint( std::min( std::max( floor( exp / 3 ), 0.0 ), 2.0 ) );
+    double scale = exp10( prefix_idx * 3 );
+    return ostream << (ns / scale) << " " << prefixes.at( prefix_idx ) << "s";
+}
+
+
 void PrettyOutputFormatter::write(
     Benchmark benchmark, NormDurations norm, int num_iters, CpuClockPeriod )
 {
-    double real_ns   = norm.real.count()   / 1000.0;
-    double thread_ns = norm.thread.count() / 1000.0;
+    const auto precision_prev = ostream_.precision( 4 );
     ostream_ << benchmark << ": "
-        << "{ " << real_ns << " ns, " << thread_ns << " ns }"
-        << " in " << num_iters << " iters\n";
+        << "{ ";
+    PrettyPrint( ostream_, norm.real ) << ", ";
+    PrettyPrint( ostream_, norm.thread ) << " }";
+    ostream_ << " in " << num_iters << " iters\n";
+    ostream_.precision( precision_prev );
 }
 
 
