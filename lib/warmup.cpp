@@ -22,7 +22,7 @@ namespace autotime
 {
 
 
-using cpu_clock_ticks_dbl = std::chrono::duration< double, std::nano >;
+using CpuClockPeriod_double = std::chrono::duration< double, std::nano >;
 
 
 class CoreWarmupMonitor: public ICoreWarmupMonitor
@@ -48,7 +48,7 @@ private:
 
     // Runtime state:
     const int coreId_ = -1;
-    const cpu_clock_ticks_dbl minClockTick_;
+    const CpuClockPeriod_double minClockTick_;
     double peak_ = 0.0;
 };
 
