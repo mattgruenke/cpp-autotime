@@ -357,6 +357,7 @@ std::ostream &PrintList(
                 {
                     ostream << "  " << benchmark << "\n";
                 }
+                ostream << "\n";
             }
         }
         break;
