@@ -10,6 +10,7 @@ find_package( Boost
 
 
 add_executable( autotime-bench
+    dispatch.cpp
     list.cpp
     main.cpp
     output.cpp
