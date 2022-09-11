@@ -64,12 +64,29 @@ std::ostream &operator<<( std::ostream &ostream, Category c );
 enum class Benchmark
 {
     // memory:
-    memcpy, first = memcpy,
-    memread,
-    memset,
+    memcpy_256, first = memcpy_256,
+    memcpy_4k,
+    memcpy_64k,
+    memcpy_1M,
+    memcpy_16M,
+    memcpy_256M,
+    strlen_256,
+    strlen_4k,
+    strlen_64k,
+    strlen_1M,
+    strlen_16M,
+    strlen_256M,
+    memset_256,
+    memset_4k,
+    memset_64k,
+    memset_1M,
+    memset_16M,
+    memset_256M,
 
     // overhead:
     overhead_nullary,
+    overhead_nullary_fn,
+    overhead_nullary_ptr,
 
     // work:
     fibonacci_u64,

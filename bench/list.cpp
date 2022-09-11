@@ -124,11 +124,28 @@ const char *ToCStr( Benchmark b )
     case Benchmark::n: \
         return #n
 
-    CASE( memcpy );
-    CASE( memread );
-    CASE( memset );
+    CASE( memcpy_256  );
+    CASE( memcpy_4k   );
+    CASE( memcpy_64k  );
+    CASE( memcpy_1M   );
+    CASE( memcpy_16M  );
+    CASE( memcpy_256M );
+    CASE( strlen_256  );
+    CASE( strlen_4k   );
+    CASE( strlen_64k  );
+    CASE( strlen_1M   );
+    CASE( strlen_16M  );
+    CASE( strlen_256M );
+    CASE( memset_256  );
+    CASE( memset_4k   );
+    CASE( memset_64k  );
+    CASE( memset_1M   );
+    CASE( memset_16M  );
+    CASE( memset_256M );
 
     CASE( overhead_nullary );
+    CASE( overhead_nullary_fn );
+    CASE( overhead_nullary_ptr );
 
     CASE( fibonacci_u64 );
     CASE( mandelbrot_256 );
@@ -176,15 +193,32 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
             {
                 Category::memory,
                 {
-                    Benchmark::memcpy,
-                    Benchmark::memread,
-                    Benchmark::memset,
+                    Benchmark::memcpy_256,
+                    Benchmark::memcpy_4k,
+                    Benchmark::memcpy_64k,
+                    Benchmark::memcpy_1M,
+                    Benchmark::memcpy_16M,
+                    Benchmark::memcpy_256M,
+                    Benchmark::strlen_256,
+                    Benchmark::strlen_4k,
+                    Benchmark::strlen_64k,
+                    Benchmark::strlen_1M,
+                    Benchmark::strlen_16M,
+                    Benchmark::strlen_256M,
+                    Benchmark::memset_256,
+                    Benchmark::memset_4k,
+                    Benchmark::memset_64k,
+                    Benchmark::memset_1M,
+                    Benchmark::memset_16M,
+                    Benchmark::memset_256M,
                 },
             },
             {
                 Category::overhead,
                 {
                     Benchmark::overhead_nullary,
+                    Benchmark::overhead_nullary_fn,
+                    Benchmark::overhead_nullary_ptr,
                 },
             },
             {
