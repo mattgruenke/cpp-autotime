@@ -68,6 +68,9 @@ enum class Benchmark
     memread,
     memset,
 
+    // overhead:
+    overhead_nullary,
+
     // work:
     fibonacci_u64,
     mandelbrot_256,

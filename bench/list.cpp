@@ -128,6 +128,8 @@ const char *ToCStr( Benchmark b )
     CASE( memread );
     CASE( memset );
 
+    CASE( overhead_nullary );
+
     CASE( fibonacci_u64 );
     CASE( mandelbrot_256 );
     CASE( trigonometry );
@@ -177,6 +179,12 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::memcpy,
                     Benchmark::memread,
                     Benchmark::memset,
+                },
+            },
+            {
+                Category::overhead,
+                {
+                    Benchmark::overhead_nullary,
                 },
             },
             {
