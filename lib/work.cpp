@@ -63,7 +63,7 @@ int Mandelbrot( std::complex< float > c, int max_iters )
     for (int iter = 0; iter < max_iters; ++iter)
     {
         z = z*z + c;
-        if (abs( z ) >= 4.0f) return iter;
+        if (fabs( z ) >= 4.0f) return iter;
     }
 
     return -1;
