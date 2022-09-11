@@ -5,6 +5,7 @@ add_library( autotime SHARED
     iterate.cpp
     log.cpp
     os.cpp
+    overhead.cpp
     time.cpp
     types.cpp
     warmup.cpp
