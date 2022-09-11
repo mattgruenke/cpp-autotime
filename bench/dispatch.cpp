@@ -55,9 +55,6 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( mandelbrot_256 );
     CASE__MAKE_TIMERS( trigonometry );
 
-    default:
-        break;
-
 #undef CASE__MAKE_TIMERS
     }
 
