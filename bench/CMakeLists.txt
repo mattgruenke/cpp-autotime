@@ -13,6 +13,7 @@ add_executable( autotime-bench
     dispatch.cpp
     list.cpp
     main.cpp
+    memory_benchmarks.cpp
     output.cpp
     overhead_benchmarks.cpp
     work_benchmarks.cpp
