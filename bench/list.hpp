@@ -83,6 +83,11 @@ enum class Benchmark
     memset_16M,
     memset_256M,
 
+    // mutex:
+    mutex_create_destroy,
+    mutex_lock_release,
+    mutex_trylock,
+
     // overhead:
     overhead_nullary,
     overhead_nullary_fn,

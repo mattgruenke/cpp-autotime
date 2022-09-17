@@ -17,6 +17,7 @@ add_executable( autotime-bench
     list.cpp
     main.cpp
     memory_benchmarks.cpp
+    mutex_benchmarks.cpp
     output.cpp
     overhead_benchmarks.cpp
     thread_utils.cpp

@@ -47,6 +47,10 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( memset_16M );
     CASE__MAKE_TIMERS( memset_256M );
 
+    CASE__MAKE_TIMERS( mutex_create_destroy );
+    CASE__MAKE_TIMERS( mutex_lock_release );
+    CASE__MAKE_TIMERS( mutex_trylock );
+
     CASE__MAKE_TIMERS( overhead_nullary );
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );

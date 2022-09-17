@@ -143,6 +143,10 @@ const char *ToCStr( Benchmark b )
     CASE( memset_16M  );
     CASE( memset_256M );
 
+    CASE( mutex_create_destroy );
+    CASE( mutex_lock_release );
+    CASE( mutex_trylock );
+
     CASE( overhead_nullary );
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
@@ -211,6 +215,14 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::memset_1M,
                     Benchmark::memset_16M,
                     Benchmark::memset_256M,
+                },
+            },
+            {
+                Category::mutex,
+                {
+                    Benchmark::mutex_create_destroy,
+                    Benchmark::mutex_lock_release,
+                    Benchmark::mutex_trylock,
                 },
             },
             {
