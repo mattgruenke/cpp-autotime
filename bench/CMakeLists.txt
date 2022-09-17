@@ -9,6 +9,9 @@ find_package( Boost
 )
 
 
+find_package( Threads REQUIRED )
+
+
 add_executable( autotime-bench
     dispatch.cpp
     list.cpp
@@ -16,12 +19,14 @@ add_executable( autotime-bench
     memory_benchmarks.cpp
     output.cpp
     overhead_benchmarks.cpp
+    thread_utils.cpp
     work_benchmarks.cpp
 )
 
 target_link_libraries( autotime-bench
     autotime
     Boost::program_options
+    Threads::Threads
 )
 
 
