@@ -18,8 +18,18 @@ namespace bench
 {
 
 
-    // Creates a thread, just to ensure libpthread is fully initialized.
+    //! Creates a thread, just to ensure libpthread is fully initialized.
 void *InitLibpthread();
+
+
+    //! Returns the ID of the secondary core to use for threaded benchmarks.
+int GetSecondaryCoreId();
+
+
+    //! Returns the ID of the secondary core to use for threaded benchmarks.
+void SetSecondaryCoreId(
+    int id      //!< Core ID (-1 for current core).
+);
 
 
 } // namespace bench

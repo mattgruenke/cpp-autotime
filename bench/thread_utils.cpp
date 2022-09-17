@@ -42,5 +42,20 @@ void *InitLibpthread()
 }
 
 
+static int SecondaryCoreId = -1;
+
+
+int GetSecondaryCoreId()
+{
+    return SecondaryCoreId;
+}
+
+
+void SetSecondaryCoreId( int id )
+{
+    SecondaryCoreId = id;
+}
+
+
 } // namespace bench
 
