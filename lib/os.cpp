@@ -156,6 +156,7 @@ int SetCoreAffinity( int core_id )
         return -1;
     }
 
+    bool need_switch = false;
     if (core_id >= num_cpus)
     {
         AUTOTIME_ERROR( "specified out-of-range CPU ID." );
@@ -166,6 +167,7 @@ int SetCoreAffinity( int core_id )
         core_id = GetCurrentCoreId();
         if (core_id < 0) return -1;
     }
+    else need_switch = (GetCurrentCoreId() != core_id);
 
     cpu_set_t *cpu_set = CPU_ALLOC( num_cpus );
     CPU_SET( core_id, cpu_set );
@@ -177,6 +179,8 @@ int SetCoreAffinity( int core_id )
     }
 
     CPU_FREE( cpu_set );
+
+    if (need_switch) sched_yield();
 
     return core_id;
 }
