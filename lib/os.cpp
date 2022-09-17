@@ -180,7 +180,12 @@ int SetCoreAffinity( int core_id )
 
     CPU_FREE( cpu_set );
 
-    if (need_switch) sched_yield();
+    if (need_switch)
+    {
+        if (sched_yield()) AUTOTIME_ERRNO( "sched_yield() failed" );
+
+        if (GetCurrentCoreId() != core_id) AUTOTIME_ERROR( "Not running on specified core" );
+    }
 
     return core_id;
 }
