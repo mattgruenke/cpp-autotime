@@ -17,6 +17,7 @@
 
 #include <pthread.h>
 
+#include "autotime/os.hpp"
 #include "autotime/overhead.hpp"
 #include "autotime/time.hpp"
 
@@ -104,6 +105,8 @@ struct LockedMutex
 
     void threadfunc( std::promise< void > started_promise )
     {
+        SetCoreAffinity( GetSecondaryCoreId() );
+
         // Use the future to receive a notification that it's time to stop.
         std::future< void > stop_future = stop_promise_.get_future();
 
@@ -121,6 +124,7 @@ struct LockedMutex
 template<> autotime::BenchTimers MakeTimers< Benchmark::mutex_trylock >()
 {
     static LockedMutex locked;
+
     int (*f)() = []()
         {
             return pthread_mutex_trylock( &locked.mutex_ );
