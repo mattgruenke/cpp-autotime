@@ -58,14 +58,7 @@ static Durations GetOverhead()
 }
 
 
-struct TimePoints
-{
-    steady_clock::time_point real;
-    thread_clock::time_point thread;
-};
-
-
-static TimePoints Start()
+TimePoints Start()
 {
     // Sample real time last, in order to maximize its accuracy.
     thread_clock::time_point thread = thread_clock::now();
@@ -75,7 +68,7 @@ static TimePoints Start()
 }
 
 
-static Durations End( const TimePoints &start )
+Durations End( const TimePoints &start )
 {
     // Sample real time first, in order to maximize its accuracy.
     steady_clock::time_point real_time = steady_clock::now();

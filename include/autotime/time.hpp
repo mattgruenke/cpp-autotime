@@ -81,6 +81,28 @@ Durations Time(
 }
 
 
+    //! Intermediate state of Time().
+struct TimePoints
+{
+    steady_clock::time_point real;
+    thread_clock::time_point thread;
+};
+
+
+    //! Low-level function: samples clocks (e.g. at the beginning of Time()).
+    /*!
+        This is exported primarily for benchmarks that don't map well to
+        the Time() measurement model.
+    */
+TimePoints Start();
+
+
+    //! Low-level function: computes durations (e.g. at the end of Time()).
+Durations End(
+    const TimePoints &start             //!< Values returned by Start().
+);
+
+
 } // namespace autotime
 
 
