@@ -29,6 +29,18 @@ namespace autotime
 {
 
 
+    //! Convenience function for creating a timer object for f().
+Timer MakeTimer(
+    const std::function< void() > f     //!< Function to measure.
+);
+
+
+    //! Convenience function for creating a timer object for f().
+Timer MakeTimer(
+    void (*f)()                         //!< Function to measure.
+);
+
+
     //! Measures f() over a given number of iterations.
     /*!
         @returns the duration of num_iter calls of f().
@@ -67,18 +79,6 @@ Durations Time(
         reinterpret_cast< const detail::ProxyType * >( inst ),
         num_iter );
 }
-
-
-    //! Convenience function for creating a timer object for f().
-Timer MakeTimer(
-    const std::function< void() > f     //!< Function to measure.
-);
-
-
-    //! Convenience function for creating a timer object for f().
-Timer MakeTimer(
-    void (*f)()                         //!< Function to measure.
-);
 
 
 } // namespace autotime
