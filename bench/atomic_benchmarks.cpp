@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <atomic>
+#include <functional>
 #include <future>
 #include <memory>
 #include <thread>
@@ -137,9 +138,8 @@ struct CounterParty
 };
 
 
-static Durations PingPong( int num_iters )
+static Durations PingPong( std::shared_ptr< CounterParty > p_counterparty, int num_iters )
 {
-    std::shared_ptr< CounterParty > p_counterparty{ new CounterParty() };
     std::atomic< int > &i = p_counterparty->i_;
 
     int exp = i;
@@ -165,7 +165,9 @@ static Durations PingPong( int num_iters )
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::atomic_pingpong >()
 {
-    return { &PingPong,  MakeTimer( &Overhead_void<> ) };
+    using namespace std::placeholders;
+    std::shared_ptr< CounterParty > p_counterparty{ new CounterParty() };
+    return { std::bind( &PingPong, p_counterparty, _1 ),  MakeTimer( &Overhead_void<> ) };
 }
 
 
