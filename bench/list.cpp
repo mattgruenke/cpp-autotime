@@ -131,6 +131,18 @@ const char *ToCStr( Benchmark b )
     CASE( atomic_cmp_exchg_strong_other );
     CASE( atomic_pingpong );
 
+    CASE( new_delete_16 );
+    CASE( new_delete_256 );
+    CASE( new_delete_4k );
+    CASE( new_delete_64k );
+    CASE( new_delete_1M );
+    CASE( new_delete_16M );
+    CASE( new_delete_256M );
+    CASE( new_delete_cold_16 );
+    CASE( new_delete_cold_4k );
+    CASE( new_delete_cold_1M );
+    CASE( new_delete_cold_256M );
+
     CASE( memcpy_256  );
     CASE( memcpy_4k   );
     CASE( memcpy_64k  );
@@ -213,6 +225,22 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::atomic_cmp_exchg_strong_xpctd,
                     Benchmark::atomic_cmp_exchg_strong_other,
                     Benchmark::atomic_pingpong,
+                },
+            },
+            {
+                Category::heap,
+                {
+                    Benchmark::new_delete_16,
+                    Benchmark::new_delete_256,
+                    Benchmark::new_delete_4k,
+                    Benchmark::new_delete_64k,
+                    Benchmark::new_delete_1M,
+                    Benchmark::new_delete_16M,
+                    Benchmark::new_delete_256M,
+                    Benchmark::new_delete_cold_16,
+                    Benchmark::new_delete_cold_4k,
+                    Benchmark::new_delete_cold_1M,
+                    Benchmark::new_delete_cold_256M,
                 },
             },
             {

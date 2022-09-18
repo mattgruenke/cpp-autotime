@@ -35,6 +35,18 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( atomic_cmp_exchg_strong_other );
     CASE__MAKE_TIMERS( atomic_pingpong );
 
+    CASE__MAKE_TIMERS( new_delete_16 );
+    CASE__MAKE_TIMERS( new_delete_256 );
+    CASE__MAKE_TIMERS( new_delete_4k );
+    CASE__MAKE_TIMERS( new_delete_64k );
+    CASE__MAKE_TIMERS( new_delete_1M );
+    CASE__MAKE_TIMERS( new_delete_16M );
+    CASE__MAKE_TIMERS( new_delete_256M );
+    CASE__MAKE_TIMERS( new_delete_cold_16 );
+    CASE__MAKE_TIMERS( new_delete_cold_4k );
+    CASE__MAKE_TIMERS( new_delete_cold_1M );
+    CASE__MAKE_TIMERS( new_delete_cold_256M );
+
     CASE__MAKE_TIMERS( memcpy_256 );
     CASE__MAKE_TIMERS( memcpy_4k );
     CASE__MAKE_TIMERS( memcpy_64k );

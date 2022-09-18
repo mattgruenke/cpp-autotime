@@ -71,6 +71,19 @@ enum class Benchmark
     atomic_cmp_exchg_strong_other,
     atomic_pingpong,
 
+    // heap:
+    new_delete_16,
+    new_delete_256,
+    new_delete_4k,
+    new_delete_64k,
+    new_delete_1M,
+    new_delete_16M,
+    new_delete_256M,
+    new_delete_cold_16,
+    new_delete_cold_4k,
+    new_delete_cold_1M,
+    new_delete_cold_256M,
+
     // memory:
     memcpy_256,
     memcpy_4k,
