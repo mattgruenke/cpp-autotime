@@ -124,6 +124,13 @@ const char *ToCStr( Benchmark b )
     case Benchmark::n: \
         return #n
 
+    CASE( atomic_increment );
+    CASE( atomic_cmp_exchg_weak_xpctd );
+    CASE( atomic_cmp_exchg_weak_other );
+    CASE( atomic_cmp_exchg_strong_xpctd );
+    CASE( atomic_cmp_exchg_strong_other );
+    CASE( atomic_pingpong );
+
     CASE( memcpy_256  );
     CASE( memcpy_4k   );
     CASE( memcpy_64k  );
@@ -194,6 +201,17 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
 {
     static const std::map< Category, std::set< Benchmark > > map =
         {
+            {
+                Category::atomic,
+                {
+                    Benchmark::atomic_increment,
+                    Benchmark::atomic_cmp_exchg_weak_xpctd,
+                    Benchmark::atomic_cmp_exchg_weak_other,
+                    Benchmark::atomic_cmp_exchg_strong_xpctd,
+                    Benchmark::atomic_cmp_exchg_strong_other,
+                    Benchmark::atomic_pingpong,
+                },
+            },
             {
                 Category::memory,
                 {

@@ -13,6 +13,7 @@ find_package( Threads REQUIRED )
 
 
 add_executable( autotime-bench
+    atomic_benchmarks.cpp
     dispatch.cpp
     list.cpp
     main.cpp

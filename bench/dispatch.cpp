@@ -28,6 +28,13 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     case Benchmark::n: \
         return MakeTimers< Benchmark::n >()
 
+    CASE__MAKE_TIMERS( atomic_increment );
+    CASE__MAKE_TIMERS( atomic_cmp_exchg_weak_xpctd );
+    CASE__MAKE_TIMERS( atomic_cmp_exchg_weak_other );
+    CASE__MAKE_TIMERS( atomic_cmp_exchg_strong_xpctd );
+    CASE__MAKE_TIMERS( atomic_cmp_exchg_strong_other );
+    CASE__MAKE_TIMERS( atomic_pingpong );
+
     CASE__MAKE_TIMERS( memcpy_256 );
     CASE__MAKE_TIMERS( memcpy_4k );
     CASE__MAKE_TIMERS( memcpy_64k );
