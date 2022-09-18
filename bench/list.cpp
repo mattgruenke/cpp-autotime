@@ -158,6 +158,9 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
 
+    CASE( thread_create_destroy );
+    CASE( thread_pingpong );
+
     CASE( fibonacci_u64 );
     CASE( mandelbrot_256 );
     CASE( trigonometry );
@@ -249,6 +252,13 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::thread,
+                {
+                    Benchmark::thread_create_destroy,
+                    Benchmark::thread_pingpong,
                 },
             },
             {

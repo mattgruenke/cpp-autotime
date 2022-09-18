@@ -62,6 +62,9 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );
 
+    CASE__MAKE_TIMERS( thread_create_destroy );
+    CASE__MAKE_TIMERS( thread_pingpong );
+
     CASE__MAKE_TIMERS( fibonacci_u64 );
     CASE__MAKE_TIMERS( mandelbrot_256 );
     CASE__MAKE_TIMERS( trigonometry );

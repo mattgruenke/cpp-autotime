@@ -101,6 +101,10 @@ enum class Benchmark
     overhead_nullary_fn,
     overhead_nullary_ptr,
 
+    // thread:
+    thread_create_destroy,
+    thread_pingpong,
+
     // work:
     fibonacci_u64,
     mandelbrot_256,
