@@ -12,6 +12,7 @@
 
 #include <atomic>
 #include <future>
+#include <memory>
 #include <thread>
 
 #include "autotime/os.hpp"
@@ -95,41 +96,61 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::atomic_cmp_exchg_strong_
 }
 
 
+    // Owns an atomic_int and a thread which increments it when its value is even.
+struct CounterParty
+{
+    std::atomic< int > i_;
+    std::atomic< bool > stop_;
+    std::thread thread_;
+
+    CounterParty()
+    :
+        i_{ 0 },
+        stop_{ false }
+    {
+        std::promise< void > started_promise;
+        std::future< void > started_future = started_promise.get_future();
+        thread_ = std::thread( &CounterParty::threadfunc, this, std::move( started_promise ) );
+        started_future.get();
+    }
+
+    ~CounterParty()
+    {
+        stop_ = true;
+        thread_.join();
+    }
+
+    void threadfunc( std::promise< void > started_promise )
+    {
+        SetCoreAffinity( GetSecondaryCoreId() );
+
+        started_promise.set_value();
+
+        int exp = 0;
+        int counter = 0;    // counter avoids sampling stop too often.
+        while ((counter++ % 256) || !stop_)
+        {
+            int x = exp;
+            if (i_.compare_exchange_weak( x, exp + 1 )) exp += 2;
+        }
+    }
+};
+
+
 static Durations PingPong( int num_iters )
 {
-    static std::atomic< int > i;
-    i = 0;
+    std::shared_ptr< CounterParty > p_counterparty{ new CounterParty() };
+    std::atomic< int > &i = p_counterparty->i_;
 
-    std::promise< void > started_promise;
-    std::future< void > started_future = started_promise.get_future();
-    std::atomic< bool > stop{ false };
-    std::thread thread( [&stop, &started_promise]()
-        {
-            SetCoreAffinity( GetSecondaryCoreId() );
+    int exp = i;
+    if (!(exp % 2)) exp += 1;   // Avoid race by ensuring exp is odd.
 
-            started_promise.set_value();
-
-            int exp = 0;
-            int counter = 0;    // counter avoids sampling stop too often.
-            while ((counter++ % 256) || !stop)
-            {
-                int x = exp;
-                if (i.compare_exchange_weak( x, exp + 1 )) exp += 2;
-            }
-        } );
-
-    started_future.get();
-
-    static int exp;
-    exp = 1;
-
-    // Since the thread started, the value will go to 1.
-    //  We want to start timing right after incrementing it again.
+    //  We want to start timing right after incrementing the counter again.
     int x = exp;
     while (!i.compare_exchange_weak( x, exp + 1 )) x = exp;
     exp += 2;
 
-    void (*f)() = []()
+    std::function< void() > f = [&i, &exp]()
         {
             int x = exp;
             while (!i.compare_exchange_weak( x, exp + 1 )) x = exp;
@@ -137,9 +158,6 @@ static Durations PingPong( int num_iters )
         };
 
     Durations durs = Time( f, num_iters );
-
-    stop = true;
-    thread.join();
 
     return durs;
 }
