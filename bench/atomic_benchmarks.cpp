@@ -129,7 +129,7 @@ struct CounterParty
 
         int exp = 0;
         int counter = 0;    // counter avoids sampling stop too often.
-        while ((counter++ % 256) || !stop_)
+        while ((counter++ % 4096) || !stop_)
         {
             int x = exp;
             if (i_.compare_exchange_weak( x, exp + 1 )) exp += 2;
@@ -143,23 +143,23 @@ static Durations PingPong( std::shared_ptr< CounterParty > p_counterparty, int n
     std::atomic< int > &i = p_counterparty->i_;
 
     int exp = i;
-    if (!(exp % 2)) exp += 1;   // Avoid race by ensuring exp is odd.
+    if (exp % 2 == 0) exp += 1;     // Avoid race by ensuring exp is odd.
 
     //  We want to start timing right after incrementing the counter again.
     int x = exp;
     while (!i.compare_exchange_weak( x, exp + 1 )) x = exp;
     exp += 2;
 
-    std::function< void() > f = [&i, &exp]()
-        {
-            int x = exp;
-            while (!i.compare_exchange_weak( x, exp + 1 )) x = exp;
-            exp += 2;
-        };
+    TimePoints start_times = Start();
 
-    Durations durs = Time( f, num_iters );
+    for (int count = 0; count < num_iters; ++count)
+    {
+        int x = exp;
+        while (!i.compare_exchange_weak( x, exp + 1 )) x = exp;
+        exp += 2;
+    }
 
-    return durs;
+    return End( start_times );
 }
 
 
@@ -167,7 +167,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::atomic_pingpong >()
 {
     using namespace std::placeholders;
     std::shared_ptr< CounterParty > p_counterparty{ new CounterParty() };
-    return { std::bind( &PingPong, p_counterparty, _1 ),  MakeTimer( &Overhead_void<> ) };
+    return { std::bind( &PingPong, p_counterparty, _1 ), nullptr };
 }
 
 
