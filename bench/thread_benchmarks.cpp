@@ -10,7 +10,6 @@
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <functional>
 #include <future>
 #include <memory>
 #include <thread>
@@ -97,36 +96,12 @@ struct Peer
 };
 
 
-static Durations PingPong( std::shared_ptr< Peer > p_peer, int num_iters )
-{
-#if 0
-    TimePoints start_times = Start();
-
-    for (int count = 0; count < num_iters; ++count) p_peer->send();
-
-    return End( start_times );
-#elif 0
-//    std::function< void() > f = [p_peer]() { p_peer->send(); };
-    std::function< void() > f = std::bind( &Peer::send, p_peer );
-
-    return Time( f, num_iters );
-#else
-    return Time( [p_peer]() { p_peer->send(); }, num_iters );
-#endif
-}
-
-
 template<> autotime::BenchTimers MakeTimers< Benchmark::thread_pingpong >()
 {
-    using namespace std::placeholders;
     std::shared_ptr< Peer > p_peer{ new Peer() };
-#if 1
     std::function< void() > f = [p_peer]() { p_peer->send(); };
     std::function< void() > o = [p_peer]() {};
     return { MakeTimer( f ), MakeTimer( o ) };
-#else
-    return { std::bind( &PingPong, p_peer, _1 ), nullptr };
-#endif
 }
 
 
