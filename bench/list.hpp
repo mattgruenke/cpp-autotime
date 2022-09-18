@@ -64,7 +64,7 @@ std::ostream &operator<<( std::ostream &ostream, Category c );
 enum class Benchmark
 {
     // atomic:
-    atomic_increment,
+    atomic_increment, first = atomic_increment,
     atomic_cmp_exchg_weak_xpctd,
     atomic_cmp_exchg_weak_other,
     atomic_cmp_exchg_strong_xpctd,
@@ -72,7 +72,7 @@ enum class Benchmark
     atomic_pingpong,
 
     // memory:
-    memcpy_256, first = memcpy_256,
+    memcpy_256,
     memcpy_4k,
     memcpy_64k,
     memcpy_1M,
