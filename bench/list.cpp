@@ -131,6 +131,18 @@ const char *ToCStr( Benchmark b )
     CASE( atomic_cmp_exchg_strong_other );
     CASE( atomic_pingpong );
 
+    CASE( function_args0 );
+    CASE( function_args1 );
+    CASE( function_args2 );
+    CASE( function_args3 );
+    CASE( function_args4 );
+    CASE( function_args5 );
+    CASE( function_args6 );
+    CASE( function_args7 );
+    CASE( member_function );
+    CASE( member_function_shptr );
+    CASE( virtual_function );
+
     CASE( new_delete_16 );
     CASE( new_delete_256 );
     CASE( new_delete_4k );
@@ -225,6 +237,22 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::atomic_cmp_exchg_strong_xpctd,
                     Benchmark::atomic_cmp_exchg_strong_other,
                     Benchmark::atomic_pingpong,
+                },
+            },
+            {
+                Category::function,
+                {
+                    Benchmark::function_args0,
+                    Benchmark::function_args1,
+                    Benchmark::function_args2,
+                    Benchmark::function_args3,
+                    Benchmark::function_args4,
+                    Benchmark::function_args5,
+                    Benchmark::function_args6,
+                    Benchmark::function_args7,
+                    Benchmark::member_function,
+                    Benchmark::member_function_shptr,
+                    Benchmark::virtual_function,
                 },
             },
             {

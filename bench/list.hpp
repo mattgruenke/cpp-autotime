@@ -71,6 +71,19 @@ enum class Benchmark
     atomic_cmp_exchg_strong_other,
     atomic_pingpong,
 
+    // function:
+    function_args0,
+    function_args1,
+    function_args2,
+    function_args3,
+    function_args4,
+    function_args5,
+    function_args6,
+    function_args7,
+    member_function,
+    member_function_shptr,
+    virtual_function,
+
     // heap:
     new_delete_16,
     new_delete_256,
