@@ -31,6 +31,7 @@ enum class Category
 {
     atomic, first = atomic,
     cache,
+    condvar,
     directory,
     file,
     function,
@@ -70,6 +71,12 @@ enum class Benchmark
     atomic_cmp_exchg_strong_xpctd,
     atomic_cmp_exchg_strong_other,
     atomic_pingpong,
+
+    // condvar:
+    condvar_broadcast,
+    condvar_create_destroy,
+    condvar_signal,
+    condvar_signal_watched,
 
     // function:
     function_args0,

@@ -35,6 +35,11 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( atomic_cmp_exchg_strong_other );
     CASE__MAKE_TIMERS( atomic_pingpong );
 
+    CASE__MAKE_TIMERS( condvar_broadcast );
+    CASE__MAKE_TIMERS( condvar_create_destroy );
+    CASE__MAKE_TIMERS( condvar_signal );
+    CASE__MAKE_TIMERS( condvar_signal_watched );
+
     CASE__MAKE_TIMERS( function_args0 );
     CASE__MAKE_TIMERS( function_args1 );
     CASE__MAKE_TIMERS( function_args2 );

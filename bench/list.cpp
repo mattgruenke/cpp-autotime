@@ -49,6 +49,7 @@ const char *ToCStr( Category c )
 
     CASE( atomic );
     CASE( cache );
+    CASE( condvar );
     CASE( directory );
     CASE( file );
     CASE( function );
@@ -130,6 +131,11 @@ const char *ToCStr( Benchmark b )
     CASE( atomic_cmp_exchg_strong_xpctd );
     CASE( atomic_cmp_exchg_strong_other );
     CASE( atomic_pingpong );
+
+    CASE( condvar_broadcast );
+    CASE( condvar_create_destroy );
+    CASE( condvar_signal );
+    CASE( condvar_signal_watched );
 
     CASE( function_args0 );
     CASE( function_args1 );
@@ -237,6 +243,15 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::atomic_cmp_exchg_strong_xpctd,
                     Benchmark::atomic_cmp_exchg_strong_other,
                     Benchmark::atomic_pingpong,
+                },
+            },
+            {
+                Category::condvar,
+                {
+                    Benchmark::condvar_broadcast,
+                    Benchmark::condvar_create_destroy,
+                    Benchmark::condvar_signal,
+                    Benchmark::condvar_signal_watched,
                 },
             },
             {
