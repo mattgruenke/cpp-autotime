@@ -54,39 +54,47 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::mutex_create_destroy >()
 }
 
 
-static void CreateDestroyLockUnlock()
+struct Mutex
 {
-    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_init( &mutex, nullptr );
-    pthread_mutex_lock( &mutex );
-    pthread_mutex_unlock( &mutex );
-    pthread_mutex_destroy( &mutex );
-}
+    pthread_mutex_t mutex_ = PTHREAD_MUTEX_INITIALIZER;
+
+    Mutex()
+    {
+        InitLibpthread();
+        pthread_mutex_init( &mutex_, nullptr );
+    }
+
+    ~Mutex()
+    {
+        pthread_mutex_destroy( &mutex_ );
+    }
+};
 
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::mutex_lock_release >()
 {
-    InitLibpthread();
+    static Mutex s;
 
-    return { MakeTimer( &CreateDestroyLockUnlock ), MakeTimer( &CreateDestroy ) };
+    void (*f)() = []()
+        {
+            pthread_mutex_lock( &s.mutex_ );
+            pthread_mutex_unlock( &s.mutex_ );
+        };
+
+    return { MakeTimer( f ), MakeTimer( &Overhead_void<> ) };
 }
 
 
     // This object starts another thread to hold the mutex, since try-locking
     //  a self-owned mutex is not the normal scenario for lock contention and
     //  likely performs differently.
-struct LockedMutex
+struct LockedMutex: public Mutex
 {
-    pthread_mutex_t mutex_ = PTHREAD_MUTEX_INITIALIZER;
     std::promise< void > stop_promise_;
     std::thread thread_;
 
     LockedMutex()
     {
-        InitLibpthread();
-
-        pthread_mutex_init( &mutex_, nullptr );
-
         // Start the thread and wait until its initialization is complete.
         std::promise< void > started_promise;
         std::future< void > started_future = started_promise.get_future();
@@ -99,8 +107,6 @@ struct LockedMutex
         // Signal the thread to exit.
         stop_promise_.set_value();
         thread_.join();
-
-        pthread_mutex_destroy( &mutex_ );
     }
 
     void threadfunc( std::promise< void > started_promise )
