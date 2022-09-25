@@ -33,6 +33,7 @@ enum class Category
     cache,
     condvar,
     directory,
+    exception,
     file,
     function,
     heap,
@@ -77,6 +78,12 @@ enum class Benchmark
     condvar_create_destroy,
     condvar_signal,
     condvar_signal_watched,
+
+    // exception:
+    exception_catch_all,
+    exception_catch_std,
+    exception_noexcept,
+    exception_try,
 
     // function:
     function_args0,

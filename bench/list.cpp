@@ -50,6 +50,7 @@ const char *ToCStr( Category c )
     CASE( atomic );
     CASE( cache );
     CASE( condvar );
+    CASE( exception );
     CASE( directory );
     CASE( file );
     CASE( function );
@@ -136,6 +137,11 @@ const char *ToCStr( Benchmark b )
     CASE( condvar_create_destroy );
     CASE( condvar_signal );
     CASE( condvar_signal_watched );
+
+    CASE( exception_catch_all );
+    CASE( exception_catch_std );
+    CASE( exception_noexcept );
+    CASE( exception_try );
 
     CASE( function_args0 );
     CASE( function_args1 );
@@ -252,6 +258,15 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::condvar_create_destroy,
                     Benchmark::condvar_signal,
                     Benchmark::condvar_signal_watched,
+                },
+            },
+            {
+                Category::exception,
+                {
+                    Benchmark::exception_catch_all,
+                    Benchmark::exception_catch_std,
+                    Benchmark::exception_noexcept,
+                    Benchmark::exception_try,
                 },
             },
             {

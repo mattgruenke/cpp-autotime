@@ -40,6 +40,11 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( condvar_signal );
     CASE__MAKE_TIMERS( condvar_signal_watched );
 
+    CASE__MAKE_TIMERS( exception_catch_all );
+    CASE__MAKE_TIMERS( exception_catch_std );
+    CASE__MAKE_TIMERS( exception_noexcept );
+    CASE__MAKE_TIMERS( exception_try );
+
     CASE__MAKE_TIMERS( function_args0 );
     CASE__MAKE_TIMERS( function_args1 );
     CASE__MAKE_TIMERS( function_args2 );
