@@ -16,6 +16,7 @@ add_executable( autotime-bench
     atomic_benchmarks.cpp
     condvar_benchmarks.cpp
     dispatch.cpp
+    exception_utils.cpp
     function_benchmarks.cpp
     function_utils.cpp
     heap_benchmarks.cpp
