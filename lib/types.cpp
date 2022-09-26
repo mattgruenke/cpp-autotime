@@ -18,6 +18,17 @@ namespace autotime
 {
 
 
+// struct Durations:
+Durations &Durations::operator+=( const Durations &rhs )
+{
+    real   += rhs.real;
+    thread += rhs.thread;
+
+    return *this;
+}
+
+
+
 // struct NormDurations:
 NormDurations NormDurations::operator-( const NormDurations &rhs ) const
 {

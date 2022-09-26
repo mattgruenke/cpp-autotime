@@ -34,6 +34,8 @@ struct Durations
 {
     steady_clock::duration real;    //!< Cumulative realtime execution time.
     thread_clock::duration thread;  //!< Cumulative thread execution time.
+
+    Durations &operator+=( const Durations &rhs );
 };
 
 
