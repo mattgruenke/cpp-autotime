@@ -158,11 +158,20 @@ static void ReadStr()
 }
 
 
+static void ReadStrOverhead()
+{
+    Iss.clear();
+    Iss.seekg( 0 );
+    Str = StrSrc;
+}
+
+
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_string4 >()
 {
-    Iss.str( "1234" );
+    StrSrc = "1234";
+    Iss.str( StrSrc );
 
-    return { MakeTimer( &ReadStr ), MakeTimer( &ResetISS ) };
+    return { MakeTimer( &ReadStr ), MakeTimer( &ReadStrOverhead ) };
 }
 
 
@@ -176,9 +185,10 @@ static std::string MakeString( int len )
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_string64 >()
 {
-    Iss.str( MakeString( 64 ) );
+    StrSrc = MakeString( 64 );
+    Iss.str( StrSrc );
 
-    return { MakeTimer( &ReadStr ), MakeTimer( &ResetISS ) };
+    return { MakeTimer( &ReadStr ), MakeTimer( &ReadStrOverhead ) };
 }
 
 
