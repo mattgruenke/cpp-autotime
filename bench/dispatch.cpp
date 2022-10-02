@@ -92,6 +92,19 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( mutex_lock_release );
     CASE__MAKE_TIMERS( mutex_trylock );
 
+    CASE__MAKE_TIMERS( ostream_string4 );
+    CASE__MAKE_TIMERS( ostream_string64 );
+    CASE__MAKE_TIMERS( ostream_cstr4 );
+    CASE__MAKE_TIMERS( ostream_cstr64 );
+    CASE__MAKE_TIMERS( ostream_smallint );
+    CASE__MAKE_TIMERS( ostream_maxint );
+    CASE__MAKE_TIMERS( ostream_maxint64 );
+    CASE__MAKE_TIMERS( ostream_smallfloat );
+    CASE__MAKE_TIMERS( ostream_bigfloat );
+    CASE__MAKE_TIMERS( ostream_smalldouble );
+    CASE__MAKE_TIMERS( ostream_bigdouble );
+    CASE__MAKE_TIMERS( ostream_endl );
+
     CASE__MAKE_TIMERS( overhead_nullary );
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );

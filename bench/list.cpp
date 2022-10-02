@@ -58,6 +58,7 @@ const char *ToCStr( Category c )
     CASE( memory );
     CASE( mutex );
     CASE( network );
+    CASE( ostream );
     CASE( overhead );
     CASE( process );
     CASE( socket );
@@ -189,6 +190,19 @@ const char *ToCStr( Benchmark b )
     CASE( mutex_create_destroy );
     CASE( mutex_lock_release );
     CASE( mutex_trylock );
+
+    CASE( ostream_string4 );
+    CASE( ostream_string64 );
+    CASE( ostream_cstr4 );
+    CASE( ostream_cstr64 );
+    CASE( ostream_smallint );
+    CASE( ostream_maxint );
+    CASE( ostream_maxint64 );
+    CASE( ostream_smallfloat );
+    CASE( ostream_bigfloat );
+    CASE( ostream_smalldouble );
+    CASE( ostream_bigdouble );
+    CASE( ostream_endl );
 
     CASE( overhead_nullary );
     CASE( overhead_nullary_fn );
@@ -330,6 +344,23 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::mutex_create_destroy,
                     Benchmark::mutex_lock_release,
                     Benchmark::mutex_trylock,
+                },
+            },
+            {
+                Category::ostream,
+                {
+                    Benchmark::ostream_string4,
+                    Benchmark::ostream_string64,
+                    Benchmark::ostream_cstr4,
+                    Benchmark::ostream_cstr64,
+                    Benchmark::ostream_smallint,
+                    Benchmark::ostream_maxint,
+                    Benchmark::ostream_maxint64,
+                    Benchmark::ostream_smallfloat,
+                    Benchmark::ostream_bigfloat,
+                    Benchmark::ostream_smalldouble,
+                    Benchmark::ostream_bigdouble,
+                    Benchmark::ostream_endl,
                 },
             },
             {

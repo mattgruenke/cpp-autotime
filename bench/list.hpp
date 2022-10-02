@@ -40,6 +40,7 @@ enum class Category
     memory,
     mutex,
     network,
+    ostream,
     overhead,
     process,
     socket,
@@ -135,6 +136,20 @@ enum class Benchmark
     mutex_create_destroy,
     mutex_lock_release,
     mutex_trylock,
+
+    // ostream:
+    ostream_string4,
+    ostream_string64,
+    ostream_cstr4,
+    ostream_cstr64,
+    ostream_smallint,
+    ostream_maxint,
+    ostream_maxint64,
+    ostream_smallfloat,
+    ostream_bigfloat,
+    ostream_smalldouble,
+    ostream_bigdouble,
+    ostream_endl,
 
     // overhead:
     overhead_nullary,
