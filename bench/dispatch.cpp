@@ -119,6 +119,14 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );
 
+    CASE__MAKE_TIMERS( string_from_smallint );
+    CASE__MAKE_TIMERS( string_from_maxint );
+    CASE__MAKE_TIMERS( string_from_maxint64 );
+    CASE__MAKE_TIMERS( string_from_smallfloat );
+    CASE__MAKE_TIMERS( string_from_bigfloat );
+    CASE__MAKE_TIMERS( string_from_smalldouble );
+    CASE__MAKE_TIMERS( string_from_bigdouble );
+
     CASE__MAKE_TIMERS( thread_create_destroy );
     CASE__MAKE_TIMERS( thread_pingpong );
 

@@ -4,9 +4,14 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-//! Implements istream- & ostream- category benchmarks.
+//! Implements istream-, ostream-, and from_string- category benchmarks.
 /*! @file
 
+    This file originally was to contain only iostreams benchmarks, however
+    the amount of similarity between those and the string conversion
+    benchmarks meant there are a lot of useful static functions and variables
+    that could be shared.  In addition, it's helpful if string & stream
+    conversion benchmarks are measuring conversions of the same values.
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,10 +36,110 @@ namespace bench
 static std::istringstream Iss;
 static std::ostringstream Oss;
 static std::string Str;
+static std::string StrSrc;
 static int32_t Int32 = 0;
 static int64_t Int64 = 0;
 static float Float = 0;
 static float Double = 0;
+
+
+static int32_t MakeRandomInt( int scale )
+{
+    return static_cast< int32_t >( random() * scale / RAND_MAX );
+}
+
+
+static void CopyStr()
+{
+    Str = StrSrc;
+}
+
+
+
+// Category::string_from
+static void StrFromInt32()
+{
+    Str = std::to_string( Int32 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallint >()
+{
+    Int32 = MakeRandomInt( 9 ) + 1;
+    StrSrc = std::to_string( Int32 );
+
+    return { MakeTimer( &StrFromInt32 ), MakeTimer( &CopyStr ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_maxint >()
+{
+    Int32 = std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 );
+    StrSrc = std::to_string( Int32 );
+
+    return { MakeTimer( &StrFromInt32 ), MakeTimer( &CopyStr ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_maxint64 >()
+{
+    Int64 = std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 );
+    StrSrc = std::to_string( Int64 );
+    void (*f)() = []()
+        {
+            Str = std::to_string( Int64 );
+        };
+
+    return { MakeTimer( f ), MakeTimer( &CopyStr ) };
+}
+
+
+static void StrFromFloat()
+{
+    Str = std::to_string( Float );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallfloat >()
+{
+    Float = MakeRandomInt( 9 ) + 1;
+    StrSrc = std::to_string( Float );
+
+    return { MakeTimer( &StrFromFloat ), MakeTimer( &CopyStr ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_bigfloat >()
+{
+    Float = exp10f( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
+    StrSrc = std::to_string( Float );
+
+    return { MakeTimer( &StrFromFloat ), MakeTimer( &CopyStr ) };
+}
+
+
+static void StrFromDouble()
+{
+    Str = std::to_string( Double );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smalldouble >()
+{
+    Double = MakeRandomInt( 9 ) + 1;
+    StrSrc = std::to_string( Double );
+
+    return { MakeTimer( &StrFromDouble ), MakeTimer( &CopyStr ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_bigdouble >()
+{
+    Double = (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
+    StrSrc = std::to_string( Double );
+
+    return { MakeTimer( &StrFromDouble ), MakeTimer( &CopyStr ) };
+}
 
 
 
@@ -74,12 +179,6 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::istream_string64 >()
     Iss.str( MakeString( 64 ) );
 
     return { MakeTimer( &ReadStr ), MakeTimer( &ResetISS ) };
-}
-
-
-static int32_t MakeRandomInt( int scale )
-{
-    return static_cast< int32_t >( random() * scale / RAND_MAX );
 }
 
 

@@ -68,6 +68,7 @@ const char *ToCStr( Category c )
     CASE( std_set );
     CASE( std_string );
     CASE( std_vector );
+    CASE( string_from );
     CASE( syscall );
     CASE( thread );
     CASE( work );
@@ -218,6 +219,14 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary );
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
+
+    CASE( string_from_smallint );
+    CASE( string_from_maxint );
+    CASE( string_from_maxint64 );
+    CASE( string_from_smallfloat );
+    CASE( string_from_bigfloat );
+    CASE( string_from_smalldouble );
+    CASE( string_from_bigdouble );
 
     CASE( thread_create_destroy );
     CASE( thread_pingpong );
@@ -394,6 +403,18 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::string_from,
+                {
+                    Benchmark::string_from_smallint,
+                    Benchmark::string_from_maxint,
+                    Benchmark::string_from_maxint64,
+                    Benchmark::string_from_smallfloat,
+                    Benchmark::string_from_bigfloat,
+                    Benchmark::string_from_smalldouble,
+                    Benchmark::string_from_bigdouble,
                 },
             },
             {

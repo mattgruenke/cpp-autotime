@@ -45,6 +45,7 @@ enum class Category
     overhead,
     process,
     socket,
+    string_from,
     std_hashset,
     std_list,
     std_set,
@@ -167,6 +168,15 @@ enum class Benchmark
     overhead_nullary,
     overhead_nullary_fn,
     overhead_nullary_ptr,
+
+    // string_from:
+    string_from_smallint,
+    string_from_maxint,
+    string_from_maxint64,
+    string_from_smallfloat,
+    string_from_bigfloat,
+    string_from_smalldouble,
+    string_from_bigdouble,
 
     // thread:
     thread_create_destroy,
