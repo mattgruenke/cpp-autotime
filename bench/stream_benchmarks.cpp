@@ -43,9 +43,59 @@ static float Float = 0;
 static float Double = 0;
 
 
+template< typename T > static std::string ToString( T val )
+{
+    std::ostringstream oss;
+    oss << val;
+    return oss.str();
+}
+
+
 static int32_t MakeRandomInt( int scale )
 {
     return static_cast< int32_t >( random() * scale / RAND_MAX );
+}
+
+
+static int32_t MakeSmallInt()
+{
+    return MakeRandomInt( 9 ) + 1;
+}
+
+
+static int32_t MakeMaxInt32()
+{
+    return std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 );
+}
+
+
+static int64_t MakeMaxInt64()
+{
+    return std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 );
+}
+
+
+static float MakeSmallFloat()
+{
+    return static_cast< float >( MakeSmallInt() );
+}
+
+
+static float MakeBigFloat()
+{
+    return exp10f( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
+}
+
+
+static double MakeSmallDouble()
+{
+    return MakeSmallInt();
+}
+
+
+static double MakeBigDouble()
+{
+    return (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
 }
 
 
@@ -65,7 +115,7 @@ static void StrFromInt32()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallint >()
 {
-    Int32 = MakeRandomInt( 9 ) + 1;
+    Int32 = MakeSmallInt();
     StrSrc = std::to_string( Int32 );
 
     return { MakeTimer( &StrFromInt32 ), MakeTimer( &CopyStr ) };
@@ -74,7 +124,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallint >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_maxint >()
 {
-    Int32 = std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 );
+    Int32 = MakeMaxInt32();
     StrSrc = std::to_string( Int32 );
 
     return { MakeTimer( &StrFromInt32 ), MakeTimer( &CopyStr ) };
@@ -83,7 +133,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_maxint >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_maxint64 >()
 {
-    Int64 = std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 );
+    Int64 = MakeMaxInt64();
     StrSrc = std::to_string( Int64 );
     void (*f)() = []()
         {
@@ -102,7 +152,7 @@ static void StrFromFloat()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallfloat >()
 {
-    Float = MakeRandomInt( 9 ) + 1;
+    Float = MakeSmallFloat();
     StrSrc = std::to_string( Float );
 
     return { MakeTimer( &StrFromFloat ), MakeTimer( &CopyStr ) };
@@ -111,7 +161,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smallfloat >
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_bigfloat >()
 {
-    Float = exp10f( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
+    Float = MakeBigFloat();
     StrSrc = std::to_string( Float );
 
     return { MakeTimer( &StrFromFloat ), MakeTimer( &CopyStr ) };
@@ -126,7 +176,7 @@ static void StrFromDouble()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smalldouble >()
 {
-    Double = MakeRandomInt( 9 ) + 1;
+    Double = MakeSmallDouble();
     StrSrc = std::to_string( Double );
 
     return { MakeTimer( &StrFromDouble ), MakeTimer( &CopyStr ) };
@@ -135,7 +185,8 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_smalldouble 
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_bigdouble >()
 {
-    Double = (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
+    // Note: this is converted to a 38.6 digit number (i.e. 45 characters)!
+    Double = MakeBigDouble();
     StrSrc = std::to_string( Double );
 
     return { MakeTimer( &StrFromDouble ), MakeTimer( &CopyStr ) };
@@ -201,7 +252,7 @@ static void ReadInt32()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallint >()
 {
-    Iss.str( std::to_string( MakeRandomInt( 9 ) + 1 ) );
+    Iss.str( std::to_string( MakeSmallInt() ) );
 
     return { MakeTimer( &ReadInt32 ), MakeTimer( &ResetISS ) };
 }
@@ -209,7 +260,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallint >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_maxint >()
 {
-    Iss.str( std::to_string( std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 ) ) );
+    Iss.str( std::to_string( MakeMaxInt32() ) );
 
     return { MakeTimer( &ReadInt32 ), MakeTimer( &ResetISS ) };
 }
@@ -224,7 +275,7 @@ static void ReadInt64()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_maxint64 >()
 {
-    Iss.str( std::to_string( std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 ) ) );
+    Iss.str( std::to_string( MakeMaxInt64() ) );
 
     return { MakeTimer( &ReadInt64 ), MakeTimer( &ResetISS ) };
 }
@@ -239,23 +290,15 @@ static void ReadFloat()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallfloat >()
 {
-    Iss.str( std::to_string( MakeRandomInt( 10 ) ) );
+    Iss.str( ToString( MakeSmallFloat() ) );
 
     return { MakeTimer( &ReadFloat ), MakeTimer( &ResetISS ) };
 }
 
 
-template< typename T > static std::string ToString( T val )
-{
-    std::ostringstream oss;
-    oss << val;
-    return oss.str();
-}
-
-
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigfloat >()
 {
-    Iss.str( ToString( exp10f( Oss.precision() ) - (MakeRandomInt( 9 ) + 1) ) );
+    Iss.str( ToString( MakeBigFloat() ) );
 
     return { MakeTimer( &ReadFloat ), MakeTimer( &ResetISS ) };
 }
@@ -270,7 +313,7 @@ static void ReadDouble()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smalldouble >()
 {
-    Iss.str( std::to_string( MakeRandomInt( 10 ) ) );
+    Iss.str( std::to_string( MakeSmallDouble() ) );
 
     return { MakeTimer( &ReadDouble ), MakeTimer( &ResetISS ) };
 }
@@ -278,7 +321,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smalldouble >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigdouble >()
 {
-    Iss.str( ToString( (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 ) ) );
+    Iss.str( ToString( MakeBigDouble() ) );
 
     return { MakeTimer( &ReadDouble ), MakeTimer( &ResetISS ) };
 }
@@ -359,7 +402,7 @@ static void WriteInt32()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallint >()
 {
-    Int32 = MakeRandomInt( 10 );
+    Int32 = MakeSmallInt();
     Oss = MakeOSS( std::to_string( Int32 ).size() + 1 );
 
     return { MakeTimer( &WriteInt32 ), MakeTimer( &ResetOSS ) };
@@ -368,7 +411,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallint >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_maxint >()
 {
-    Int32 = std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 );
+    Int32 = MakeMaxInt32();
     Oss = MakeOSS( std::to_string( Int32 ).size() + 1 );
 
     return { MakeTimer( &WriteInt32 ), MakeTimer( &ResetOSS ) };
@@ -384,7 +427,7 @@ static void WriteInt64()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_maxint64 >()
 {
-    Int64 = std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 );
+    Int64 = MakeMaxInt64();
     Oss = MakeOSS( std::to_string( Int64 ).size() + 1 );
 
     return { MakeTimer( &WriteInt64 ), MakeTimer( &ResetOSS ) };
@@ -400,7 +443,7 @@ static void WriteFloat()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallfloat >()
 {
-    Float = MakeRandomInt( 10 );
+    Float = MakeSmallFloat();
     Oss = MakeOSS( ToString( Float ).size() + 1 );
 
     return { MakeTimer( &WriteFloat ), MakeTimer( &ResetOSS ) };
@@ -409,7 +452,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallfloat >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigfloat >()
 {
-    Float = exp10( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
+    Float = MakeBigFloat();
     Oss = MakeOSS( ToString( Float ).size() + 1 );
 
     return { MakeTimer( &WriteFloat ), MakeTimer( &ResetOSS ) };
@@ -425,7 +468,7 @@ static void WriteDouble()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smalldouble >()
 {
-    Double = MakeRandomInt( 10 );
+    Double = MakeSmallDouble();
     Oss = MakeOSS( ToString( Double ).size() + 1 );
 
     return { MakeTimer( &WriteDouble ), MakeTimer( &ResetOSS ) };
@@ -434,7 +477,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smalldouble >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigdouble >()
 {
-    Double = (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
+    Double = MakeBigDouble();
     Oss = MakeOSS( ToString( Double ).size() + 1 );
 
     return { MakeTimer( &WriteDouble ), MakeTimer( &ResetOSS ) };
