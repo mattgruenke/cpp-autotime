@@ -37,6 +37,7 @@ enum class Category
     file,
     function,
     heap,
+    istream,
     memory,
     mutex,
     network,
@@ -111,6 +112,17 @@ enum class Benchmark
     new_delete_cold_4k,
     new_delete_cold_1M,
     new_delete_cold_256M,
+
+    // istream:
+    istream_string4,
+    istream_string64,
+    istream_smallint,
+    istream_maxint,
+    istream_maxint64,
+    istream_smallfloat,
+    istream_bigfloat,
+    istream_smalldouble,
+    istream_bigdouble,
 
     // memory:
     memcpy_256,

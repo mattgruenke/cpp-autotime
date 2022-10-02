@@ -69,6 +69,16 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( new_delete_cold_1M );
     CASE__MAKE_TIMERS( new_delete_cold_256M );
 
+    CASE__MAKE_TIMERS( istream_string4 );
+    CASE__MAKE_TIMERS( istream_string64 );
+    CASE__MAKE_TIMERS( istream_smallint );
+    CASE__MAKE_TIMERS( istream_maxint );
+    CASE__MAKE_TIMERS( istream_maxint64 );
+    CASE__MAKE_TIMERS( istream_smallfloat );
+    CASE__MAKE_TIMERS( istream_bigfloat );
+    CASE__MAKE_TIMERS( istream_smalldouble );
+    CASE__MAKE_TIMERS( istream_bigdouble );
+
     CASE__MAKE_TIMERS( memcpy_256 );
     CASE__MAKE_TIMERS( memcpy_4k );
     CASE__MAKE_TIMERS( memcpy_64k );

@@ -55,6 +55,7 @@ const char *ToCStr( Category c )
     CASE( file );
     CASE( function );
     CASE( heap );
+    CASE( istream );
     CASE( memory );
     CASE( mutex );
     CASE( network );
@@ -167,6 +168,16 @@ const char *ToCStr( Benchmark b )
     CASE( new_delete_cold_4k );
     CASE( new_delete_cold_1M );
     CASE( new_delete_cold_256M );
+
+    CASE( istream_string4 );
+    CASE( istream_string64 );
+    CASE( istream_smallint );
+    CASE( istream_maxint );
+    CASE( istream_maxint64 );
+    CASE( istream_smallfloat );
+    CASE( istream_bigfloat );
+    CASE( istream_smalldouble );
+    CASE( istream_bigdouble );
 
     CASE( memcpy_256  );
     CASE( memcpy_4k   );
@@ -313,6 +324,20 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::new_delete_cold_4k,
                     Benchmark::new_delete_cold_1M,
                     Benchmark::new_delete_cold_256M,
+                },
+            },
+            {
+                Category::istream,
+                {
+                    Benchmark::istream_string4,
+                    Benchmark::istream_string64,
+                    Benchmark::istream_smallint,
+                    Benchmark::istream_maxint,
+                    Benchmark::istream_maxint64,
+                    Benchmark::istream_smallfloat,
+                    Benchmark::istream_bigfloat,
+                    Benchmark::istream_smalldouble,
+                    Benchmark::istream_bigdouble,
                 },
             },
             {

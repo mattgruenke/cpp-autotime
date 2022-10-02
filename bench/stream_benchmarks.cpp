@@ -4,7 +4,7 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-//! Implements ostream-category benchmarks.
+//! Implements istream & ostream-category benchmarks.
 /*! @file
 
 */
@@ -28,6 +28,7 @@ namespace bench
 {
 
 
+static std::istringstream Iss;
 static std::ostringstream Oss;
 static std::string Str;
 static int32_t Int32 = 0;
@@ -36,6 +37,142 @@ static float Float = 0;
 static float Double = 0;
 
 
+
+// Category::istream:
+static void ResetISS()
+{
+    Iss.clear();
+    Iss.seekg( 0 );
+}
+
+
+static void ReadStr()
+{
+    ResetISS();
+    Iss >> Str;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_string4 >()
+{
+    Iss.str( "1234" );
+
+    return { MakeTimer( &ReadStr ), MakeTimer( &ResetISS ) };
+}
+
+
+static std::string MakeString( int len )
+{
+    std::string result;
+    for (int i = 0; i < len; ++i) result.push_back( 'a' + (i % 26) );
+    return result;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_string64 >()
+{
+    Iss.str( MakeString( 64 ) );
+
+    return { MakeTimer( &ReadStr ), MakeTimer( &ResetISS ) };
+}
+
+
+static int32_t MakeRandomInt( int scale )
+{
+    return static_cast< int32_t >( random() * scale / RAND_MAX );
+}
+
+
+static void ReadInt32()
+{
+    ResetISS();
+    Iss >> Int32;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallint >()
+{
+    Iss.str( std::to_string( MakeRandomInt( 9 ) + 1 ) );
+
+    return { MakeTimer( &ReadInt32 ), MakeTimer( &ResetISS ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_maxint >()
+{
+    Iss.str( std::to_string( std::numeric_limits< int32_t >::max() - MakeRandomInt( 10 ) ) );
+
+    return { MakeTimer( &ReadInt32 ), MakeTimer( &ResetISS ) };
+}
+
+
+static void ReadInt64()
+{
+    ResetISS();
+    Iss >> Int64;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_maxint64 >()
+{
+    Iss.str( std::to_string( std::numeric_limits< int64_t >::max() - MakeRandomInt( 10 ) ) );
+
+    return { MakeTimer( &ReadInt64 ), MakeTimer( &ResetISS ) };
+}
+
+
+static void ReadFloat()
+{
+    ResetISS();
+    Iss >> Float;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallfloat >()
+{
+    Iss.str( std::to_string( MakeRandomInt( 10 ) ) );
+
+    return { MakeTimer( &ReadFloat ), MakeTimer( &ResetISS ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigfloat >()
+{
+    std::ostringstream oss;
+    oss << (exp10( oss.precision() ) - (MakeRandomInt( 9 ) + 1));
+    Iss.str( oss.str() );
+
+    return { MakeTimer( &ReadFloat ), MakeTimer( &ResetISS ) };
+}
+
+
+static void ReadDouble()
+{
+    ResetISS();
+    Iss >> Double;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smalldouble >()
+{
+    Iss.str( std::to_string( MakeRandomInt( 10 ) ) );
+
+    return { MakeTimer( &ReadDouble ), MakeTimer( &ResetISS ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigdouble >()
+{
+    std::ostringstream oss;
+    oss << ((1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 ));
+    Iss.str( oss.str() );
+
+    return { MakeTimer( &ReadDouble ), MakeTimer( &ResetISS ) };
+}
+
+
+
+// Category::ostream:
 static void ResetOSS()
 {
     Oss.seekp( 0 );
@@ -99,12 +236,6 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_cstr64 >()
     Oss = MakeOSS( Str.size() + 1 );
 
     return { MakeTimer( &WriteCStr ), MakeTimer( &ResetOSS ) };
-}
-
-
-static int32_t MakeRandomInt( int scale )
-{
-    return static_cast< int32_t >( random() * scale / RAND_MAX );
 }
 
 
