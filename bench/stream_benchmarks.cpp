@@ -4,7 +4,7 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-//! Implements istream & ostream-category benchmarks.
+//! Implements istream- & ostream- category benchmarks.
 /*! @file
 
 */
@@ -136,11 +136,17 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smallfloat >()
 }
 
 
-template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigfloat >()
+template< typename T > static std::string ToString( T val )
 {
     std::ostringstream oss;
-    oss << (exp10( oss.precision() ) - (MakeRandomInt( 9 ) + 1));
-    Iss.str( oss.str() );
+    oss << val;
+    return oss.str();
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigfloat >()
+{
+    Iss.str( ToString( exp10f( Oss.precision() ) - (MakeRandomInt( 9 ) + 1) ) );
 
     return { MakeTimer( &ReadFloat ), MakeTimer( &ResetISS ) };
 }
@@ -163,9 +169,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::istream_smalldouble >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::istream_bigdouble >()
 {
-    std::ostringstream oss;
-    oss << ((1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 ));
-    Iss.str( oss.str() );
+    Iss.str( ToString( (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 ) ) );
 
     return { MakeTimer( &ReadDouble ), MakeTimer( &ResetISS ) };
 }
@@ -205,8 +209,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_string4 >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_string64 >()
 {
-    Str.clear();
-    for (int i = 0; i < 64; ++i) Str.push_back( 'a' + (i % 26) );
+    Str = MakeString( 64 );
     Oss = MakeOSS( Str.size() + 1 );
 
     return { MakeTimer( &WriteStr ), MakeTimer( &ResetOSS ) };
@@ -231,8 +234,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_cstr4 >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_cstr64 >()
 {
-    Str.clear();
-    for (int i = 0; i < 64; ++i) Str.push_back( 'a' + (i % 26) );
+    Str = MakeString( 64 );
     Oss = MakeOSS( Str.size() + 1 );
 
     return { MakeTimer( &WriteCStr ), MakeTimer( &ResetOSS ) };
@@ -290,9 +292,7 @@ static void WriteFloat()
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallfloat >()
 {
     Float = MakeRandomInt( 10 );
-    Oss = std::ostringstream();
-    Oss << Float;
-    Oss = MakeOSS( Oss.str().size() + 1 );
+    Oss = MakeOSS( ToString( Float ).size() + 1 );
 
     return { MakeTimer( &WriteFloat ), MakeTimer( &ResetOSS ) };
 }
@@ -301,9 +301,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallfloat >()
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigfloat >()
 {
     Float = exp10( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
-    Oss = std::ostringstream();
-    Oss << Float;
-    Oss = MakeOSS( Oss.str().size() + 1 );
+    Oss = MakeOSS( ToString( Float ).size() + 1 );
 
     return { MakeTimer( &WriteFloat ), MakeTimer( &ResetOSS ) };
 }
@@ -319,9 +317,7 @@ static void WriteDouble()
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smalldouble >()
 {
     Double = MakeRandomInt( 10 );
-    Oss = std::ostringstream();
-    Oss << Double;
-    Oss = MakeOSS( Oss.str().size() + 1 );
+    Oss = MakeOSS( ToString( Double ).size() + 1 );
 
     return { MakeTimer( &WriteDouble ), MakeTimer( &ResetOSS ) };
 }
@@ -330,9 +326,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smalldouble >()
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigdouble >()
 {
     Double = (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
-    Oss = std::ostringstream();
-    Oss << Double;
-    Oss = MakeOSS( Oss.str().size() + 1 );
+    Oss = MakeOSS( ToString( Double ).size() + 1 );
 
     return { MakeTimer( &WriteDouble ), MakeTimer( &ResetOSS ) };
 }
