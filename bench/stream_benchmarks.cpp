@@ -12,6 +12,14 @@
     benchmarks meant there are a lot of useful static functions and variables
     that could be shared.  In addition, it's helpful if string & stream
     conversion benchmarks are measuring conversions of the same values.
+
+    Note that there are two sets of string_to benchmarks, for the floats and
+    doubles.  Here, the idea was to have a set of numbers directly comparable
+    to the corresponding istream tests, which meant the input needed to be
+    formatted the same way (i.e. via std::ostringstream).  However, I also
+    wanted a set of tests indicating the cost of parsing these numbers the
+    way that std::to_string() formats them. Hence, the _os variants
+    correspond to the former, while the _ts correspond to the latter.
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,6 +198,120 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::string_from_bigdouble >(
     StrSrc = std::to_string( Double );
 
     return { MakeTimer( &StrFromDouble ), MakeTimer( &CopyStr ) };
+}
+
+
+
+// Category::string_to:
+static void StrToInt32()
+{
+    Int32 = stoi( Str );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_smallint >()
+{
+    Str = std::to_string( MakeSmallInt() );
+
+    return { MakeTimer( &StrToInt32 ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_maxint >()
+{
+    Str = std::to_string( MakeMaxInt32() );
+
+    return { MakeTimer( &StrToInt32 ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+static void StrToInt64()
+{
+    Int64 = stol( Str );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_maxint64 >()
+{
+    Str = std::to_string( MakeMaxInt64() );
+
+    return { MakeTimer( &StrToInt64 ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+static void StrToFloat()
+{
+    Float = stof( Str );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_smallfloat_os >()
+{
+    Str = ToString( MakeSmallFloat() );     // formats via std::ostream
+
+    return { MakeTimer( &StrToFloat ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_smallfloat_ts >()
+{
+    Str = std::to_string( MakeSmallFloat() );
+
+    return { MakeTimer( &StrToFloat ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_bigfloat_os >()
+{
+    Str = ToString( MakeBigFloat() );       // formats via std::ostream
+
+    return { MakeTimer( &StrToFloat ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_bigfloat_ts >()
+{
+    Str = std::to_string( MakeBigFloat() );
+
+    return { MakeTimer( &StrToFloat ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+static void StrToDouble()
+{
+    Double = stod( Str );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_smalldouble_os >()
+{
+    Str = ToString( MakeSmallDouble() );    // formats via std::ostream
+
+    return { MakeTimer( &StrToDouble ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_smalldouble_ts >()
+{
+    Str = std::to_string( MakeSmallDouble() );
+
+    return { MakeTimer( &StrToDouble ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_bigdouble_os >()
+{
+    Str = ToString( MakeBigDouble() );      // formats via std::ostream
+
+    return { MakeTimer( &StrToDouble ), MakeTimer( &Overhead_void<> ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::string_to_bigdouble_ts >()
+{
+    Str = std::to_string( MakeBigDouble() );
+
+    return { MakeTimer( &StrToDouble ), MakeTimer( &Overhead_void<> ) };
 }
 
 

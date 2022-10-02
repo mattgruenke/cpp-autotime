@@ -46,6 +46,7 @@ enum class Category
     process,
     socket,
     string_from,
+    string_to,
     std_hashset,
     std_list,
     std_set,
@@ -177,6 +178,19 @@ enum class Benchmark
     string_from_bigfloat,
     string_from_smalldouble,
     string_from_bigdouble,
+
+    // string_to:  (Note: _os versions share input formatting w/ istream tests)
+    string_to_smallint,
+    string_to_maxint,
+    string_to_maxint64,
+    string_to_smallfloat_os,
+    string_to_smallfloat_ts,
+    string_to_bigfloat_os,
+    string_to_bigfloat_ts,
+    string_to_smalldouble_os,
+    string_to_smalldouble_ts,
+    string_to_bigdouble_os,
+    string_to_bigdouble_ts,
 
     // thread:
     thread_create_destroy,

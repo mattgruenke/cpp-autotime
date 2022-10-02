@@ -127,6 +127,18 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( string_from_smalldouble );
     CASE__MAKE_TIMERS( string_from_bigdouble );
 
+    CASE__MAKE_TIMERS( string_to_smallint );
+    CASE__MAKE_TIMERS( string_to_maxint );
+    CASE__MAKE_TIMERS( string_to_maxint64 );
+    CASE__MAKE_TIMERS( string_to_smallfloat_os );
+    CASE__MAKE_TIMERS( string_to_smallfloat_ts );
+    CASE__MAKE_TIMERS( string_to_bigfloat_os );
+    CASE__MAKE_TIMERS( string_to_bigfloat_ts );
+    CASE__MAKE_TIMERS( string_to_smalldouble_os );
+    CASE__MAKE_TIMERS( string_to_smalldouble_ts );
+    CASE__MAKE_TIMERS( string_to_bigdouble_os );
+    CASE__MAKE_TIMERS( string_to_bigdouble_ts );
+
     CASE__MAKE_TIMERS( thread_create_destroy );
     CASE__MAKE_TIMERS( thread_pingpong );
 

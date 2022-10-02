@@ -69,6 +69,7 @@ const char *ToCStr( Category c )
     CASE( std_string );
     CASE( std_vector );
     CASE( string_from );
+    CASE( string_to );
     CASE( syscall );
     CASE( thread );
     CASE( work );
@@ -227,6 +228,18 @@ const char *ToCStr( Benchmark b )
     CASE( string_from_bigfloat );
     CASE( string_from_smalldouble );
     CASE( string_from_bigdouble );
+
+    CASE( string_to_smallint );
+    CASE( string_to_maxint );
+    CASE( string_to_maxint64 );
+    CASE( string_to_smallfloat_os );
+    CASE( string_to_smallfloat_ts );
+    CASE( string_to_bigfloat_os );
+    CASE( string_to_bigfloat_ts );
+    CASE( string_to_smalldouble_os );
+    CASE( string_to_smalldouble_ts );
+    CASE( string_to_bigdouble_os );
+    CASE( string_to_bigdouble_ts );
 
     CASE( thread_create_destroy );
     CASE( thread_pingpong );
@@ -415,6 +428,22 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::string_from_bigfloat,
                     Benchmark::string_from_smalldouble,
                     Benchmark::string_from_bigdouble,
+                },
+            },
+            {
+                Category::string_to,
+                {
+                    Benchmark::string_to_smallint,
+                    Benchmark::string_to_maxint,
+                    Benchmark::string_to_maxint64,
+                    Benchmark::string_to_smallfloat_os,
+                    Benchmark::string_to_smallfloat_ts,
+                    Benchmark::string_to_bigfloat_os,
+                    Benchmark::string_to_bigfloat_ts,
+                    Benchmark::string_to_smalldouble_os,
+                    Benchmark::string_to_smalldouble_ts,
+                    Benchmark::string_to_bigdouble_os,
+                    Benchmark::string_to_bigdouble_ts,
                 },
             },
             {
