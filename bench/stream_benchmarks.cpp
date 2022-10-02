@@ -12,6 +12,7 @@
 
 #include "dispatch.hpp"
 
+#include <cmath>
 #include <cstdlib>
 #include <limits>
 #include <sstream>
@@ -168,7 +169,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smallfloat >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigfloat >()
 {
-    Float = std::numeric_limits< float >::max() - MakeRandomInt( 10 );
+    Float = exp10( Oss.precision() ) - (MakeRandomInt( 9 ) + 1);
     Oss = std::ostringstream();
     Oss << Float;
     Oss = MakeOSS( Oss.str().size() + 1 );
@@ -197,7 +198,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_smalldouble >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::ostream_bigdouble >()
 {
-    Double = std::numeric_limits< double >::max() - MakeRandomInt( 10 );
+    Double = (1.0 - exp10( -Oss.precision() )) * 1e+38 - MakeRandomInt( 10 );
     Oss = std::ostringstream();
     Oss << Double;
     Oss = MakeOSS( Oss.str().size() + 1 );
