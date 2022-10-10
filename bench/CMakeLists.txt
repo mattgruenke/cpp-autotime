@@ -15,6 +15,7 @@ find_package( Threads REQUIRED )
 add_executable( autotime-bench
     atomic_benchmarks.cpp
     condvar_benchmarks.cpp
+    container_benchmarks.cpp
     dispatch.cpp
     exception_benchmarks.cpp
     exception_utils.cpp

@@ -221,6 +221,55 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
 
+    CASE( set_int32_copy1 );
+    CASE( set_int32_copy16 );
+    CASE( set_int32_copy256 );
+    CASE( set_int32_copy4k );
+    CASE( set_int32_copy64k );
+    CASE( set_int32_copy1M );
+    CASE( set_int32_destroy1 );
+    CASE( set_int32_destroy16 );
+    CASE( set_int32_destroy256 );
+    CASE( set_int32_destroy4k );
+    CASE( set_int32_destroy64k );
+    CASE( set_int32_destroy1M );
+    CASE( set_int32_find1 );
+    CASE( set_int32_find16 );
+    CASE( set_int32_find256 );
+    CASE( set_int32_find4k );
+    CASE( set_int32_find64k );
+    CASE( set_int32_find1M );
+    CASE( set_int32_insert16 );
+    CASE( set_int32_insert256 );
+    CASE( set_int32_insert4k );
+    CASE( set_int32_insert64k );
+    CASE( set_int32_insert1M );
+    CASE( set_int32_iterate16 );
+    CASE( set_int32_iterate256 );
+    CASE( set_int32_iterate4k );
+    CASE( set_int32_iterate64k );
+    CASE( set_int32_iterate1M );
+    CASE( set_int64_copy64k );
+    CASE( set_int64_destroy64k );
+    CASE( set_int64_find64k );
+    CASE( set_int64_insert4k );
+    CASE( set_int64_iterate64k );
+    CASE( set_float_copy64k );
+    CASE( set_float_destroy64k );
+    CASE( set_float_find64k );
+    CASE( set_float_insert4k );
+    CASE( set_float_iterate64k );
+    CASE( set_double_copy64k );
+    CASE( set_double_destroy64k );
+    CASE( set_double_find64k );
+    CASE( set_double_insert4k );
+    CASE( set_double_iterate64k );
+    CASE( set_string_copy64k );
+    CASE( set_string_destroy64k );
+    CASE( set_string_find64k );
+    CASE( set_string_insert4k );
+    CASE( set_string_iterate64k );
+
     CASE( string_from_smallint );
     CASE( string_from_maxint );
     CASE( string_from_maxint64 );
@@ -416,6 +465,59 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::std_set,
+                {
+                    Benchmark::set_int32_copy1,
+                    Benchmark::set_int32_copy16,
+                    Benchmark::set_int32_copy256,
+                    Benchmark::set_int32_copy4k,
+                    Benchmark::set_int32_copy64k,
+//                    Benchmark::set_int32_copy1M,      <- Test setup takes too long.
+                    Benchmark::set_int32_destroy1,
+                    Benchmark::set_int32_destroy16,
+                    Benchmark::set_int32_destroy256,
+                    Benchmark::set_int32_destroy4k,
+                    Benchmark::set_int32_destroy64k,
+//                    Benchmark::set_int32_destroy1M,   <- Test setup takes too long.
+                    Benchmark::set_int32_find1,
+                    Benchmark::set_int32_find16,
+                    Benchmark::set_int32_find256,
+                    Benchmark::set_int32_find4k,
+                    Benchmark::set_int32_find64k,
+//                    Benchmark::set_int32_find1M,      <- Test setup takes too long.
+                    Benchmark::set_int32_insert16,
+                    Benchmark::set_int32_insert256,
+                    Benchmark::set_int32_insert4k,
+                    Benchmark::set_int32_insert64k,
+//                    Benchmark::set_int32_insert1M,    <- Test takes too long.
+                    Benchmark::set_int32_iterate16,
+                    Benchmark::set_int32_iterate256,
+                    Benchmark::set_int32_iterate4k,
+                    Benchmark::set_int32_iterate64k,
+//                    Benchmark::set_int32_iterate1M,   <- Test setup takes too long.
+                    Benchmark::set_int64_copy64k,
+                    Benchmark::set_int64_destroy64k,
+                    Benchmark::set_int64_find64k,
+                    Benchmark::set_int64_insert4k,
+                    Benchmark::set_int64_iterate64k,
+                    Benchmark::set_float_copy64k,
+                    Benchmark::set_float_destroy64k,
+                    Benchmark::set_float_find64k,
+                    Benchmark::set_float_insert4k,
+                    Benchmark::set_float_iterate64k,
+                    Benchmark::set_double_copy64k,
+                    Benchmark::set_double_destroy64k,
+                    Benchmark::set_double_find64k,
+                    Benchmark::set_double_insert4k,
+                    Benchmark::set_double_iterate64k,
+                    Benchmark::set_string_copy64k,
+                    Benchmark::set_string_destroy64k,
+                    Benchmark::set_string_find64k,
+                    Benchmark::set_string_insert4k,
+                    Benchmark::set_string_iterate64k,
                 },
             },
             {
