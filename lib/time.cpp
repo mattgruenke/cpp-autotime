@@ -96,6 +96,16 @@ Durations Time( const std::function< void() > &f, int num_iter )
 }
 
 
+Durations Time( const std::function< Durations() > &f, int num_iter )
+{
+    Durations durs{};
+
+    for (int i = 0; i < num_iter; ++i) durs += f();
+
+    return durs;
+}
+
+
 Durations Time( void (*f)(), int num_iter )
 {
     TimePoints start_times = Start();

@@ -51,6 +51,16 @@ Durations Time(
 );
 
 
+    //! Accumulates timing data from repeated calls to an instrumented function.
+    /*!
+        @returns the accumulated durations from num_iter calls of f().
+    */
+Durations Time(
+    const std::function< Durations() > &f,  //!< Instrumented function.
+    int num_iter                        //!< Number of iterations to measure.
+);
+
+
     //! Measures f() over a given number of iterations.
     /*!
         @returns the duration of num_iter calls of f().
