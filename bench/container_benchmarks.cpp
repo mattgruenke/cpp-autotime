@@ -7,7 +7,7 @@
 //! Implements benchmarks of various containers.
 /*! @file
 
-    TO_DO: deque, hashset
+    TO_DO: hashset
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,6 +118,13 @@ template< typename element_t >
     inline void InsertElement( std::set< element_t > &set, element_t value )
 {
     set.insert( value );
+}
+
+
+template< typename element_t >
+    inline void InsertElement( std::deque< element_t > &d, element_t value )
+{
+    d.push_back( value );
 }
 
 
@@ -246,6 +253,13 @@ template< typename element_t >
     inline bool HasElement( const std::set< element_t > &set, element_t value )
 {
     return set.find( value ) != set.end();
+}
+
+
+template< typename element_t >
+    inline bool HasElement( const std::deque< element_t > &d, element_t value )
+{
+    return std::find( d.begin(), d.end(), value ) != d.end();
 }
 
 
@@ -395,6 +409,322 @@ template< typename container_t >
             std::bind( &DestroyTimer< container_t >, container, _1 ),
             std::bind( &CopyOverhead< container_t >, container, _1 )
         };
+}
+
+
+////////////////////////////////////////////////////////////
+// Category::std_deque:
+////////////////////////////////////////////////////////////
+
+std::deque< int32_t > Deque_int32;
+std::deque< int64_t > Deque_int64;
+std::deque< float > Deque_float;
+std::deque< double > Deque_double;
+std::deque< std::string > Deque_string;
+
+
+template<> std::deque< int32_t > &Writable< std::deque< int32_t > >()
+{
+    return Deque_int32;
+}
+
+
+template<> std::deque< int64_t > &Writable< std::deque< int64_t > >()
+{
+    return Deque_int64;
+}
+
+
+template<> std::deque< float > &Writable< std::deque< float > >()
+{
+    return Deque_float;
+}
+
+
+template<> std::deque< double > &Writable< std::deque< double > >()
+{
+    return Deque_double;
+}
+
+
+template<> std::deque< std::string > &Writable< std::deque< std::string > >()
+{
+    return Deque_string;
+}
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_insert16 >()
+{
+    return MakeInsertTimers< std::deque< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_insert256 >()
+{
+    return MakeInsertTimers< std::deque< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_insert4k >()
+{
+    return MakeInsertTimers< std::deque< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_insert64k >()
+{
+    return MakeInsertTimers< std::deque< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_insert1M >()
+{
+    return MakeInsertTimers< std::deque< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int64_insert4k >()
+{
+    return MakeInsertTimers< std::deque< int64_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_float_insert4k >()
+{
+    return MakeInsertTimers< std::deque< float > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_insert4k >()
+{
+    return MakeInsertTimers< std::deque< double > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_insert4k >()
+{
+    return MakeInsertTimers< std::deque< std::string > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_iterate16 >()
+{
+    return MakeCountTimers< std::deque< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_iterate256 >()
+{
+    return MakeCountTimers< std::deque< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_iterate4k >()
+{
+    return MakeCountTimers< std::deque< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_iterate64k >()
+{
+    return MakeCountTimers< std::deque< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_iterate1M >()
+{
+    return MakeCountTimers< std::deque< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int64_iterate64k >()
+{
+    return MakeCountTimers< std::deque< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_float_iterate64k >()
+{
+    return MakeCountTimers< std::deque< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_iterate64k >()
+{
+    return MakeCountTimers< std::deque< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_iterate64k >()
+{
+    return MakeCountTimers< std::deque< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find1 >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 0 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find16 >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find256 >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find4k >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find64k >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_find1M >()
+{
+    return MakeFindTimers< std::deque< int32_t > >( true, 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int64_find64k >()
+{
+    return MakeFindTimers< std::deque< int64_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_float_find64k >()
+{
+    return MakeFindTimers< std::deque< float > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_find64k >()
+{
+    return MakeFindTimers< std::deque< double > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_find64k >()
+{
+    return MakeFindTimers< std::deque< std::string > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_copy16 >()
+{
+    return MakeCopyTimers< std::deque< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_copy256 >()
+{
+    return MakeCopyTimers< std::deque< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_copy4k >()
+{
+    return MakeCopyTimers< std::deque< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_copy64k >()
+{
+    return MakeCopyTimers< std::deque< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_copy1M >()
+{
+    return MakeCopyTimers< std::deque< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int64_copy64k >()
+{
+    return MakeCopyTimers< std::deque< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_float_copy64k >()
+{
+    return MakeCopyTimers< std::deque< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_copy64k >()
+{
+    return MakeCopyTimers< std::deque< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_copy64k >()
+{
+    return MakeCopyTimers< std::deque< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_destroy16 >()
+{
+    return MakeDestroyTimers< std::deque< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_destroy256 >()
+{
+    return MakeDestroyTimers< std::deque< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_destroy4k >()
+{
+    return MakeDestroyTimers< std::deque< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_destroy64k >()
+{
+    return MakeDestroyTimers< std::deque< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int32_destroy1M >()
+{
+    return MakeDestroyTimers< std::deque< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_int64_destroy64k >()
+{
+    return MakeDestroyTimers< std::deque< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_float_destroy64k >()
+{
+    return MakeDestroyTimers< std::deque< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_destroy64k >()
+{
+    return MakeDestroyTimers< std::deque< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_destroy64k >()
+{
+    return MakeDestroyTimers< std::deque< std::string > >( 1 << 16 );
 }
 
 
@@ -712,8 +1042,6 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_destroy64k >
 {
     return MakeDestroyTimers< std::list< std::string > >( 1 << 16 );
 }
-
-
 
 
 ////////////////////////////////////////////////////////////

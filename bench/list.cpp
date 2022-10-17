@@ -63,6 +63,7 @@ const char *ToCStr( Category c )
     CASE( overhead );
     CASE( process );
     CASE( socket );
+    CASE( std_deque );
     CASE( std_hashset );
     CASE( std_list );
     CASE( std_set );
@@ -220,6 +221,53 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary );
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
+
+    CASE( deque_int32_copy16 );
+    CASE( deque_int32_copy256 );
+    CASE( deque_int32_copy4k );
+    CASE( deque_int32_copy64k );
+    CASE( deque_int32_copy1M );
+    CASE( deque_int32_destroy16 );
+    CASE( deque_int32_destroy256 );
+    CASE( deque_int32_destroy4k );
+    CASE( deque_int32_destroy64k );
+    CASE( deque_int32_destroy1M );
+    CASE( deque_int32_find1 );
+    CASE( deque_int32_find16 );
+    CASE( deque_int32_find256 );
+    CASE( deque_int32_find4k );
+    CASE( deque_int32_find64k );
+    CASE( deque_int32_find1M );
+    CASE( deque_int32_insert16 );
+    CASE( deque_int32_insert256 );
+    CASE( deque_int32_insert4k );
+    CASE( deque_int32_insert64k );
+    CASE( deque_int32_insert1M );
+    CASE( deque_int32_iterate16 );
+    CASE( deque_int32_iterate256 );
+    CASE( deque_int32_iterate4k );
+    CASE( deque_int32_iterate64k );
+    CASE( deque_int32_iterate1M );
+    CASE( deque_int64_copy64k );
+    CASE( deque_int64_destroy64k );
+    CASE( deque_int64_find64k );
+    CASE( deque_int64_insert4k );
+    CASE( deque_int64_iterate64k );
+    CASE( deque_float_copy64k );
+    CASE( deque_float_destroy64k );
+    CASE( deque_float_find64k );
+    CASE( deque_float_insert4k );
+    CASE( deque_float_iterate64k );
+    CASE( deque_double_copy64k );
+    CASE( deque_double_destroy64k );
+    CASE( deque_double_find64k );
+    CASE( deque_double_insert4k );
+    CASE( deque_double_iterate64k );
+    CASE( deque_string_copy64k );
+    CASE( deque_string_destroy64k );
+    CASE( deque_string_find64k );
+    CASE( deque_string_insert4k );
+    CASE( deque_string_iterate64k );
 
     CASE( list_int32_copy16 );
     CASE( list_int32_copy256 );
@@ -552,6 +600,57 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::std_deque,
+                {
+                    Benchmark::deque_int32_copy16,
+                    Benchmark::deque_int32_copy256,
+                    Benchmark::deque_int32_copy4k,
+                    Benchmark::deque_int32_copy64k,
+//                    Benchmark::deque_int32_copy1M,      <- Test setup takes too long.
+                    Benchmark::deque_int32_destroy16,
+                    Benchmark::deque_int32_destroy256,
+                    Benchmark::deque_int32_destroy4k,
+                    Benchmark::deque_int32_destroy64k,
+//                    Benchmark::deque_int32_destroy1M,   <- Test setup takes too long.
+                    Benchmark::deque_int32_find1,
+                    Benchmark::deque_int32_find16,
+                    Benchmark::deque_int32_find256,
+                    Benchmark::deque_int32_find4k,
+                    Benchmark::deque_int32_find64k,
+//                    Benchmark::deque_int32_find1M,      <- Test setup takes too long.
+                    Benchmark::deque_int32_insert16,
+                    Benchmark::deque_int32_insert256,
+                    Benchmark::deque_int32_insert4k,
+                    Benchmark::deque_int32_insert64k,
+//                    Benchmark::deque_int32_insert1M,    <- Test takes too long.
+                    Benchmark::deque_int32_iterate16,
+                    Benchmark::deque_int32_iterate256,
+                    Benchmark::deque_int32_iterate4k,
+                    Benchmark::deque_int32_iterate64k,
+//                    Benchmark::deque_int32_iterate1M,   <- Test setup takes too long.
+                    Benchmark::deque_int64_copy64k,
+                    Benchmark::deque_int64_destroy64k,
+                    Benchmark::deque_int64_find64k,
+                    Benchmark::deque_int64_insert4k,
+                    Benchmark::deque_int64_iterate64k,
+                    Benchmark::deque_float_copy64k,
+                    Benchmark::deque_float_destroy64k,
+                    Benchmark::deque_float_find64k,
+                    Benchmark::deque_float_insert4k,
+                    Benchmark::deque_float_iterate64k,
+                    Benchmark::deque_double_copy64k,
+                    Benchmark::deque_double_destroy64k,
+                    Benchmark::deque_double_find64k,
+                    Benchmark::deque_double_insert4k,
+                    Benchmark::deque_double_iterate64k,
+                    Benchmark::deque_string_copy64k,
+                    Benchmark::deque_string_destroy64k,
+                    Benchmark::deque_string_find64k,
+                    Benchmark::deque_string_insert4k,
+                    Benchmark::deque_string_iterate64k,
                 },
             },
             {
