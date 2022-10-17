@@ -7,7 +7,7 @@
 //! Implements benchmarks of various containers.
 /*! @file
 
-    TO_DO: vector, list, deque, hashset
+    TO_DO: list, deque, hashset
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +99,32 @@ template< typename elem_t > std::shared_ptr< elem_t[] > MakeData( size_t n )
 }
 
 
+template< typename element_t >
+    inline void InsertElement( std::set< element_t > &set, element_t value )
+{
+    set.insert( value );
+}
+
+
+template< typename element_t >
+    inline void InsertElement( std::vector< element_t > &v, element_t value )
+{
+    v.push_back( value );
+}
+
+
 template< typename container_t >
     container_t Insert( const typename container_t::value_type *data, size_t n )
 {
     container_t result;
+
+#if 1
+    using element_t = typename container_t::value_type;
+    for (size_t i = 0; i < n; ++i) InsertElement< element_t >( result, data[i] );
+#else
     for (size_t i = 0; i < n; ++i) result.insert( data[i] );
+#endif
+
     return result;
 }
 
@@ -142,6 +163,10 @@ template< typename container_t >
     return { std::bind( &InsertTimer< container_t >, data, n, _1 ), nullptr };
 }
 
+
+////////////////////////////////////////////////////////////
+// Category::std_set:
+////////////////////////////////////////////////////////////
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::set_int32_insert16 >()
 {
@@ -308,6 +333,21 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::set_string_iterate64k >(
 }
 
 
+template< typename element_t >
+    inline bool HasElement( const std::set< element_t > &set, element_t value )
+{
+    return set.find( value ) != set.end();
+}
+
+
+template< typename element_t >
+    inline bool HasElement( const std::vector< element_t > &v, element_t value )
+{
+    return std::find( v.begin(), v.end(), value ) != v.end();
+}
+
+
+
 template< typename container_t >
     bool Find( const container_t &c, typename container_t::value_type value )
 {
@@ -326,7 +366,15 @@ template< typename container_t >
 
     unsigned int count = 0;
     TimePoints start_times = Start();
-    for (int i = 0; i < num_iters; ++i) if (Find( c, data[i % data_size] )) ++count;
+    for (int i = 0; i < num_iters; ++i)
+    {
+#if 1
+        using element_t = typename container_t::value_type;
+        if (HasElement< element_t >( c, data[i % data_size] )) ++count;
+#else
+        if (Find( c, data[i % data_size] )) ++count;
+#endif
+    }
     CountResult = count;
 
     return End( start_times );
@@ -453,6 +501,51 @@ std::set< std::string > Set_string;
 template<> std::set< std::string > &Writable< std::set< std::string > >()
 {
     return Set_string;
+}
+
+
+std::vector< int32_t > Vector_int32;
+
+
+template<> std::vector< int32_t > &Writable< std::vector< int32_t > >()
+{
+    return Vector_int32;
+}
+
+
+std::vector< int64_t > Vector_int64;
+
+
+template<> std::vector< int64_t > &Writable< std::vector< int64_t > >()
+{
+    return Vector_int64;
+}
+
+
+std::vector< float > Vector_float;
+
+
+template<> std::vector< float > &Writable< std::vector< float > >()
+{
+    return Vector_float;
+}
+
+
+std::vector< double > Vector_double;
+
+
+template<> std::vector< double > &Writable< std::vector< double > >()
+{
+    return Vector_double;
+}
+
+
+std::vector< std::string > Vector_string;
+
+
+template<> std::vector< std::string > &Writable< std::vector< std::string > >()
+{
+    return Vector_string;
 }
 
 
@@ -663,6 +756,269 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::set_double_destroy64k >(
 template<> autotime::BenchTimers MakeTimers< Benchmark::set_string_destroy64k >()
 {
     return MakeDestroyTimers< std::set< std::string > >( 1 << 16 );
+}
+
+
+
+////////////////////////////////////////////////////////////
+// Category::std_vector:
+////////////////////////////////////////////////////////////
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_insert16 >()
+{
+    return MakeInsertTimers< std::vector< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_insert256 >()
+{
+    return MakeInsertTimers< std::vector< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_insert4k >()
+{
+    return MakeInsertTimers< std::vector< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_insert64k >()
+{
+    return MakeInsertTimers< std::vector< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_insert1M >()
+{
+    return MakeInsertTimers< std::vector< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int64_insert4k >()
+{
+    return MakeInsertTimers< std::vector< int64_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_float_insert4k >()
+{
+    return MakeInsertTimers< std::vector< float > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_insert4k >()
+{
+    return MakeInsertTimers< std::vector< double > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_insert4k >()
+{
+    return MakeInsertTimers< std::vector< std::string > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_iterate16 >()
+{
+    return MakeCountTimers< std::vector< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_iterate256 >()
+{
+    return MakeCountTimers< std::vector< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_iterate4k >()
+{
+    return MakeCountTimers< std::vector< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_iterate64k >()
+{
+    return MakeCountTimers< std::vector< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_iterate1M >()
+{
+    return MakeCountTimers< std::vector< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int64_iterate64k >()
+{
+    return MakeCountTimers< std::vector< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_float_iterate64k >()
+{
+    return MakeCountTimers< std::vector< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_iterate64k >()
+{
+    return MakeCountTimers< std::vector< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_iterate64k >()
+{
+    return MakeCountTimers< std::vector< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find1 >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 0 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find16 >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find256 >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find4k >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find64k >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_find1M >()
+{
+    return MakeFindTimers< std::vector< int32_t > >( true, 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int64_find64k >()
+{
+    return MakeFindTimers< std::vector< int64_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_float_find64k >()
+{
+    return MakeFindTimers< std::vector< float > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_find64k >()
+{
+    return MakeFindTimers< std::vector< double > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_find64k >()
+{
+    return MakeFindTimers< std::vector< std::string > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy256 >()
+{
+    return MakeCopyTimers< std::vector< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy4k >()
+{
+    return MakeCopyTimers< std::vector< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy64k >()
+{
+    return MakeCopyTimers< std::vector< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy1M >()
+{
+    return MakeCopyTimers< std::vector< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int64_copy64k >()
+{
+    return MakeCopyTimers< std::vector< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_float_copy64k >()
+{
+    return MakeCopyTimers< std::vector< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_copy64k >()
+{
+    return MakeCopyTimers< std::vector< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_copy64k >()
+{
+    return MakeCopyTimers< std::vector< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_destroy4k >()
+{
+    return MakeDestroyTimers< std::vector< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_destroy64k >()
+{
+    return MakeDestroyTimers< std::vector< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_destroy1M >()
+{
+    return MakeDestroyTimers< std::vector< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int64_destroy64k >()
+{
+    return MakeDestroyTimers< std::vector< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_float_destroy64k >()
+{
+    return MakeDestroyTimers< std::vector< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_destroy64k >()
+{
+    return MakeDestroyTimers< std::vector< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_destroy64k >()
+{
+    return MakeDestroyTimers< std::vector< std::string > >( 1 << 16 );
 }
 
 

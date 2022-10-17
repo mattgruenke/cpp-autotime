@@ -270,6 +270,50 @@ const char *ToCStr( Benchmark b )
     CASE( set_string_insert4k );
     CASE( set_string_iterate64k );
 
+    CASE( vec_int32_copy256 );
+    CASE( vec_int32_copy4k );
+    CASE( vec_int32_copy64k );
+    CASE( vec_int32_copy1M );
+    CASE( vec_int32_destroy4k );
+    CASE( vec_int32_destroy64k );
+    CASE( vec_int32_destroy1M );
+    CASE( vec_int32_find1 );
+    CASE( vec_int32_find16 );
+    CASE( vec_int32_find256 );
+    CASE( vec_int32_find4k );
+    CASE( vec_int32_find64k );
+    CASE( vec_int32_find1M );
+    CASE( vec_int32_insert16 );
+    CASE( vec_int32_insert256 );
+    CASE( vec_int32_insert4k );
+    CASE( vec_int32_insert64k );
+    CASE( vec_int32_insert1M );
+    CASE( vec_int32_iterate16 );
+    CASE( vec_int32_iterate256 );
+    CASE( vec_int32_iterate4k );
+    CASE( vec_int32_iterate64k );
+    CASE( vec_int32_iterate1M );
+    CASE( vec_int64_copy64k );
+    CASE( vec_int64_destroy64k );
+    CASE( vec_int64_find64k );
+    CASE( vec_int64_insert4k );
+    CASE( vec_int64_iterate64k );
+    CASE( vec_float_copy64k );
+    CASE( vec_float_destroy64k );
+    CASE( vec_float_find64k );
+    CASE( vec_float_insert4k );
+    CASE( vec_float_iterate64k );
+    CASE( vec_double_copy64k );
+    CASE( vec_double_destroy64k );
+    CASE( vec_double_find64k );
+    CASE( vec_double_insert4k );
+    CASE( vec_double_iterate64k );
+    CASE( vec_string_copy64k );
+    CASE( vec_string_destroy64k );
+    CASE( vec_string_find64k );
+    CASE( vec_string_insert4k );
+    CASE( vec_string_iterate64k );
+
     CASE( string_from_smallint );
     CASE( string_from_maxint );
     CASE( string_from_maxint64 );
@@ -518,6 +562,54 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::set_string_find64k,
                     Benchmark::set_string_insert4k,
                     Benchmark::set_string_iterate64k,
+                },
+            },
+            {
+                Category::std_vector,
+                {
+                    Benchmark::vec_int32_copy256,
+                    Benchmark::vec_int32_copy4k,
+                    Benchmark::vec_int32_copy64k,
+//                    Benchmark::vec_int32_copy1M,      <- Test setup takes too long.
+                    Benchmark::vec_int32_destroy4k,
+                    Benchmark::vec_int32_destroy64k,
+//                    Benchmark::vec_int32_destroy1M,   <- Test setup takes too long.
+                    Benchmark::vec_int32_find1,
+                    Benchmark::vec_int32_find16,
+                    Benchmark::vec_int32_find256,
+                    Benchmark::vec_int32_find4k,
+                    Benchmark::vec_int32_find64k,
+//                    Benchmark::vec_int32_find1M,      <- Test setup takes too long.
+                    Benchmark::vec_int32_insert16,
+                    Benchmark::vec_int32_insert256,
+                    Benchmark::vec_int32_insert4k,
+                    Benchmark::vec_int32_insert64k,
+//                    Benchmark::vec_int32_insert1M,    <- Test takes too long.
+                    Benchmark::vec_int32_iterate16,
+                    Benchmark::vec_int32_iterate256,
+                    Benchmark::vec_int32_iterate4k,
+                    Benchmark::vec_int32_iterate64k,
+//                    Benchmark::vec_int32_iterate1M,   <- Test setup takes too long.
+                    Benchmark::vec_int64_copy64k,
+                    Benchmark::vec_int64_destroy64k,
+                    Benchmark::vec_int64_find64k,
+                    Benchmark::vec_int64_insert4k,
+                    Benchmark::vec_int64_iterate64k,
+                    Benchmark::vec_float_copy64k,
+                    Benchmark::vec_float_destroy64k,
+                    Benchmark::vec_float_find64k,
+                    Benchmark::vec_float_insert4k,
+                    Benchmark::vec_float_iterate64k,
+                    Benchmark::vec_double_copy64k,
+                    Benchmark::vec_double_destroy64k,
+                    Benchmark::vec_double_find64k,
+                    Benchmark::vec_double_insert4k,
+                    Benchmark::vec_double_iterate64k,
+                    Benchmark::vec_string_copy64k,
+                    Benchmark::vec_string_destroy64k,
+                    Benchmark::vec_string_find64k,
+                    Benchmark::vec_string_insert4k,
+                    Benchmark::vec_string_iterate64k,
                 },
             },
             {
