@@ -221,6 +221,53 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
 
+    CASE( list_int32_copy16 );
+    CASE( list_int32_copy256 );
+    CASE( list_int32_copy4k );
+    CASE( list_int32_copy64k );
+    CASE( list_int32_copy1M );
+    CASE( list_int32_destroy16 );
+    CASE( list_int32_destroy256 );
+    CASE( list_int32_destroy4k );
+    CASE( list_int32_destroy64k );
+    CASE( list_int32_destroy1M );
+    CASE( list_int32_find1 );
+    CASE( list_int32_find16 );
+    CASE( list_int32_find256 );
+    CASE( list_int32_find4k );
+    CASE( list_int32_find64k );
+    CASE( list_int32_find1M );
+    CASE( list_int32_insert16 );
+    CASE( list_int32_insert256 );
+    CASE( list_int32_insert4k );
+    CASE( list_int32_insert64k );
+    CASE( list_int32_insert1M );
+    CASE( list_int32_iterate16 );
+    CASE( list_int32_iterate256 );
+    CASE( list_int32_iterate4k );
+    CASE( list_int32_iterate64k );
+    CASE( list_int32_iterate1M );
+    CASE( list_int64_copy64k );
+    CASE( list_int64_destroy64k );
+    CASE( list_int64_find64k );
+    CASE( list_int64_insert4k );
+    CASE( list_int64_iterate64k );
+    CASE( list_float_copy64k );
+    CASE( list_float_destroy64k );
+    CASE( list_float_find64k );
+    CASE( list_float_insert4k );
+    CASE( list_float_iterate64k );
+    CASE( list_double_copy64k );
+    CASE( list_double_destroy64k );
+    CASE( list_double_find64k );
+    CASE( list_double_insert4k );
+    CASE( list_double_iterate64k );
+    CASE( list_string_copy64k );
+    CASE( list_string_destroy64k );
+    CASE( list_string_find64k );
+    CASE( list_string_insert4k );
+    CASE( list_string_iterate64k );
+
     CASE( set_int32_copy16 );
     CASE( set_int32_copy256 );
     CASE( set_int32_copy4k );
@@ -505,6 +552,57 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::std_list,
+                {
+                    Benchmark::list_int32_copy16,
+                    Benchmark::list_int32_copy256,
+                    Benchmark::list_int32_copy4k,
+                    Benchmark::list_int32_copy64k,
+//                    Benchmark::list_int32_copy1M,      <- Test setup takes too long.
+                    Benchmark::list_int32_destroy16,
+                    Benchmark::list_int32_destroy256,
+                    Benchmark::list_int32_destroy4k,
+                    Benchmark::list_int32_destroy64k,
+//                    Benchmark::list_int32_destroy1M,   <- Test setup takes too long.
+                    Benchmark::list_int32_find1,
+                    Benchmark::list_int32_find16,
+                    Benchmark::list_int32_find256,
+                    Benchmark::list_int32_find4k,
+                    Benchmark::list_int32_find64k,
+//                    Benchmark::list_int32_find1M,      <- Test setup takes too long.
+                    Benchmark::list_int32_insert16,
+                    Benchmark::list_int32_insert256,
+                    Benchmark::list_int32_insert4k,
+                    Benchmark::list_int32_insert64k,
+//                    Benchmark::list_int32_insert1M,    <- Test takes too long.
+                    Benchmark::list_int32_iterate16,
+                    Benchmark::list_int32_iterate256,
+                    Benchmark::list_int32_iterate4k,
+                    Benchmark::list_int32_iterate64k,
+//                    Benchmark::list_int32_iterate1M,   <- Test setup takes too long.
+                    Benchmark::list_int64_copy64k,
+                    Benchmark::list_int64_destroy64k,
+                    Benchmark::list_int64_find64k,
+                    Benchmark::list_int64_insert4k,
+                    Benchmark::list_int64_iterate64k,
+                    Benchmark::list_float_copy64k,
+                    Benchmark::list_float_destroy64k,
+                    Benchmark::list_float_find64k,
+                    Benchmark::list_float_insert4k,
+                    Benchmark::list_float_iterate64k,
+                    Benchmark::list_double_copy64k,
+                    Benchmark::list_double_destroy64k,
+                    Benchmark::list_double_find64k,
+                    Benchmark::list_double_insert4k,
+                    Benchmark::list_double_iterate64k,
+                    Benchmark::list_string_copy64k,
+                    Benchmark::list_string_destroy64k,
+                    Benchmark::list_string_find64k,
+                    Benchmark::list_string_insert4k,
+                    Benchmark::list_string_iterate64k,
                 },
             },
             {

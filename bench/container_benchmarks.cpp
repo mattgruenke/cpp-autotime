@@ -7,7 +7,7 @@
 //! Implements benchmarks of various containers.
 /*! @file
 
-    TO_DO: list, deque, hashset
+    TO_DO: deque, hashset
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,6 +118,13 @@ template< typename element_t >
     inline void InsertElement( std::set< element_t > &set, element_t value )
 {
     set.insert( value );
+}
+
+
+template< typename element_t >
+    inline void InsertElement( std::list< element_t > &l, element_t value )
+{
+    l.push_back( value );
 }
 
 
@@ -239,6 +246,13 @@ template< typename element_t >
     inline bool HasElement( const std::set< element_t > &set, element_t value )
 {
     return set.find( value ) != set.end();
+}
+
+
+template< typename element_t >
+    inline bool HasElement( const std::list< element_t > &l, element_t value )
+{
+    return std::find( l.begin(), l.end(), value ) != l.end();
 }
 
 
@@ -382,6 +396,324 @@ template< typename container_t >
             std::bind( &CopyOverhead< container_t >, container, _1 )
         };
 }
+
+
+////////////////////////////////////////////////////////////
+// Category::std_list:
+////////////////////////////////////////////////////////////
+
+std::list< int32_t > List_int32;
+std::list< int64_t > List_int64;
+std::list< float > List_float;
+std::list< double > List_double;
+std::list< std::string > List_string;
+
+
+template<> std::list< int32_t > &Writable< std::list< int32_t > >()
+{
+    return List_int32;
+}
+
+
+template<> std::list< int64_t > &Writable< std::list< int64_t > >()
+{
+    return List_int64;
+}
+
+
+template<> std::list< float > &Writable< std::list< float > >()
+{
+    return List_float;
+}
+
+
+template<> std::list< double > &Writable< std::list< double > >()
+{
+    return List_double;
+}
+
+
+template<> std::list< std::string > &Writable< std::list< std::string > >()
+{
+    return List_string;
+}
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_insert16 >()
+{
+    return MakeInsertTimers< std::list< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_insert256 >()
+{
+    return MakeInsertTimers< std::list< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_insert4k >()
+{
+    return MakeInsertTimers< std::list< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_insert64k >()
+{
+    return MakeInsertTimers< std::list< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_insert1M >()
+{
+    return MakeInsertTimers< std::list< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int64_insert4k >()
+{
+    return MakeInsertTimers< std::list< int64_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_float_insert4k >()
+{
+    return MakeInsertTimers< std::list< float > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_double_insert4k >()
+{
+    return MakeInsertTimers< std::list< double > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_insert4k >()
+{
+    return MakeInsertTimers< std::list< std::string > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_iterate16 >()
+{
+    return MakeCountTimers< std::list< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_iterate256 >()
+{
+    return MakeCountTimers< std::list< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_iterate4k >()
+{
+    return MakeCountTimers< std::list< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_iterate64k >()
+{
+    return MakeCountTimers< std::list< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_iterate1M >()
+{
+    return MakeCountTimers< std::list< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int64_iterate64k >()
+{
+    return MakeCountTimers< std::list< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_float_iterate64k >()
+{
+    return MakeCountTimers< std::list< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_double_iterate64k >()
+{
+    return MakeCountTimers< std::list< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_iterate64k >()
+{
+    return MakeCountTimers< std::list< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find1 >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 0 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find16 >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find256 >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find4k >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find64k >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_find1M >()
+{
+    return MakeFindTimers< std::list< int32_t > >( true, 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int64_find64k >()
+{
+    return MakeFindTimers< std::list< int64_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_float_find64k >()
+{
+    return MakeFindTimers< std::list< float > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_double_find64k >()
+{
+    return MakeFindTimers< std::list< double > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_find64k >()
+{
+    return MakeFindTimers< std::list< std::string > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_copy16 >()
+{
+    return MakeCopyTimers< std::list< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_copy256 >()
+{
+    return MakeCopyTimers< std::list< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_copy4k >()
+{
+    return MakeCopyTimers< std::list< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_copy64k >()
+{
+    return MakeCopyTimers< std::list< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_copy1M >()
+{
+    return MakeCopyTimers< std::list< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int64_copy64k >()
+{
+    return MakeCopyTimers< std::list< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_float_copy64k >()
+{
+    return MakeCopyTimers< std::list< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_double_copy64k >()
+{
+    return MakeCopyTimers< std::list< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_copy64k >()
+{
+    return MakeCopyTimers< std::list< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_destroy16 >()
+{
+    return MakeDestroyTimers< std::list< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_destroy256 >()
+{
+    return MakeDestroyTimers< std::list< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_destroy4k >()
+{
+    return MakeDestroyTimers< std::list< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_destroy64k >()
+{
+    return MakeDestroyTimers< std::list< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int32_destroy1M >()
+{
+    return MakeDestroyTimers< std::list< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_int64_destroy64k >()
+{
+    return MakeDestroyTimers< std::list< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_float_destroy64k >()
+{
+    return MakeDestroyTimers< std::list< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_double_destroy64k >()
+{
+    return MakeDestroyTimers< std::list< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::list_string_destroy64k >()
+{
+    return MakeDestroyTimers< std::list< std::string > >( 1 << 16 );
+}
+
+
 
 
 ////////////////////////////////////////////////////////////
