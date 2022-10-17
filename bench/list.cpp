@@ -269,6 +269,53 @@ const char *ToCStr( Benchmark b )
     CASE( deque_string_insert4k );
     CASE( deque_string_iterate64k );
 
+    CASE( hashset_int32_copy16 );
+    CASE( hashset_int32_copy256 );
+    CASE( hashset_int32_copy4k );
+    CASE( hashset_int32_copy64k );
+    CASE( hashset_int32_copy1M );
+    CASE( hashset_int32_destroy16 );
+    CASE( hashset_int32_destroy256 );
+    CASE( hashset_int32_destroy4k );
+    CASE( hashset_int32_destroy64k );
+    CASE( hashset_int32_destroy1M );
+    CASE( hashset_int32_find1 );
+    CASE( hashset_int32_find16 );
+    CASE( hashset_int32_find256 );
+    CASE( hashset_int32_find4k );
+    CASE( hashset_int32_find64k );
+    CASE( hashset_int32_find1M );
+    CASE( hashset_int32_insert16 );
+    CASE( hashset_int32_insert256 );
+    CASE( hashset_int32_insert4k );
+    CASE( hashset_int32_insert64k );
+    CASE( hashset_int32_insert1M );
+    CASE( hashset_int32_iterate16 );
+    CASE( hashset_int32_iterate256 );
+    CASE( hashset_int32_iterate4k );
+    CASE( hashset_int32_iterate64k );
+    CASE( hashset_int32_iterate1M );
+    CASE( hashset_int64_copy64k );
+    CASE( hashset_int64_destroy64k );
+    CASE( hashset_int64_find64k );
+    CASE( hashset_int64_insert4k );
+    CASE( hashset_int64_iterate64k );
+    CASE( hashset_float_copy64k );
+    CASE( hashset_float_destroy64k );
+    CASE( hashset_float_find64k );
+    CASE( hashset_float_insert4k );
+    CASE( hashset_float_iterate64k );
+    CASE( hashset_double_copy64k );
+    CASE( hashset_double_destroy64k );
+    CASE( hashset_double_find64k );
+    CASE( hashset_double_insert4k );
+    CASE( hashset_double_iterate64k );
+    CASE( hashset_string_copy64k );
+    CASE( hashset_string_destroy64k );
+    CASE( hashset_string_find64k );
+    CASE( hashset_string_insert4k );
+    CASE( hashset_string_iterate64k );
+
     CASE( list_int32_copy16 );
     CASE( list_int32_copy256 );
     CASE( list_int32_copy4k );
@@ -651,6 +698,57 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::deque_string_find64k,
                     Benchmark::deque_string_insert4k,
                     Benchmark::deque_string_iterate64k,
+                },
+            },
+            {
+                Category::std_hashset,
+                {
+                    Benchmark::hashset_int32_copy16,
+                    Benchmark::hashset_int32_copy256,
+                    Benchmark::hashset_int32_copy4k,
+                    Benchmark::hashset_int32_copy64k,
+//                    Benchmark::hashset_int32_copy1M,      <- Test setup takes too long.
+                    Benchmark::hashset_int32_destroy16,
+                    Benchmark::hashset_int32_destroy256,
+                    Benchmark::hashset_int32_destroy4k,
+                    Benchmark::hashset_int32_destroy64k,
+//                    Benchmark::hashset_int32_destroy1M,   <- Test setup takes too long.
+                    Benchmark::hashset_int32_find1,
+                    Benchmark::hashset_int32_find16,
+                    Benchmark::hashset_int32_find256,
+                    Benchmark::hashset_int32_find4k,
+                    Benchmark::hashset_int32_find64k,
+//                    Benchmark::hashset_int32_find1M,      <- Test setup takes too long.
+                    Benchmark::hashset_int32_insert16,
+                    Benchmark::hashset_int32_insert256,
+                    Benchmark::hashset_int32_insert4k,
+                    Benchmark::hashset_int32_insert64k,
+//                    Benchmark::hashset_int32_insert1M,    <- Test takes too long.
+                    Benchmark::hashset_int32_iterate16,
+                    Benchmark::hashset_int32_iterate256,
+                    Benchmark::hashset_int32_iterate4k,
+                    Benchmark::hashset_int32_iterate64k,
+//                    Benchmark::hashset_int32_iterate1M,   <- Test setup takes too long.
+                    Benchmark::hashset_int64_copy64k,
+                    Benchmark::hashset_int64_destroy64k,
+                    Benchmark::hashset_int64_find64k,
+                    Benchmark::hashset_int64_insert4k,
+                    Benchmark::hashset_int64_iterate64k,
+                    Benchmark::hashset_float_copy64k,
+                    Benchmark::hashset_float_destroy64k,
+                    Benchmark::hashset_float_find64k,
+                    Benchmark::hashset_float_insert4k,
+                    Benchmark::hashset_float_iterate64k,
+                    Benchmark::hashset_double_copy64k,
+                    Benchmark::hashset_double_destroy64k,
+                    Benchmark::hashset_double_find64k,
+                    Benchmark::hashset_double_insert4k,
+                    Benchmark::hashset_double_iterate64k,
+                    Benchmark::hashset_string_copy64k,
+                    Benchmark::hashset_string_destroy64k,
+                    Benchmark::hashset_string_find64k,
+                    Benchmark::hashset_string_insert4k,
+                    Benchmark::hashset_string_iterate64k,
                 },
             },
             {

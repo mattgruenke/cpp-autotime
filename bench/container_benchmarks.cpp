@@ -7,8 +7,6 @@
 //! Implements benchmarks of various containers.
 /*! @file
 
-    TO_DO: hashset
-
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,6 +111,13 @@ template< typename container_t > container_t &Writable();
 ////////////////////////////////
 // Insert generics:
 ////////////////////////////////
+
+template< typename element_t >
+    inline void InsertElement( std::unordered_set< element_t > &set, element_t value )
+{
+    set.insert( value );
+}
+
 
 template< typename element_t >
     inline void InsertElement( std::set< element_t > &set, element_t value )
@@ -248,6 +253,13 @@ template< typename container_t >
 ////////////////////////////////
 // Find generics:
 ////////////////////////////////
+
+template< typename element_t >
+    inline bool HasElement( const std::unordered_set< element_t > &set, element_t value )
+{
+    return set.find( value ) != set.end();
+}
+
 
 template< typename element_t >
     inline bool HasElement( const std::set< element_t > &set, element_t value )
@@ -725,6 +737,322 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::deque_double_destroy64k 
 template<> autotime::BenchTimers MakeTimers< Benchmark::deque_string_destroy64k >()
 {
     return MakeDestroyTimers< std::deque< std::string > >( 1 << 16 );
+}
+
+
+////////////////////////////////////////////////////////////
+// Category::std_hashset:
+////////////////////////////////////////////////////////////
+
+std::unordered_set< int32_t > Hashset_int32;
+std::unordered_set< int64_t > Hashset_int64;
+std::unordered_set< float > Hashset_float;
+std::unordered_set< double > Hashset_double;
+std::unordered_set< std::string > Hashset_string;
+
+
+template<> std::unordered_set< int32_t > &Writable< std::unordered_set< int32_t > >()
+{
+    return Hashset_int32;
+}
+
+
+template<> std::unordered_set< int64_t > &Writable< std::unordered_set< int64_t > >()
+{
+    return Hashset_int64;
+}
+
+
+template<> std::unordered_set< float > &Writable< std::unordered_set< float > >()
+{
+    return Hashset_float;
+}
+
+
+template<> std::unordered_set< double > &Writable< std::unordered_set< double > >()
+{
+    return Hashset_double;
+}
+
+
+template<> std::unordered_set< std::string > &Writable< std::unordered_set< std::string > >()
+{
+    return Hashset_string;
+}
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_insert16 >()
+{
+    return MakeInsertTimers< std::unordered_set< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_insert256 >()
+{
+    return MakeInsertTimers< std::unordered_set< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_insert4k >()
+{
+    return MakeInsertTimers< std::unordered_set< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_insert64k >()
+{
+    return MakeInsertTimers< std::unordered_set< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_insert1M >()
+{
+    return MakeInsertTimers< std::unordered_set< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int64_insert4k >()
+{
+    return MakeInsertTimers< std::unordered_set< int64_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_float_insert4k >()
+{
+    return MakeInsertTimers< std::unordered_set< float > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_double_insert4k >()
+{
+    return MakeInsertTimers< std::unordered_set< double > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_string_insert4k >()
+{
+    return MakeInsertTimers< std::unordered_set< std::string > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_iterate16 >()
+{
+    return MakeCountTimers< std::unordered_set< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_iterate256 >()
+{
+    return MakeCountTimers< std::unordered_set< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_iterate4k >()
+{
+    return MakeCountTimers< std::unordered_set< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_iterate64k >()
+{
+    return MakeCountTimers< std::unordered_set< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_iterate1M >()
+{
+    return MakeCountTimers< std::unordered_set< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int64_iterate64k >()
+{
+    return MakeCountTimers< std::unordered_set< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_float_iterate64k >()
+{
+    return MakeCountTimers< std::unordered_set< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_double_iterate64k >()
+{
+    return MakeCountTimers< std::unordered_set< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_string_iterate64k >()
+{
+    return MakeCountTimers< std::unordered_set< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find1 >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 0 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find16 >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find256 >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find4k >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find64k >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_find1M >()
+{
+    return MakeFindTimers< std::unordered_set< int32_t > >( true, 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int64_find64k >()
+{
+    return MakeFindTimers< std::unordered_set< int64_t > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_float_find64k >()
+{
+    return MakeFindTimers< std::unordered_set< float > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_double_find64k >()
+{
+    return MakeFindTimers< std::unordered_set< double > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_string_find64k >()
+{
+    return MakeFindTimers< std::unordered_set< std::string > >( true, 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_copy16 >()
+{
+    return MakeCopyTimers< std::unordered_set< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_copy256 >()
+{
+    return MakeCopyTimers< std::unordered_set< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_copy4k >()
+{
+    return MakeCopyTimers< std::unordered_set< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_copy64k >()
+{
+    return MakeCopyTimers< std::unordered_set< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_copy1M >()
+{
+    return MakeCopyTimers< std::unordered_set< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int64_copy64k >()
+{
+    return MakeCopyTimers< std::unordered_set< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_float_copy64k >()
+{
+    return MakeCopyTimers< std::unordered_set< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_double_copy64k >()
+{
+    return MakeCopyTimers< std::unordered_set< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_string_copy64k >()
+{
+    return MakeCopyTimers< std::unordered_set< std::string > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_destroy16 >()
+{
+    return MakeDestroyTimers< std::unordered_set< int32_t > >( 1 << 4 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_destroy256 >()
+{
+    return MakeDestroyTimers< std::unordered_set< int32_t > >( 1 << 8 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_destroy4k >()
+{
+    return MakeDestroyTimers< std::unordered_set< int32_t > >( 1 << 12 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_destroy64k >()
+{
+    return MakeDestroyTimers< std::unordered_set< int32_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int32_destroy1M >()
+{
+    return MakeDestroyTimers< std::unordered_set< int32_t > >( 1 << 20 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_int64_destroy64k >()
+{
+    return MakeDestroyTimers< std::unordered_set< int64_t > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_float_destroy64k >()
+{
+    return MakeDestroyTimers< std::unordered_set< float > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_double_destroy64k >()
+{
+    return MakeDestroyTimers< std::unordered_set< double > >( 1 << 16 );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::hashset_string_destroy64k >()
+{
+    return MakeDestroyTimers< std::unordered_set< std::string > >( 1 << 16 );
 }
 
 
