@@ -662,7 +662,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::vec_int32_copy4k,
                     Benchmark::vec_int32_copy64k,
 //                    Benchmark::vec_int32_copy1M,      <- Test setup takes too long.
-                    Benchmark::vec_int32_destroy64k,
+//                    Benchmark::vec_int32_destroy64k,  <- Too unstable.
 //                    Benchmark::vec_int32_destroy1M,   <- Test setup takes too long.
                     Benchmark::vec_int32_find1,
                     Benchmark::vec_int32_find16,
@@ -681,22 +681,22 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::vec_int32_iterate64k,
 //                    Benchmark::vec_int32_iterate1M,   <- Test setup takes too long.
                     Benchmark::vec_int64_copy64k,
-                    Benchmark::vec_int64_destroy64k,
+//                    Benchmark::vec_int64_destroy64k,    <- Too unstable.
                     Benchmark::vec_int64_find64k,
                     Benchmark::vec_int64_insert4k,
                     Benchmark::vec_int64_iterate64k,
                     Benchmark::vec_float_copy64k,
-                    Benchmark::vec_float_destroy64k,
+//                    Benchmark::vec_float_destroy64k,    <- Too unstable.
                     Benchmark::vec_float_find64k,
                     Benchmark::vec_float_insert4k,
                     Benchmark::vec_float_iterate64k,
                     Benchmark::vec_double_copy64k,
-                    Benchmark::vec_double_destroy64k,
+//                    Benchmark::vec_double_destroy64k,   <- Too unstable.
                     Benchmark::vec_double_find64k,
                     Benchmark::vec_double_insert4k,
                     Benchmark::vec_double_iterate64k,
                     Benchmark::vec_string_copy64k,
-                    Benchmark::vec_string_destroy64k,
+//                    Benchmark::vec_string_destroy64k,   <- Too unstable.
                     Benchmark::vec_string_find64k,
                     Benchmark::vec_string_insert4k,
                     Benchmark::vec_string_iterate64k,
