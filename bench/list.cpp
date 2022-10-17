@@ -268,11 +268,9 @@ const char *ToCStr( Benchmark b )
     CASE( set_string_insert4k );
     CASE( set_string_iterate64k );
 
-    CASE( vec_int32_copy256 );
     CASE( vec_int32_copy4k );
     CASE( vec_int32_copy64k );
     CASE( vec_int32_copy1M );
-    CASE( vec_int32_destroy4k );
     CASE( vec_int32_destroy64k );
     CASE( vec_int32_destroy1M );
     CASE( vec_int32_find1 );
@@ -563,11 +561,9 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
             {
                 Category::std_vector,
                 {
-                    Benchmark::vec_int32_copy256,
                     Benchmark::vec_int32_copy4k,
                     Benchmark::vec_int32_copy64k,
 //                    Benchmark::vec_int32_copy1M,      <- Test setup takes too long.
-                    Benchmark::vec_int32_destroy4k,
                     Benchmark::vec_int32_destroy64k,
 //                    Benchmark::vec_int32_destroy1M,   <- Test setup takes too long.
                     Benchmark::vec_int32_find1,

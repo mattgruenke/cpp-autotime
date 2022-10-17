@@ -908,12 +908,6 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_find64k >()
 }
 
 
-template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy256 >()
-{
-    return MakeCopyTimers< std::vector< int32_t > >( 1 << 8 );
-}
-
-
 template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_copy4k >()
 {
     return MakeCopyTimers< std::vector< int32_t > >( 1 << 12 );
@@ -953,12 +947,6 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::vec_double_copy64k >()
 template<> autotime::BenchTimers MakeTimers< Benchmark::vec_string_copy64k >()
 {
     return MakeCopyTimers< std::vector< std::string > >( 1 << 16 );
-}
-
-
-template<> autotime::BenchTimers MakeTimers< Benchmark::vec_int32_destroy4k >()
-{
-    return MakeDestroyTimers< std::vector< int32_t > >( 1 << 12 );
 }
 
 

@@ -166,11 +166,9 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( set_string_insert4k );
     CASE__MAKE_TIMERS( set_string_iterate64k );
 
-    CASE__MAKE_TIMERS( vec_int32_copy256 );
     CASE__MAKE_TIMERS( vec_int32_copy4k );
     CASE__MAKE_TIMERS( vec_int32_copy64k );
     CASE__MAKE_TIMERS( vec_int32_copy1M );
-    CASE__MAKE_TIMERS( vec_int32_destroy4k );
     CASE__MAKE_TIMERS( vec_int32_destroy64k );
     CASE__MAKE_TIMERS( vec_int32_destroy1M );
     CASE__MAKE_TIMERS( vec_int32_find1 );

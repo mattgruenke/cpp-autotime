@@ -219,11 +219,9 @@ enum class Benchmark
     set_string_iterate64k,
 
     // std_vector
-    vec_int32_copy256,
     vec_int32_copy4k,
     vec_int32_copy64k,
     vec_int32_copy1M,
-    vec_int32_destroy4k,
     vec_int32_destroy64k,
     vec_int32_destroy1M,
     vec_int32_find1,
