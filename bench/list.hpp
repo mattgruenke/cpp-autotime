@@ -171,13 +171,11 @@ enum class Benchmark
     overhead_nullary_ptr,
 
     // std_set
-    set_int32_copy1,
     set_int32_copy16,
     set_int32_copy256,
     set_int32_copy4k,
     set_int32_copy64k,
     set_int32_copy1M,
-    set_int32_destroy1,
     set_int32_destroy16,
     set_int32_destroy256,
     set_int32_destroy4k,

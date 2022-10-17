@@ -119,13 +119,11 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );
 
-    CASE__MAKE_TIMERS( set_int32_copy1 );
     CASE__MAKE_TIMERS( set_int32_copy16 );
     CASE__MAKE_TIMERS( set_int32_copy256 );
     CASE__MAKE_TIMERS( set_int32_copy4k );
     CASE__MAKE_TIMERS( set_int32_copy64k );
     CASE__MAKE_TIMERS( set_int32_copy1M );
-    CASE__MAKE_TIMERS( set_int32_destroy1 );
     CASE__MAKE_TIMERS( set_int32_destroy16 );
     CASE__MAKE_TIMERS( set_int32_destroy256 );
     CASE__MAKE_TIMERS( set_int32_destroy4k );

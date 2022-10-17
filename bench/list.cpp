@@ -221,13 +221,11 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
 
-    CASE( set_int32_copy1 );
     CASE( set_int32_copy16 );
     CASE( set_int32_copy256 );
     CASE( set_int32_copy4k );
     CASE( set_int32_copy64k );
     CASE( set_int32_copy1M );
-    CASE( set_int32_destroy1 );
     CASE( set_int32_destroy16 );
     CASE( set_int32_destroy256 );
     CASE( set_int32_destroy4k );
@@ -514,13 +512,11 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
             {
                 Category::std_set,
                 {
-                    Benchmark::set_int32_copy1,
                     Benchmark::set_int32_copy16,
                     Benchmark::set_int32_copy256,
                     Benchmark::set_int32_copy4k,
                     Benchmark::set_int32_copy64k,
 //                    Benchmark::set_int32_copy1M,      <- Test setup takes too long.
-                    Benchmark::set_int32_destroy1,
                     Benchmark::set_int32_destroy16,
                     Benchmark::set_int32_destroy256,
                     Benchmark::set_int32_destroy4k,
