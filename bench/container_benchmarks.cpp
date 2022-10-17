@@ -250,13 +250,6 @@ template< typename element_t >
 
 
 template< typename container_t >
-    bool Find( const container_t &c, typename container_t::value_type value )
-{
-    return c.find( value ) != c.end();
-}
-
-
-template< typename container_t >
     static Durations FindTimer(
         std::shared_ptr< container_t > container,
         std::shared_ptr< typename container_t::value_type[] > data,
@@ -269,12 +262,8 @@ template< typename container_t >
     TimePoints start_times = Start();
     for (int i = 0; i < num_iters; ++i)
     {
-#if 1
         using element_t = typename container_t::value_type;
         if (HasElement< element_t >( c, data[i % data_size] )) ++count;
-#else
-        if (Find( c, data[i % data_size] )) ++count;
-#endif
     }
     CountResult = count;
 
