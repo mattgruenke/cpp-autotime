@@ -795,7 +795,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::vec_double_insert4k,
                     Benchmark::vec_double_iterate64k,
                     Benchmark::vec_string_copy64k,
-//                    Benchmark::vec_string_destroy64k,   <- Too unstable.
+                    Benchmark::vec_string_destroy64k,
                     Benchmark::vec_string_find64k,
                     Benchmark::vec_string_insert4k,
                     Benchmark::vec_string_iterate64k,
