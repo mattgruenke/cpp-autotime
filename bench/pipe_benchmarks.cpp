@@ -87,7 +87,7 @@ struct Pipe
         size_t remain = n;
         while (remain > 0)
         {
-            ssize_t result = ::read( fds_[0], p_dest, n );
+            ssize_t result = ::read( fds_[0], p_dest + (n - remain), n );
             if (result < 0 && errno != EINTR) throw_system_error( errno, "Pipe::read()" );
             else if (result == 0) throw std::runtime_error( "Pipe::read() hit EOF" );
             else
@@ -108,7 +108,7 @@ struct Pipe
         size_t remain = n;
         while (remain > 0)
         {
-            ssize_t result = ::write( fds_[1], p_src, n );
+            ssize_t result = ::write( fds_[1], p_src + (n - remain), n );
             if (result < 0 && errno != EINTR) throw_system_error( errno, "Pipe::write()" );
             else if (result == 0) throw std::runtime_error( "Pipe::write() hit EOF" );
             else
@@ -202,7 +202,7 @@ static Timer MakeWriteReadTimer()
 
     std::function< void() > f = [p_pipe]()
         {
-            std::array< uint8_t, block_size > buf;
+            std::array< uint8_t, block_size > buf{};
             p_pipe->write( buf.data(), buf.size() );
             p_pipe->read( buf.data(), buf.size() );
         };
