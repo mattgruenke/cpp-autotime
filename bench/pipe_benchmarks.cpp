@@ -138,6 +138,19 @@ struct Pipe
 };
 
 
+Timer MakePipeOverhead()
+{
+    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+
+    std::function< void() > o = [p_pipe]()
+        {
+            if (!p_pipe) throw std::runtime_error( "invalid pipe" );
+        };
+
+    return MakeTimer( o );
+}
+
+
 template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
 {
     std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
@@ -155,12 +168,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
             return Time( f, num_iters );
         };
 
-    std::function< void() > o = [p_pipe]()
-        {
-            if (!p_pipe) throw std::runtime_error( "invalid pipe" );
-        };
-
-    return { time_f, MakeTimer( o ) };
+    return { time_f, MakePipeOverhead() };
 }
 
 
@@ -181,12 +189,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write >()
             return Time( f, num_iters );
         };
 
-    std::function< void() > o = [p_pipe]()
-        {
-            if (!p_pipe) throw std::runtime_error( "invalid channel" );
-        };
-
-    return { time_f, MakeTimer( o ) };
+    return { time_f, MakePipeOverhead() };
 }
 
 
