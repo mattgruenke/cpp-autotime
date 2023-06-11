@@ -61,6 +61,7 @@ const char *ToCStr( Category c )
     CASE( network );
     CASE( ostream );
     CASE( overhead );
+    CASE( pipe );
     CASE( process );
     CASE( socket );
     CASE( std_deque );
@@ -221,6 +222,9 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary );
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
+
+    CASE( pipe_read );
+    CASE( pipe_write );
 
     CASE( deque_int32_copy16 );
     CASE( deque_int32_copy256 );
@@ -647,6 +651,13 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::overhead_nullary,
                     Benchmark::overhead_nullary_fn,
                     Benchmark::overhead_nullary_ptr,
+                },
+            },
+            {
+                Category::pipe,
+                {
+                    Benchmark::pipe_read,
+                    Benchmark::pipe_write,
                 },
             },
             {

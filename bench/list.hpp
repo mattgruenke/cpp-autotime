@@ -43,6 +43,7 @@ enum class Category
     network,
     ostream,
     overhead,
+    pipe,
     process,
     socket,
     string_from,
@@ -170,6 +171,10 @@ enum class Benchmark
     overhead_nullary,
     overhead_nullary_fn,
     overhead_nullary_ptr,
+
+    // pipe:
+    pipe_read,
+    pipe_write,
 
     // std_deque
     deque_int32_copy16,
