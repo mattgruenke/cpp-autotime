@@ -138,7 +138,7 @@ struct Pipe
 };
 
 
-Timer MakePipeOverhead()
+static Timer MakePipeOverheadTimer()
 {
     std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
 
@@ -168,7 +168,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
             return Time( f, num_iters );
         };
 
-    return { time_f, MakePipeOverhead() };
+    return { time_f, MakePipeOverheadTimer() };
 }
 
 
@@ -189,7 +189,55 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write >()
             return Time( f, num_iters );
         };
 
-    return { time_f, MakePipeOverhead() };
+    return { time_f, MakePipeOverheadTimer() };
+}
+
+
+template<
+    size_t block_size
+>
+static Timer MakeWriteReadTimer()
+{
+    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+
+    std::function< void() > f = [p_pipe]()
+        {
+            std::array< uint8_t, block_size > buf;
+            p_pipe->write( buf.data(), buf.size() );
+            p_pipe->read( buf.data(), buf.size() );
+        };
+
+    return MakeTimer( f );
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_256 >()
+{
+    return { MakeWriteReadTimer< 1 << 8 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_1k >()
+{
+    return { MakeWriteReadTimer< 1 << 10 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_4k >()
+{
+    return { MakeWriteReadTimer< 1 << 12 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_16k >()
+{
+    return { MakeWriteReadTimer< 1 << 14 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_64k >()
+{
+    return { MakeWriteReadTimer< 1 << 16 >(), MakePipeOverheadTimer() };
 }
 
 

@@ -175,6 +175,11 @@ enum class Benchmark
     // pipe:
     pipe_read,
     pipe_write,
+    pipe_write_read_256,
+    pipe_write_read_1k,
+    pipe_write_read_4k,
+    pipe_write_read_16k,
+    pipe_write_read_64k,
 
     // std_deque
     deque_int32_copy16,
