@@ -10,20 +10,25 @@
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <array>
 #include <cassert>
+#include <future>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "autotime/os.hpp"
 #include "autotime/time.hpp"
 
 #include "dispatch.hpp"
 #include "error_utils.hpp"
 #include "file_utils.hpp"
+#include "thread_utils.hpp"
 #include "list.hpp"
 
 
@@ -54,6 +59,35 @@ static void SetPipeSize( int fds[2], int size )
 }
 
 
+struct BlockingPipeTraits
+{
+    static void would_underflow()
+    {
+        throw std::runtime_error( "Pipe::read() underflow" );
+    }
+
+    static void would_overflow()
+    {
+        throw std::runtime_error( "Pipe::write() overflow" );
+    }
+};
+
+
+struct NonblockingPipeTraits
+{
+    static inline void would_underflow()
+    {
+    }
+
+    static inline void would_overflow()
+    {
+    }
+};
+
+
+template<
+    typename traits_type=BlockingPipeTraits
+>
 struct Pipe
 {
     const size_t capacity_;
@@ -75,21 +109,21 @@ struct Pipe
 
     ~Pipe()
     {
-        for (int fd: fds_) if (fd >= 0) close( fd );
+        for (int fd: fds_) if (fd >= 0) ::close( fd );
     }
 
     Pipe &operator=( const Pipe & ) = delete;
 
-    inline void read( uint8_t *p_dest, size_t n )
+    inline size_t read( uint8_t *p_dest, size_t n )
     {
-        if (n > occupancy_) throw std::runtime_error( "Pipe::read() underflow" );
+        if (n > occupancy_) traits_type::would_underflow();
 
         size_t remain = n;
         while (remain > 0)
         {
             ssize_t result = ::read( fds_[0], p_dest + (n - remain), n );
             if (result < 0 && errno != EINTR) throw_system_error( errno, "Pipe::read()" );
-            else if (result == 0) throw std::runtime_error( "Pipe::read() hit EOF" );
+            else if (result == 0) break;
             else
             {
                 assert( result <= occupancy_ );
@@ -99,18 +133,26 @@ struct Pipe
                 remain -= result;
             }
         }
+
+        return n - remain;
     }
 
-    inline void write( const uint8_t *p_src, size_t n )
+    inline void read_checked( uint8_t *p_dest, size_t n )
     {
-        if (n + occupancy_ > capacity_) throw std::runtime_error( "Pipe::write() overflow" );
+        size_t got = this->read( p_dest, n );
+        if (got < n) throw std::runtime_error( "Pipe::read() hit EOF" );
+    }
+
+    inline size_t write( const uint8_t *p_src, size_t n )
+    {
+        if (n + occupancy_ > capacity_) traits_type::would_underflow();
 
         size_t remain = n;
         while (remain > 0)
         {
             ssize_t result = ::write( fds_[1], p_src + (n - remain), n );
             if (result < 0 && errno != EINTR) throw_system_error( errno, "Pipe::write()" );
-            else if (result == 0) throw std::runtime_error( "Pipe::write() hit EOF" );
+            else if (result == 0) break;
             else
             {
                 assert( result <= remain );
@@ -119,12 +161,20 @@ struct Pipe
                 remain -= result;
             }
         }
+
+        return n - remain;
+    }
+
+    inline void write_checked( const uint8_t *p_dest, size_t n )
+    {
+        size_t got = this->write( p_dest, n );
+        if (got < n) throw std::runtime_error( "Pipe::write() hit EOF" );
     }
 
     void drain()
     {
         buffer_.resize( occupancy_ );
-        if (!buffer_.empty()) this->read( buffer_.data(), buffer_.size() );
+        if (!buffer_.empty()) this->read_checked( buffer_.data(), buffer_.size() );
     }
 
     void fill()
@@ -133,18 +183,28 @@ struct Pipe
         if (vacancy < epsilon_) return;
 
         buffer_.resize( vacancy - 1);
-        if (!buffer_.empty()) this->write( buffer_.data(), buffer_.size() );
+        if (!buffer_.empty()) this->write_checked( buffer_.data(), buffer_.size() );
+    }
+
+        //! Closes the write side of the pipe, only.
+    void close()
+    {
+        if (fds_[1] >= 0)
+        {
+            ::close( fds_[1] );
+            fds_[1] = -1;
+        }
     }
 };
 
 
 static Timer MakePipeOverheadTimer()
 {
-    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+    std::shared_ptr< int > p = std::make_shared< int >();
 
-    std::function< void() > o = [p_pipe]()
+    std::function< void() > o = [p]()
         {
-            if (!p_pipe) throw std::runtime_error( "invalid pipe" );
+            if (!p) throw std::runtime_error( "invalid pointer" );
         };
 
     return MakeTimer( o );
@@ -153,7 +213,7 @@ static Timer MakePipeOverheadTimer()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
 {
-    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+    std::shared_ptr< Pipe<> > p_pipe = std::make_shared< Pipe<> >();
 
     Timer time_f = [p_pipe]( int num_iters )
         {
@@ -162,7 +222,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
             std::function< void() > f = [p_pipe]()
                 {
                     uint8_t buf = 0;
-                    p_pipe->read( &buf, sizeof( buf ) );
+                    p_pipe->read_checked( &buf, sizeof( buf ) );
                 };
 
             return Time( f, num_iters );
@@ -174,7 +234,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_read >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write >()
 {
-    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+    std::shared_ptr< Pipe<> > p_pipe = std::make_shared< Pipe<> >();
 
     Timer time_f = [p_pipe]( int num_iters )
         {
@@ -183,7 +243,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write >()
             std::function< void() > f = [p_pipe]()
                 {
                     uint8_t buf = 0;
-                    p_pipe->write( &buf, sizeof( buf ) );
+                    p_pipe->write_checked( &buf, sizeof( buf ) );
                 };
 
             return Time( f, num_iters );
@@ -198,13 +258,13 @@ template<
 >
 static Timer MakeWriteReadTimer()
 {
-    std::shared_ptr< Pipe > p_pipe = std::make_shared< Pipe >();
+    std::shared_ptr< Pipe<> > p_pipe = std::make_shared< Pipe<> >();
 
     std::function< void() > f = [p_pipe]()
         {
             std::array< uint8_t, block_size > buf{};
-            p_pipe->write( buf.data(), buf.size() );
-            p_pipe->read( buf.data(), buf.size() );
+            p_pipe->write_checked( buf.data(), buf.size() );
+            p_pipe->read_checked( buf.data(), buf.size() );
         };
 
     return MakeTimer( f );
@@ -238,6 +298,98 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_16k >()
 template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_write_read_64k >()
 {
     return { MakeWriteReadTimer< 1 << 16 >(), MakePipeOverheadTimer() };
+}
+
+
+struct Ponger
+{
+    const size_t message_size_;
+    std::shared_ptr< Pipe< NonblockingPipeTraits >[] > pipes_;
+    std::thread thread_;
+
+    explicit Ponger( size_t message_size )
+    :
+        message_size_( message_size ),
+        pipes_( new Pipe< NonblockingPipeTraits >[2] )
+    {
+        // Block on thread actually starting.
+        std::promise< void > started_promise;
+        std::future< void > started_future = started_promise.get_future(); 
+        thread_ = std::thread( &Ponger::threadfunc, this, std::move( started_promise ) );
+        started_future.get();
+    }
+
+    ~Ponger()
+    {
+        pipes_[0].close();  // A short read() will tell the thread to exit.
+        thread_.join();
+    }
+
+    void threadfunc( std::promise< void > started_promise )
+    {
+        SetCoreAffinity( GetSecondaryCoreId() );
+
+        started_promise.set_value();
+
+        std::vector< uint8_t > buf( message_size_ );
+        while (pipes_[0].read( buf.data(), buf.size() ) == message_size_)
+        {
+            pipes_[1].write_checked( buf.data(), buf.size() );
+        }
+    }
+};
+
+
+template<
+    size_t block_size
+>
+static Timer MakePingPongTimer()
+{
+    Timer time_f = []( int num_iters )
+        {
+            Ponger ponger{ block_size };
+            std::array< uint8_t, block_size > buf{};
+
+            std::function< void() > f = [&ponger, &buf]()
+                {
+                    ponger.pipes_[0].write_checked( buf.data(), buf.size() );
+                    ponger.pipes_[1].read_checked( buf.data(), buf.size() );
+                };
+
+            return Time( f, num_iters );
+        };
+
+    return time_f;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_pingpong_256 >()
+{
+    return { MakePingPongTimer< 1 << 8 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_pingpong_1k >()
+{
+    return { MakePingPongTimer< 1 << 10 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_pingpong_4k >()
+{
+    return { MakePingPongTimer< 1 << 12 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_pingpong_16k >()
+{
+    return { MakePingPongTimer< 1 << 14 >(), MakePipeOverheadTimer() };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_pingpong_64k >()
+{
+    return { MakePingPongTimer< 1 << 16 >(), MakePipeOverheadTimer() };
 }
 
 

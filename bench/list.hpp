@@ -180,6 +180,11 @@ enum class Benchmark
     pipe_write_read_4k,
     pipe_write_read_16k,
     pipe_write_read_64k,
+    pipe_pingpong_256,
+    pipe_pingpong_1k,
+    pipe_pingpong_4k,
+    pipe_pingpong_16k,
+    pipe_pingpong_64k,
 
     // std_deque
     deque_int32_copy16,
