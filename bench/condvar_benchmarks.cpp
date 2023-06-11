@@ -14,7 +14,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <future>
-#include <system_error>
 #include <thread>
 
 #include <pthread.h>
@@ -24,6 +23,7 @@
 #include "autotime/time.hpp"
 
 #include "dispatch.hpp"
+#include "error_utils.hpp"
 #include "list.hpp"
 #include "thread_utils.hpp"
 
@@ -152,7 +152,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::condvar_signal_watched >
             // Normally, you'd get the mutex, but that could force a context switch.
             //  We're trying to isolate just the signalling time.
             int ev = pthread_cond_signal( &p_watched->cond_.var_ );
-            if (ev) throw std::system_error( ev, std::system_category(), "pthread_cond_signal()" );
+            if (ev) throw_system_error( ev, "pthread_cond_signal()" );
         };
 
     std::function< void() > o = [p_watched]() {};

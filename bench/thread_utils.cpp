@@ -13,7 +13,7 @@
 
 #include "thread_utils.hpp"
 
-#include <system_error>
+#include "error_utils.hpp"
 
 #include <pthread.h>
 
@@ -29,11 +29,11 @@ void *InitLibpthread()
             pthread_t thread{};
             int ev = pthread_create( &thread, nullptr,
                 []( void * ) -> void * { return nullptr; }, nullptr );
-            if (ev) throw std::system_error( ev, std::system_category(), "pthread_create()" );
+            if (ev) throw_system_error( ev, "pthread_create()" );
 
             void *result = nullptr;
             ev = pthread_join( thread, &result );
-            if (ev) throw std::system_error( ev, std::system_category(), "pthread_join()" );
+            if (ev) throw_system_error( ev, "pthread_join()" );
 
             return result;
         }();

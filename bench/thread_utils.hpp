@@ -14,6 +14,7 @@
 #ifndef BENCH_THREAD_UTILS_HPP
 #define BENCH_THREAD_UTILS_HPP
 
+
 namespace bench
 {
 
