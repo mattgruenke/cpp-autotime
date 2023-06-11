@@ -149,7 +149,7 @@ int GetCurrentCoreId()
 
 int SetCoreAffinity( int core_id )
 {
-    const int num_cpus = get_nprocs_conf();
+    static const int num_cpus = get_nprocs_conf();
     if (num_cpus <= 0)
     {
         AUTOTIME_ERRNO( "failed to query ncpus" );
@@ -169,7 +169,9 @@ int SetCoreAffinity( int core_id )
     }
     else need_switch = (GetCurrentCoreId() != core_id);
 
+    // Note: you might expect CPU_ALLOC() to zero the cpu_set, but it doesn't!
     cpu_set_t *cpu_set = CPU_ALLOC( num_cpus );
+    CPU_ZERO_S( CPU_ALLOC_SIZE( num_cpus ), cpu_set );
     CPU_SET( core_id, cpu_set );
 
     const pid_t thread_id = 0;  // 0 -> current thread
