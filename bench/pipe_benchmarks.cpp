@@ -259,10 +259,10 @@ template<
 static Timer MakeWriteReadTimer()
 {
     std::shared_ptr< Pipe<> > p_pipe = std::make_shared< Pipe<> >();
+    static std::array< uint8_t, block_size > buf{};
 
     std::function< void() > f = [p_pipe]()
         {
-            std::array< uint8_t, block_size > buf{};
             p_pipe->write_checked( buf.data(), buf.size() );
             p_pipe->read_checked( buf.data(), buf.size() );
         };
@@ -348,9 +348,9 @@ static Timer MakePingPongTimer()
     Timer time_f = []( int num_iters )
         {
             Ponger ponger{ block_size };
-            std::array< uint8_t, block_size > buf{};
+            static std::array< uint8_t, block_size > buf{};
 
-            std::function< void() > f = [&ponger, &buf]()
+            std::function< void() > f = [&ponger]()
                 {
                     ponger.pipes_[0].write_checked( buf.data(), buf.size() );
                     ponger.pipes_[1].read_checked( buf.data(), buf.size() );
