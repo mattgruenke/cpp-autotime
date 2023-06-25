@@ -19,7 +19,6 @@
 #include <thread>
 #include <vector>
 
-#include <fcntl.h>
 #include <unistd.h>
 
 #include "autotime/os.hpp"
@@ -27,36 +26,15 @@
 
 #include "dispatch.hpp"
 #include "error_utils.hpp"
-#include "file_utils.hpp"
-#include "thread_utils.hpp"
 #include "list.hpp"
+#include "pipe_utils.hpp"
+#include "thread_utils.hpp"
 
 
 using namespace autotime;
 
 namespace bench
 {
-
-
-static size_t GetMaxPipeSize()
-{
-    // Cache the value for subsequent calls.
-    static const int result = ReadFromFile< int >( "/proc/sys/fs/pipe-max-size" );
-
-    if (result <= 0) throw std::runtime_error(
-            "Invalid pipe max size: " + std::to_string( result ) );
-
-    return static_cast< size_t >( result );
-}
-
-
-static void SetPipeSize( int fds[2], int size )
-{
-    int actual = fcntl( fds[1], F_SETPIPE_SZ, size );
-    if (actual < 0) throw_system_error( errno, "Set pipe size" );
-    else if (actual < size) throw std::runtime_error(
-        "Set pipe size failed: " + std::to_string( actual ) + " < " + std::to_string( size ) );
-}
 
 
 struct BlockingPipeTraits
@@ -100,7 +78,7 @@ struct Pipe
     :
         capacity_{ GetMaxPipeSize() }
     {
-        if (pipe( fds_ )) throw_system_error( errno, "pipe()" );
+        OpenPipe( fds_ );
 
         SetPipeSize( fds_, capacity_ );
     }

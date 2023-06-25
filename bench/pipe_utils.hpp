@@ -22,6 +22,13 @@ namespace bench
 {
 
 
+    //! Opens a new pipe.
+    /*!
+        @throws std::system_error if the pipe() fails.
+    */
+void OpenPipe( int fds[2] );
+
+
     //! Returns the system's maximum supported pipe buffer size.
 size_t GetMaxPipeSize();
 

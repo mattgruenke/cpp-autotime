@@ -16,6 +16,8 @@
 #include "error_utils.hpp"
 #include "file_utils.hpp"
 
+#include <unistd.h>
+
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -25,6 +27,12 @@
 
 namespace bench
 {
+
+
+void OpenPipe( int fds[2] )
+{
+    if (pipe( fds )) throw_system_error( errno, "pipe()" );
+}
 
 
 size_t GetMaxPipeSize()
