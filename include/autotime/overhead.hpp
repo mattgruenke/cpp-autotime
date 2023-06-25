@@ -16,6 +16,8 @@
 #define AUTOTIME_OVERHEAD_HPP
 
 
+#include <autotime/detail/types_impl.hpp>
+
 #include <functional>
 
 
@@ -35,7 +37,7 @@ template<
 >
 return_t Overhead(
     params_t...
-);
+) AUTOTIME_DETAIL_NO_INLINE;
 
 
     //! Variant of Overhead<>() for functions returning void.
@@ -47,7 +49,7 @@ template<
 >
 void Overhead_void(
     params_t...
-);
+) AUTOTIME_DETAIL_NO_INLINE;
 
 
     //! Factory for constructing empty std::function<> instances.

@@ -16,6 +16,9 @@
 #define AUTOTIME_DETAIL_TYPES_IMPL_HPP
 
 
+#define AUTOTIME_DETAIL_NO_INLINE __attribute__((noinline))
+
+
 namespace autotime
 {
 
