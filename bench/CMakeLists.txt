@@ -30,6 +30,7 @@ add_executable( autotime-bench
     output.cpp
     overhead_benchmarks.cpp
     pipe_benchmarks.cpp
+    pipe_utils.cpp
     stream_benchmarks.cpp
     thread_benchmarks.cpp
     thread_utils.cpp
