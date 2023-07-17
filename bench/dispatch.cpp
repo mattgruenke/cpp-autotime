@@ -28,6 +28,12 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     case Benchmark::n: \
         return MakeTimers< Benchmark::n >()
 
+    CASE__MAKE_TIMERS( asio_dispatch );
+    CASE__MAKE_TIMERS( asio_dispatch_strand );
+    CASE__MAKE_TIMERS( asio_post );
+    CASE__MAKE_TIMERS( asio_post_strand );
+    CASE__MAKE_TIMERS( asio_post_pingpong );
+
     CASE__MAKE_TIMERS( atomic_increment );
     CASE__MAKE_TIMERS( atomic_cmp_exchg_weak_xpctd );
     CASE__MAKE_TIMERS( atomic_cmp_exchg_weak_other );
@@ -131,6 +137,15 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( pipe_pingpong_4k );
     CASE__MAKE_TIMERS( pipe_pingpong_16k );
     CASE__MAKE_TIMERS( pipe_pingpong_64k );
+    CASE__MAKE_TIMERS( pipe_asio_read );
+    CASE__MAKE_TIMERS( pipe_asio_read_async );
+    CASE__MAKE_TIMERS( pipe_asio_write );
+    CASE__MAKE_TIMERS( pipe_asio_write_async );
+    CASE__MAKE_TIMERS( pipe_asio_write_read_256 );
+    CASE__MAKE_TIMERS( pipe_asio_write_read_1k );
+    CASE__MAKE_TIMERS( pipe_asio_write_read_4k );
+    CASE__MAKE_TIMERS( pipe_asio_write_read_16k );
+    CASE__MAKE_TIMERS( pipe_asio_write_read_64k );
 
     CASE__MAKE_TIMERS( deque_int32_copy16 );
     CASE__MAKE_TIMERS( deque_int32_copy256 );

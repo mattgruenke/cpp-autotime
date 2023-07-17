@@ -47,6 +47,7 @@ const char *ToCStr( Category c )
     case Category::n: \
         return #n
 
+    CASE( asio );
     CASE( atomic );
     CASE( cache );
     CASE( condvar );
@@ -131,6 +132,12 @@ const char *ToCStr( Benchmark b )
 #define CASE( n ) \
     case Benchmark::n: \
         return #n
+
+    CASE( asio_dispatch );
+    CASE( asio_dispatch_strand );
+    CASE( asio_post );
+    CASE( asio_post_strand );
+    CASE( asio_post_pingpong );
 
     CASE( atomic_increment );
     CASE( atomic_cmp_exchg_weak_xpctd );
@@ -235,6 +242,15 @@ const char *ToCStr( Benchmark b )
     CASE( pipe_pingpong_4k );
     CASE( pipe_pingpong_16k );
     CASE( pipe_pingpong_64k );
+    CASE( pipe_asio_read );
+    CASE( pipe_asio_read_async );
+    CASE( pipe_asio_write );
+    CASE( pipe_asio_write_async );
+    CASE( pipe_asio_write_read_256 );
+    CASE( pipe_asio_write_read_1k );
+    CASE( pipe_asio_write_read_4k );
+    CASE( pipe_asio_write_read_16k );
+    CASE( pipe_asio_write_read_64k );
 
     CASE( deque_int32_copy16 );
     CASE( deque_int32_copy256 );
@@ -533,6 +549,16 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
     static const std::map< Category, std::set< Benchmark > > map =
         {
             {
+                Category::asio,
+                {
+                    Benchmark::asio_dispatch,
+                    Benchmark::asio_dispatch_strand,
+                    Benchmark::asio_post,
+                    Benchmark::asio_post_strand,
+                    Benchmark::asio_post_pingpong,
+                },
+            },
+            {
                 Category::atomic,
                 {
                     Benchmark::atomic_increment,
@@ -678,6 +704,15 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::pipe_pingpong_4k,
                     Benchmark::pipe_pingpong_16k,
                     Benchmark::pipe_pingpong_64k,
+                    Benchmark::pipe_asio_read,
+                    Benchmark::pipe_asio_read_async,
+                    Benchmark::pipe_asio_write,
+                    Benchmark::pipe_asio_write_async,
+                    Benchmark::pipe_asio_write_read_256,
+                    Benchmark::pipe_asio_write_read_1k,
+                    Benchmark::pipe_asio_write_read_4k,
+                    Benchmark::pipe_asio_write_read_16k,
+                    Benchmark::pipe_asio_write_read_64k,
                 },
             },
             {

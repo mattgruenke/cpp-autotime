@@ -6,6 +6,7 @@ set( CMAKE_CXX_EXTENSIONS OFF )
 find_package( Boost
     COMPONENTS REQUIRED
         program_options
+        system
 )
 
 
@@ -13,6 +14,7 @@ find_package( Threads REQUIRED )
 
 
 add_executable( autotime-bench
+    asio_benchmarks.cpp
     atomic_benchmarks.cpp
     condvar_benchmarks.cpp
     container_benchmarks.cpp
@@ -42,6 +44,7 @@ add_executable( autotime-bench
 target_link_libraries( autotime-bench
     autotime
     Boost::program_options
+    Boost::system
     Threads::Threads
 )
 

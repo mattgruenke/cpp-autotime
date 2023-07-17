@@ -29,7 +29,8 @@ namespace bench
 
 enum class Category
 {
-    atomic, first = atomic,
+    asio, first = asio,
+    atomic,
     cache,
     condvar,
     directory,
@@ -71,8 +72,15 @@ std::ostream &operator<<( std::ostream &ostream, Category c );
 
 enum class Benchmark
 {
+    // asio:
+    asio_dispatch, first = asio_dispatch,
+    asio_dispatch_strand,
+    asio_post,
+    asio_post_strand,
+    asio_post_pingpong,
+
     // atomic:
-    atomic_increment, first = atomic_increment,
+    atomic_increment,
     atomic_cmp_exchg_weak_xpctd,
     atomic_cmp_exchg_weak_other,
     atomic_cmp_exchg_strong_xpctd,
@@ -185,6 +193,16 @@ enum class Benchmark
     pipe_pingpong_4k,
     pipe_pingpong_16k,
     pipe_pingpong_64k,
+
+    pipe_asio_read,
+    pipe_asio_read_async,
+    pipe_asio_write,
+    pipe_asio_write_async,
+    pipe_asio_write_read_256,
+    pipe_asio_write_read_1k,
+    pipe_asio_write_read_4k,
+    pipe_asio_write_read_16k,
+    pipe_asio_write_read_64k,
 
     // std_deque
     deque_int32_copy16,
