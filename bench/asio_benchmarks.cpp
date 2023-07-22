@@ -149,9 +149,8 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
     {
         std::shared_ptr< AsioCounter > p_this = shared_from_this();
         std::shared_ptr< AsioCounter > p_other = std::make_shared< AsioCounter >();
-        std::shared_ptr< std::thread > p_thread = std::make_shared< std::thread >();
 
-        return [p_this, p_other, p_thread]( int num_iters )
+        return [p_this, p_other]( int num_iters )
             {
                 p_this->iosvc_.reset();
                 p_other->iosvc_.reset();
@@ -168,7 +167,10 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                         p_other->iosvc_.run();
                     };
 
-                *p_thread = std::thread( threadfunc );
+                std::thread thread{ threadfunc };
+                std::promise< void > thread_started;
+                p_other->iosvc_.post( [&thread_started]() { thread_started.set_value(); } );
+                thread_started.get_future().wait();
 
                 AsioCounter *p2 = p_other.get();
                 p_this->cb_ = [p2, num_iters, &work]()
@@ -188,7 +190,7 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                 p_this->iosvc_.run();
                 Durations durs = End( start_times );
 
-                p_thread->join();
+                thread.join();
 
                 return durs;
             };
