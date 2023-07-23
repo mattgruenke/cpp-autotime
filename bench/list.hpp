@@ -203,6 +203,8 @@ enum class Benchmark
     pipe_asio_write_read_4k,
     pipe_asio_write_read_16k,
     pipe_asio_write_read_64k,
+    pipe_asio_pingpong,
+    pipe_asio_pingpong_threaded,
 
     // std_deque
     deque_int32_copy16,

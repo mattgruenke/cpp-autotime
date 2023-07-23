@@ -240,13 +240,20 @@ struct Pipe
 
     explicit Pipe( asio::io_service &iosvc )
     :
+        Pipe( iosvc, iosvc )
+    {
+    }
+
+    Pipe( asio::io_service &iosvc_rd, asio::io_service &iosvc_wr )
+    :
         capacity_{ GetMaxPipeSize() }
     {
         int fds[2] = { -1, -1 };
         OpenPipe( fds );
 
         // Transfer ownership of the fds to asio, which handles closing them.
-        for (int fd: fds) fds_.emplace_back( iosvc, fd );
+        fds_.emplace_back( iosvc_rd, fds[0] );
+        fds_.emplace_back( iosvc_wr, fds[1] );
 
         SetPipeSize( fds, capacity_ );
     }
@@ -258,9 +265,9 @@ template<
 >
 struct Stream
 {
-    descriptor_type &stream_;
-    size_t num_iter_ = 0;
-    size_t i_ = 0;
+    descriptor_type &desc_;
+    int num_iters_ = 0;
+    int i_ = 0;
     const size_t io_size = 1;
     std::vector< uint8_t > storage_;
     asio::mutable_buffers_1 buffer_;
@@ -269,9 +276,9 @@ struct Stream
     using op_type = void (descriptor_type::*)( const asio::mutable_buffers_1 &, cb_type && );
     op_type op_ = nullptr;
 
-    Stream( descriptor_type &stream )
+    Stream( descriptor_type &desc )
     :
-        stream_{ stream },
+        desc_{ desc },
         storage_( io_size ),
         buffer_( asio::buffer( storage_ ) )
     {
@@ -283,38 +290,38 @@ struct Stream
         {
             if (error.value() != EINTR) throw boost::system::system_error( error );
         }
-        else if (++i_ >= num_iter_)
+        else if (++i_ >= num_iters_)
         {
             done_promise_.set_value();
             return;
         }
 
-        (stream_.*op_)( buffer_, std::bind( &Stream::iterate, this, std::placeholders::_1 ) );
+        (desc_.*op_)( buffer_, std::bind( &Stream::iterate, this, std::placeholders::_1 ) );
     }
 
-    void repeat_async( op_type op, size_t num_iter )
+    void repeat_async( op_type op, int num_iters )
     {
         // Setup class members used by iterate().
-        num_iter_ = num_iter;
+        num_iters_ = num_iters;
         i_ = 0;
         op_ = op;
 
         // Initiate first iteration.
-        (stream_.*op)( buffer_, std::bind( &Stream::iterate, this, std::placeholders::_1 ) );
+        (desc_.*op)( buffer_, std::bind( &Stream::iterate, this, std::placeholders::_1 ) );
     }
 
-    void read_async( size_t num_iter )
+    void read_async( int num_iters )
     {
         this->repeat_async(
             &descriptor_type::template async_read_some< asio::mutable_buffers_1, cb_type >,
-            num_iter );
+            num_iters );
     }
 
-    void write_async( size_t num_iter )
+    void write_async( int num_iters )
     {
         this->repeat_async(
             &descriptor_type::template async_write_some< asio::mutable_buffers_1, cb_type >,
-            num_iter );
+            num_iters );
     }
 
     std::future< void > getFuture()
@@ -436,6 +443,133 @@ template<> BenchTimers MakeTimers< Benchmark::pipe_asio_write_async >()
         };
 
     return { time_f, nullptr };
+}
+
+
+template< 
+    typename descriptor_type
+>
+struct Ponger
+{
+    using stream_type = Stream< descriptor_type >;
+
+    const int num_iters_;
+    stream_type &read_stream_;
+    stream_type &write_stream_;
+
+    Ponger( int num_iters, stream_type &read_stream, stream_type &write_stream )
+    :
+        num_iters_{ num_iters },
+        read_stream_{ read_stream },
+        write_stream_{ write_stream }
+    {
+    }
+
+    void throw_if( const boost::system::error_code &error )
+    {
+        if (error)
+        {
+            if (error.value() != EINTR) throw boost::system::system_error( error );
+        }
+    }
+
+    void async_read()
+    {
+        if (read_stream_.i_++ >= num_iters_) return;
+
+        using namespace std::placeholders;
+        read_stream_.desc_.async_read_some( read_stream_.buffer_,
+            std::bind( &Ponger::read_handler, this, _1, _2 ) );
+    }
+
+    void async_write()
+    {
+        if (write_stream_.i_++ >= num_iters_) return;
+
+        using namespace std::placeholders;
+        write_stream_.desc_.async_write_some( write_stream_.buffer_, 
+            std::bind( &Ponger::write_handler, this, _1, _2 ) );
+    }
+
+    void read_handler( const boost::system::error_code &error, size_t bytes_transferred )
+    {
+        this->throw_if( error );
+        if (bytes_transferred != read_stream_.storage_.size())
+        {
+            throw std::runtime_error( "Incomplete read" );
+        }
+        this->async_write();
+    }
+
+    void write_handler( const boost::system::error_code &error, size_t bytes_transferred )
+    {
+        this->throw_if( error );
+        if (bytes_transferred != write_stream_.storage_.size())
+        {
+            throw std::runtime_error( "Incomplete write" );
+        }
+        this->async_read();
+    }
+};
+
+
+static BenchTimers MakePingPongTimer( bool second_thread )
+{
+    Timer time_f = [second_thread]( int num_iters )
+        {
+            asio::io_service iosvc0;
+            asio::io_service iosvc1;
+
+            Pipe pipe0{ iosvc0, second_thread ? iosvc1 : iosvc0 };
+            Pipe pipe1{ second_thread ? iosvc1 : iosvc0, iosvc0 };
+            using descriptor_type = asio::posix::stream_descriptor;
+            Stream< descriptor_type > pipe0_rd{ pipe0.fds_[0] };
+            Stream< descriptor_type > pipe0_wr{ pipe0.fds_[1] };
+            Stream< descriptor_type > pipe1_rd{ pipe1.fds_[0] };
+            Stream< descriptor_type > pipe1_wr{ pipe1.fds_[1] };
+            Ponger< descriptor_type > ponger0{ num_iters, pipe0_rd, pipe1_wr };
+            Ponger< descriptor_type > ponger1{ num_iters, pipe1_rd, pipe0_wr };
+
+            ponger1.async_read();
+
+            std::thread thread;
+            if (second_thread)
+            {
+                auto threadfunc = [&iosvc1, &ponger1]()
+                    {
+                        SetCoreAffinity( GetSecondaryCoreId() );
+                        iosvc1.run();
+                    };
+
+                std::promise< void > thread_started;
+                iosvc1.post( [&thread_started]() { thread_started.set_value(); } );
+                thread = std::thread{ threadfunc };
+                thread_started.get_future().wait();
+            }
+
+            TimePoints start_times = Start();
+            ponger0.async_write();
+            iosvc0.run();
+            Durations durs = End( start_times );
+
+            if (second_thread) thread.join();
+
+            return durs;
+        };
+
+    return { time_f, nullptr };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::pipe_asio_pingpong >()
+{
+    return MakePingPongTimer( false );
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::pipe_asio_pingpong_threaded >()
+{
+    return MakePingPongTimer( true );
 }
 
 

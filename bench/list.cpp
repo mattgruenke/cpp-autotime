@@ -251,6 +251,8 @@ const char *ToCStr( Benchmark b )
     CASE( pipe_asio_write_read_4k );
     CASE( pipe_asio_write_read_16k );
     CASE( pipe_asio_write_read_64k );
+    CASE( pipe_asio_pingpong );
+    CASE( pipe_asio_pingpong_threaded );
 
     CASE( deque_int32_copy16 );
     CASE( deque_int32_copy256 );
@@ -713,6 +715,8 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::pipe_asio_write_read_4k,
                     Benchmark::pipe_asio_write_read_16k,
                     Benchmark::pipe_asio_write_read_64k,
+                    Benchmark::pipe_asio_pingpong,
+                    Benchmark::pipe_asio_pingpong_threaded,
                 },
             },
             {

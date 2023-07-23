@@ -146,6 +146,8 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( pipe_asio_write_read_4k );
     CASE__MAKE_TIMERS( pipe_asio_write_read_16k );
     CASE__MAKE_TIMERS( pipe_asio_write_read_64k );
+    CASE__MAKE_TIMERS( pipe_asio_pingpong );
+    CASE__MAKE_TIMERS( pipe_asio_pingpong_threaded );
 
     CASE__MAKE_TIMERS( deque_int32_copy16 );
     CASE__MAKE_TIMERS( deque_int32_copy256 );
