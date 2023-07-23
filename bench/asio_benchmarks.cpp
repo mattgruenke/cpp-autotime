@@ -109,7 +109,7 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                 AsioCounter *p = p_this.get();
                 p_this->cb_ = [p, num_iters]()
                     {
-                        if (++p->i_ < num_iters) p->iosvc_.post( p->cb_ );
+                        if (p->i_++ < num_iters) p->iosvc_.post( p->cb_ );
                     };
 
                 TimePoints start_times = Start();
@@ -133,7 +133,7 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                 AsioCounter *p = p_this.get();
                 p_this->cb_ = [p, num_iters]()
                     {
-                        if (++p->i_ < num_iters) p->strand_.post( p->cb_ );
+                        if (p->i_++ < num_iters) p->strand_.post( p->cb_ );
                     };
 
                 TimePoints start_times = Start();
@@ -175,7 +175,7 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                 AsioCounter *p2 = p_other.get();
                 p_this->cb_ = [p2, num_iters, &work]()
                     {
-                        if (++p2->i_ < num_iters) p2->iosvc_.post( p2->cb_ );
+                        if (p2->i_++ < num_iters) p2->iosvc_.post( p2->cb_ );
                         else work.clear();
                     };
 
@@ -290,7 +290,7 @@ struct Stream
         {
             if (error.value() != EINTR) throw boost::system::system_error( error );
         }
-        else if (++i_ >= num_iters_)
+        else if (i_++ >= num_iters_)
         {
             done_promise_.set_value();
             return;
