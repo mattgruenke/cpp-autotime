@@ -134,10 +134,21 @@ const char *ToCStr( Benchmark b )
         return #n
 
     CASE( asio_dispatch );
+    CASE( asio_dispatch_wait );
     CASE( asio_dispatch_strand );
+    CASE( asio_dispatch_strand_wait );
+    CASE( asio_dispatch_threaded );
+    CASE( asio_dispatch_threaded_wait );
+    CASE( asio_dispatch_strand_threaded_wait );
     CASE( asio_post );
-    CASE( asio_post_strand );
+    CASE( asio_post_wait );
+    CASE( asio_post_threaded );
+    CASE( asio_post_threaded_wait );
+    CASE( asio_post_tail );
+    CASE( asio_post_tail_strand );
     CASE( asio_post_pingpong );
+    CASE( asio_reset );
+    CASE( asio_run );
 
     CASE( atomic_increment );
     CASE( atomic_cmp_exchg_weak_xpctd );
@@ -554,10 +565,21 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                 Category::asio,
                 {
                     Benchmark::asio_dispatch,
+                    Benchmark::asio_dispatch_wait,
                     Benchmark::asio_dispatch_strand,
+                    Benchmark::asio_dispatch_strand_wait,
+                    Benchmark::asio_dispatch_threaded,
+                    Benchmark::asio_dispatch_threaded_wait,
+                    Benchmark::asio_dispatch_strand_threaded_wait,
                     Benchmark::asio_post,
-                    Benchmark::asio_post_strand,
+                    Benchmark::asio_post_wait,
+                    Benchmark::asio_post_threaded,
+                    Benchmark::asio_post_threaded_wait,
+                    Benchmark::asio_post_tail,
+                    Benchmark::asio_post_tail_strand,
                     Benchmark::asio_post_pingpong,
+                    Benchmark::asio_reset,
+                    Benchmark::asio_run,
                 },
             },
             {

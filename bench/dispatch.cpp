@@ -29,10 +29,21 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
         return MakeTimers< Benchmark::n >()
 
     CASE__MAKE_TIMERS( asio_dispatch );
+    CASE__MAKE_TIMERS( asio_dispatch_wait );
     CASE__MAKE_TIMERS( asio_dispatch_strand );
+    CASE__MAKE_TIMERS( asio_dispatch_strand_wait );
+    CASE__MAKE_TIMERS( asio_dispatch_threaded );
+    CASE__MAKE_TIMERS( asio_dispatch_threaded_wait );
+    CASE__MAKE_TIMERS( asio_dispatch_strand_threaded_wait );
     CASE__MAKE_TIMERS( asio_post );
-    CASE__MAKE_TIMERS( asio_post_strand );
+    CASE__MAKE_TIMERS( asio_post_wait );
+    CASE__MAKE_TIMERS( asio_post_threaded );
+    CASE__MAKE_TIMERS( asio_post_threaded_wait );
+    CASE__MAKE_TIMERS( asio_post_tail );
+    CASE__MAKE_TIMERS( asio_post_tail_strand );
     CASE__MAKE_TIMERS( asio_post_pingpong );
+    CASE__MAKE_TIMERS( asio_reset );
+    CASE__MAKE_TIMERS( asio_run );
 
     CASE__MAKE_TIMERS( atomic_increment );
     CASE__MAKE_TIMERS( atomic_cmp_exchg_weak_xpctd );

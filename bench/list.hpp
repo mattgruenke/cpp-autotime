@@ -74,10 +74,21 @@ enum class Benchmark
 {
     // asio:
     asio_dispatch, first = asio_dispatch,
+    asio_dispatch_wait,
     asio_dispatch_strand,
+    asio_dispatch_strand_wait,
+    asio_dispatch_threaded,
+    asio_dispatch_threaded_wait,
+    asio_dispatch_strand_threaded_wait,
     asio_post,
-    asio_post_strand,
+    asio_post_wait,
+    asio_post_threaded,
+    asio_post_threaded_wait,
+    asio_post_tail,
+    asio_post_tail_strand,
     asio_post_pingpong,
+    asio_reset,
+    asio_run,
 
     // atomic:
     atomic_increment,

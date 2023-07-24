@@ -18,6 +18,7 @@
 #include <vector>
 
 #include <boost/asio.hpp>
+#include <boost/optional.hpp>
 
 #include "autotime/os.hpp"
 #include "autotime/overhead.hpp"
@@ -42,14 +43,29 @@ namespace bench
 struct AsioCounter: std::enable_shared_from_this< AsioCounter >
 {
     asio::io_service iosvc_;
-    asio::io_service::strand strand_;
+    boost::optional< asio::io_service::strand > strand_;
     int i_ = 0;
     std::function< void() > cb_;
 
     AsioCounter()
-    :
-        strand_{ iosvc_ }
     {
+    }
+
+    std::thread StartIoThread()
+    {
+        std::shared_ptr< AsioCounter > p_this = shared_from_this();
+        auto threadfunc = [p_this]()
+            {
+                SetCoreAffinity( GetSecondaryCoreId() );
+                p_this->iosvc_.run();
+            };
+
+        std::promise< void > thread_started;
+        p_this->iosvc_.post( [&thread_started]() { thread_started.set_value(); } );
+        std::thread thread = std::thread{ threadfunc };
+        thread_started.get_future().wait();
+
+        return thread;
     }
 
     static Timer MakeOverheadTimer()
@@ -63,85 +79,159 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
         return MakeTimer( o );
     }
 
-    Timer MakeDispatchTimer()
+    Timer MakeIoResetTimer()
     {
         std::shared_ptr< AsioCounter > p_this = shared_from_this();
 
-        return [p_this]( int num_iters )
+        std::function< void() > f = [p_this]()
+            {
+                p_this->iosvc_.reset();
+            };
+
+        return MakeTimer( f );
+    }
+
+    Timer MakeIoRunTimer()
+    {
+        std::shared_ptr< AsioCounter > p_this = shared_from_this();
+
+        std::function< void() > f = [p_this]()
+            {
+                p_this->iosvc_.reset();
+                p_this->iosvc_.run();
+            };
+
+        return MakeTimer( f );
+    }
+
+    Timer MakeDispatchTimer( bool separate_thread, bool wait, bool use_strand )
+    {
+        std::shared_ptr< AsioCounter > p_this = shared_from_this();
+
+        if (use_strand) strand_.emplace( iosvc_ );
+
+        return [p_this, separate_thread, wait, use_strand]( int num_iters )
             {
                 p_this->iosvc_.reset();
 
+                boost::optional< asio::io_service::work > work;
+                std::thread thread;
+                if (separate_thread)
+                {
+                    work.emplace( p_this->iosvc_ );
+                    thread = p_this->StartIoThread();
+                }
+
                 TimePoints start_times = Start();
 
-                for (int i = 0; i < num_iters; ++i) p_this->iosvc_.dispatch( [](){} );
-                p_this->iosvc_.run();
+                for (int i = 0; i < num_iters-1; ++i)
+                {
+                    if (use_strand) p_this->strand_->dispatch( [](){} );
+                    else p_this->iosvc_.dispatch( [](){} );
+                }
+
+                std::promise< void > thread_sync;
+                auto sync_cb = [&thread_sync]() { thread_sync.set_value(); };
+                if (use_strand) p_this->strand_->dispatch( sync_cb );
+                else p_this->iosvc_.dispatch( sync_cb );
+
+                Durations durs{};
+                if (!wait) durs = End( start_times );
+                else if (separate_thread)
+                {
+                    thread_sync.get_future().wait();
+                    durs = End( start_times );
+                }
+                else
+                {
+                    p_this->iosvc_.run();
+                    durs = End( start_times );
+                }
+
+                if (separate_thread)
+                {
+                    work.reset();
+                    thread.join();
+                }
 
                 return End( start_times );
             };
     }
 
-    Timer MakeStrandDispatchTimer()
+    Timer MakeTailPostTimer( bool use_strand )
     {
         std::shared_ptr< AsioCounter > p_this = shared_from_this();
 
-        return [p_this]( int num_iters )
-            {
-                p_this->iosvc_.reset();
+        if (use_strand) strand_.emplace( iosvc_ );
 
-                TimePoints start_times = Start();
-
-                for (int i = 0; i < num_iters; ++i) p_this->strand_.dispatch( [](){} );
-                p_this->iosvc_.run();
-
-                return End( start_times );
-            };
-    }
-
-    Timer MakePostTimer()
-    {
-        std::shared_ptr< AsioCounter > p_this = shared_from_this();
-
-        return [p_this]( int num_iters )
+        return [p_this, use_strand]( int num_iters )
             {
                 p_this->iosvc_.reset();
                 p_this->i_ = 0;
 
                 AsioCounter *p = p_this.get();
-                p_this->cb_ = [p, num_iters]()
+                p_this->cb_ = [p, num_iters, use_strand]()
                     {
-                        if (p->i_++ < num_iters) p->iosvc_.post( p->cb_ );
+                        if (p->i_++ >= num_iters) return;
+
+                        if (use_strand) p->strand_->post( p->cb_ );
+                        else p->iosvc_.post( p->cb_ );
                     };
 
                 TimePoints start_times = Start();
 
-                p_this->iosvc_.post( p_this->cb_ );
+                if (use_strand) p_this->strand_->post( p_this->cb_ );
+                else p_this->iosvc_.post( p_this->cb_ );
+
                 p_this->iosvc_.run();
 
                 return End( start_times );
             };
     }
 
-    Timer MakeStrandPostTimer()
+    Timer MakePostLoopTimer( bool separate_thread, bool wait )
     {
         std::shared_ptr< AsioCounter > p_this = shared_from_this();
 
-        return [p_this]( int num_iters )
+        return [p_this, separate_thread, wait]( int num_iters )
             {
                 p_this->iosvc_.reset();
-                p_this->i_ = 0;
 
-                AsioCounter *p = p_this.get();
-                p_this->cb_ = [p, num_iters]()
-                    {
-                        if (p->i_++ < num_iters) p->strand_.post( p->cb_ );
-                    };
+                boost::optional< asio::io_service::work > work;
+                std::thread thread;
+                if (separate_thread)
+                {
+                    work.emplace( p_this->iosvc_ );
+                    thread = p_this->StartIoThread();
+                }
 
                 TimePoints start_times = Start();
 
-                p_this->strand_.post( p_this->cb_ );
-                p_this->iosvc_.run();
+                for (int i = 0; i < num_iters - 1; ++i) p_this->iosvc_.post( [](){} );
 
-                return End( start_times );
+                std::promise< void > thread_sync;
+                p_this->iosvc_.post( [&thread_sync]() { thread_sync.set_value(); } );
+
+                Durations durs{};
+                if (!wait) durs = End( start_times );
+                else if (separate_thread)
+                {
+                    thread_sync.get_future().wait();
+                    durs = End( start_times );
+                }
+                else
+                {
+                    p_this->iosvc_.run();
+                    durs = End( start_times );
+                }
+
+                if (separate_thread)
+                {
+                    work.reset();
+                    thread.join();
+                }
+
+                return durs;
             };
     }
 
@@ -161,16 +251,7 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
                 work.emplace_back( p_this->iosvc_ );
                 work.emplace_back( p_other->iosvc_ );
 
-                auto threadfunc = [p_other]()
-                    {
-                        SetCoreAffinity( GetSecondaryCoreId() );
-                        p_other->iosvc_.run();
-                    };
-
-                std::thread thread{ threadfunc };
-                std::promise< void > thread_started;
-                p_other->iosvc_.post( [&thread_started]() { thread_started.set_value(); } );
-                thread_started.get_future().wait();
+                std::thread thread = p_other->StartIoThread();
 
                 AsioCounter *p2 = p_other.get();
                 p_this->cb_ = [p2, num_iters, &work]()
@@ -201,28 +282,91 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
 template<> BenchTimers MakeTimers< Benchmark::asio_dispatch >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
-    return { counter->MakeDispatchTimer(), counter->MakeOverheadTimer() };
+    return { counter->MakeDispatchTimer( false, false, false ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_wait >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeDispatchTimer( false, true, false ), counter->MakeOverheadTimer() };
 }
 
 
 template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_strand >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
-    return { counter->MakeStrandDispatchTimer(), counter->MakeOverheadTimer() };
+    return { counter->MakeDispatchTimer( false, false, true ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_strand_wait >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeDispatchTimer( false, true, true ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_threaded >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeDispatchTimer( true, false, false ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_threaded_wait >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeDispatchTimer( true, true, false ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_dispatch_strand_threaded_wait >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeDispatchTimer( true, true, true ), counter->MakeOverheadTimer() };
 }
 
 
 template<> BenchTimers MakeTimers< Benchmark::asio_post >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
-    return { counter->MakePostTimer(), counter->MakeOverheadTimer() };
+    return { counter->MakePostLoopTimer( false, false ), nullptr };
 }
 
 
-template<> BenchTimers MakeTimers< Benchmark::asio_post_strand >()
+template<> BenchTimers MakeTimers< Benchmark::asio_post_wait >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
-    return { counter->MakeStrandPostTimer(), counter->MakeOverheadTimer() };
+    return { counter->MakePostLoopTimer( false, true ), nullptr };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_post_threaded >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakePostLoopTimer( true, false ), nullptr };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_post_threaded_wait >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakePostLoopTimer( true, true ), nullptr };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_post_tail >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeTailPostTimer( false ), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_post_tail_strand >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeTailPostTimer( true ), counter->MakeOverheadTimer() };
 }
 
 
@@ -230,6 +374,20 @@ template<> BenchTimers MakeTimers< Benchmark::asio_post_pingpong >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
     return { counter->MakePingPongTimer(), counter->MakeOverheadTimer() };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_reset >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeIoResetTimer(), nullptr };
+}
+
+
+template<> BenchTimers MakeTimers< Benchmark::asio_run >()
+{
+    std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
+    return { counter->MakeIoRunTimer(), counter->MakeIoResetTimer() };
 }
 
 
@@ -535,7 +693,7 @@ static BenchTimers MakePingPongTimer( bool second_thread )
             std::thread thread;
             if (second_thread)
             {
-                auto threadfunc = [&iosvc1, &ponger1]()
+                auto threadfunc = [&iosvc1]()
                     {
                         SetCoreAffinity( GetSecondaryCoreId() );
                         iosvc1.run();
