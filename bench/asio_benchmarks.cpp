@@ -25,6 +25,7 @@
 #include "autotime/overhead_impl.hpp"
 #include "autotime/time.hpp"
 
+#include "description.hpp"
 #include "dispatch.hpp"
 #include "error_utils.hpp"
 #include "list.hpp"
@@ -38,6 +39,14 @@ using namespace autotime;
 
 namespace bench
 {
+
+
+template<> Description Describe< Category::asio >()
+{
+    Description desc;
+    desc.measures = "Various Boost.ASIO io_service functions and communication mechanisms.";
+    return desc;
+}
 
 
 struct AsioCounter: std::enable_shared_from_this< AsioCounter >
@@ -74,6 +83,18 @@ struct AsioCounter: std::enable_shared_from_this< AsioCounter >
         std::function< void() > o = [nullary]()
             {
                 Overhead_void< std::function< void() > >( nullary );
+            };
+
+        return MakeTimer( o );
+    }
+
+    Timer MakeGetIoServiceTimer()
+    {
+        std::shared_ptr< AsioCounter > p_this = shared_from_this();
+
+        std::function< void() > o = [p_this]() -> const asio::io_service &
+            {
+                return p_this->iosvc_;
             };
 
         return MakeTimer( o );
@@ -377,10 +398,28 @@ template<> BenchTimers MakeTimers< Benchmark::asio_post_pingpong >()
 }
 
 
+template<> Description Describe< Benchmark::asio_reset >()
+{
+    Description desc;
+    desc.measures = "asio::io_service::reset() on an empty io_service.";
+    desc.overhead = "Accessing the io_service via a shared_ptr, from within a lambda.";
+    return desc;
+}
+
+
 template<> BenchTimers MakeTimers< Benchmark::asio_reset >()
 {
     std::shared_ptr< AsioCounter > counter = std::make_shared< AsioCounter >();
-    return { counter->MakeIoResetTimer(), nullptr };
+    return { counter->MakeIoResetTimer(), counter->MakeGetIoServiceTimer() };
+}
+
+
+template<> Description Describe< Benchmark::asio_run >()
+{
+    Description desc;
+    desc.measures = "asio::io_service::run() on an empty io_service.";
+    desc.overhead = "First calling asio::io_service::reset().";
+    return desc;
 }
 
 
