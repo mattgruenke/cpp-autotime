@@ -506,11 +506,26 @@ const std::map< Benchmark, Category > &BenchmarkCategoryMap();
 std::set< Benchmark > ParseSpecification( const std::string &spec );
 
 
+    //! Returns the set of categories containing the specified benchmarks.
+std::set< Category > CategoriesOf(
+    const std::set< Benchmark > &list
+);
+
+
+    //! Returns a map of the specified benchmarks, grouped by category.
+std::map< Category, std::set< Benchmark > > GroupByCategory(
+    const std::set< Benchmark > &list
+);
+
+
+    //! Controls the behavior of the --list command.
 enum class ListMode
 {
-    benchmarks, first = benchmarks,
-    categories,
-    joint,      last = joint
+    benchmarks,     //!< List only individual benchmarks.
+    first = benchmarks,
+    categories,     //!< List only benchmark categories.
+    joint,          //!< List benchmarks, grouped by category.
+    last = joint
 };
 
 ListMode operator++( ListMode &mode );
@@ -525,7 +540,10 @@ std::ostream &operator<<( std::ostream &ostream, ListMode mode );
 
     //! Prints a list of benchmarks/categories to an ostream.
 std::ostream &PrintList(
-    std::ostream &ostream, const std::set< Benchmark > &list, ListMode mode );
+    std::ostream &ostream,
+    const std::set< Benchmark > &list,
+    ListMode mode
+);
 
 
 } // namespace bench

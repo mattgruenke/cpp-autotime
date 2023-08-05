@@ -1106,6 +1106,38 @@ std::set< Benchmark > ParseSpecification( const std::string &spec )
 
 
 
+// CategoriesOf():
+std::set< Category > CategoriesOf( const std::set< Benchmark > &list )
+{
+    const auto &category_of = BenchmarkCategoryMap();
+    std::set< Category > categories;
+    for (auto benchmark: list)
+    {
+        auto iter = category_of.find( benchmark );
+        if (iter != category_of.end()) categories.insert( iter->second );
+    }
+
+    return categories;
+}
+
+
+
+// GroupByCategory():
+std::map< Category, std::set< Benchmark > > GroupByCategory( const std::set< Benchmark > &list )
+{
+    const auto &category_of = BenchmarkCategoryMap();
+    std::map< Category, std::set< Benchmark > > by_category;
+    for (auto benchmark: list)
+    {
+        auto iter = category_of.find( benchmark );
+        if (iter != category_of.end()) by_category[iter->second].insert( benchmark );
+    }
+
+    return by_category;
+}
+
+
+
 // enum class ListMode:
 ListMode operator++( ListMode &mode )
 {
@@ -1165,7 +1197,7 @@ std::ostream &operator<<( std::ostream &ostream, ListMode mode )
 
 
 
-// Print():
+// PrintList():
 std::ostream &PrintList(
     std::ostream &ostream, const std::set< Benchmark > &list, ListMode mode )
 {
@@ -1177,27 +1209,14 @@ std::ostream &PrintList(
 
     case ListMode::categories:
         {
-            const auto &category_of = BenchmarkCategoryMap();
-            std::set< Category > categories;
-            for (auto benchmark: list)
-            {
-                auto iter = category_of.find( benchmark );
-                if (iter != category_of.end()) categories.insert( iter->second );
-            }
+            const std::set< Category > categories = CategoriesOf( list );
             for (auto category: categories) ostream << category << "\n";
         }
         break;
 
     case ListMode::joint:
         {
-            const auto &category_of = BenchmarkCategoryMap();
-            std::map< Category, std::set< Benchmark > > by_category;
-            for (auto benchmark: list)
-            {
-                auto iter = category_of.find( benchmark );
-                if (iter != category_of.end()) by_category[iter->second].insert( benchmark );
-            }
-
+            const std::map< Category, std::set< Benchmark > > by_category = GroupByCategory( list );
             for (auto category_benchmarks: by_category)
             {
                 ostream << category_benchmarks.first << ":\n";
