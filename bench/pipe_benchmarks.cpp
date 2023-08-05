@@ -63,7 +63,10 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_open_close >()
 
             if (pipe( fds )) throw_system_error( errno, "pipe()" );
 
-            for (int fd: fds) if (fd >= 0) ::close( fd );
+            for (int fd: fds)
+            {
+                if (fd >= 0 && close( fd )) throw_system_error( errno, "close()" );
+            }
         };
 
     return { MakeTimer( f ), MakeTimer( &Overhead_void<> ) };
@@ -120,7 +123,7 @@ struct Pipe
 
     ~Pipe()
     {
-        for (int fd: fds_) if (fd >= 0) ::close( fd );
+        ClosePipe( fds_ );
     }
 
     Pipe &operator=( const Pipe & ) = delete;
@@ -202,7 +205,7 @@ struct Pipe
     {
         if (fds_[1] >= 0)
         {
-            ::close( fds_[1] );
+            if (::close( fds_[1] )) throw_system_error( errno, "close()" );
             fds_[1] = -1;
         }
     }

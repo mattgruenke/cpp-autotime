@@ -35,6 +35,16 @@ void OpenPipe( int fds[2] )
 }
 
 
+void ClosePipe( int fds[2] )
+{
+    for (int i = 0; i < 2; ++i)
+    {
+        if (fds[i] >= 0 && close( fds[i] )) throw_system_error( errno, "close()" );
+        fds[i] = -1;
+    }
+}
+
+
 size_t GetMaxPipeSize()
 {
     // Cache the value for subsequent calls.

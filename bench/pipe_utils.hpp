@@ -29,6 +29,13 @@ namespace bench
 void OpenPipe( int fds[2] );
 
 
+    //! Closes an existing pipe.
+    /*!
+        @throws std::system_error if the close() fails.
+    */
+void ClosePipe( int fds[2] );
+
+
     //! Returns the system's maximum supported pipe buffer size.
 size_t GetMaxPipeSize();
 
