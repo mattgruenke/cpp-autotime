@@ -29,6 +29,7 @@
 #include <boost/optional.hpp>
 #include <boost/program_options.hpp>
 
+#include "description.hpp"
 #include "dispatch.hpp"
 #include "list.hpp"
 #include "output.hpp"
@@ -55,13 +56,18 @@ int main( int argc, char *argv[] )
     int warmup_limit_ms = 125;
     std::string spec = "all";
     boost::optional< ListMode > list_mode;
+    boost::optional< ListMode > describe_mode;
     bool run = false;
     Format format = Format::pretty;
 
     // Parse commandline options.
     namespace prog_opts = boost::program_options;
     prog_opts::options_description desc( "Allowed options", GetTermWidth() );
-    std::string list_help = "Print the complete list.  (options: " + List< ListMode >( ", " ) + ").";
+    std::string list_modes = List< ListMode >( ", " );
+    std::string list_help =
+        "Enumerate selected benchmarks or categories.  (options: " + list_modes + ").";
+    std::string describe_help =
+        "Print detailed info about benchmarks, categories.  (options: " + list_modes + ").";
     std::string format_help = "Output format (options: " + List< Format >( ", " ) + ").";
     desc.add_options()
         ( "help", "Show help message and exit." )
@@ -92,6 +98,10 @@ int main( int argc, char *argv[] )
           prog_opts::value< ListMode >()->value_name( "mode" )->implicit_value( ListMode::joint )->
             notifier( [&list_mode]( const ListMode &mode ){ list_mode = mode; } ),
           list_help.c_str() )
+        ( "describe",
+          prog_opts::value< ListMode >()->value_name( "mode" )->implicit_value( ListMode::joint )->
+            notifier( [&describe_mode]( const ListMode &mode ){ describe_mode = mode; } ),
+          describe_help.c_str() )
         ( "run",
           prog_opts::bool_switch( &run ),
           "Perform the benchmarks." )
@@ -125,6 +135,14 @@ int main( int argc, char *argv[] )
         PrintList( std::cout, benchmarks, *list_mode ) << "\n";
 
         // --run is implied only if --list is absent.
+        if (!run && !describe_mode) return 0;
+    }
+
+    if (describe_mode)
+    {
+        PrintDescriptions( std::cout, benchmarks, *describe_mode ) << "\n";
+
+        // Unless otherwise specified, this overrides --run.
         if (!run) return 0;
     }
 
