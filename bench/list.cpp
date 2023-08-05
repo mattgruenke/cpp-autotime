@@ -241,6 +241,7 @@ const char *ToCStr( Benchmark b )
     CASE( overhead_nullary_fn );
     CASE( overhead_nullary_ptr );
 
+    CASE( pipe_open_close );
     CASE( pipe_read );
     CASE( pipe_write );
     CASE( pipe_write_read_256 );
@@ -716,6 +717,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
             {
                 Category::pipe,
                 {
+                    Benchmark::pipe_open_close,
                     Benchmark::pipe_read,
                     Benchmark::pipe_write,
                     Benchmark::pipe_write_read_256,

@@ -29,6 +29,8 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( asio_reset );
     CASE__DESCRIBE( asio_run );
 
+    CASE__DESCRIBE( pipe_open_close );
+
 #undef CASE__DESCRIBE
 
     default:
@@ -48,6 +50,7 @@ Description Describe( Category category )
         return Describe< Category::n >()
 
     CASE__DESCRIBE( asio );
+    CASE__DESCRIBE( pipe );
 
 #undef CASE__DESCRIBE
 
@@ -79,7 +82,7 @@ std::ostream &PrintParagraphs(
     const std::string &name, const std::vector< std::string > &values, const std::string &indent )
 {
     ostream << indent << name << ":\n";
-    for (const std::string &value: values) ostream << "\n  " << indent << value << "\n";
+    for (const std::string &value: values) ostream << indent << "  " << value << "\n";
     return ostream;
 }
 

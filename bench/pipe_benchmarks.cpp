@@ -22,8 +22,10 @@
 #include <unistd.h>
 
 #include "autotime/os.hpp"
+#include "autotime/overhead.hpp"
 #include "autotime/time.hpp"
 
+#include "description.hpp"
 #include "dispatch.hpp"
 #include "error_utils.hpp"
 #include "list.hpp"
@@ -35,6 +37,37 @@ using namespace autotime;
 
 namespace bench
 {
+
+
+template<> Description Describe< Category::pipe >()
+{
+    Description desc;
+    desc.measures = "Pipe creation, throughput, and latency via POSIX and Boost.ASIO.";
+    return desc;
+}
+
+
+template<> Description Describe< Benchmark::pipe_open_close >()
+{
+    Description desc;
+    desc.measures = "pipe() and calling close() on each end.";
+    return desc;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::pipe_open_close >()
+{
+    std::function< void() > f = []()
+        {
+            int fds[2] = { -1, -1 };
+
+            if (pipe( fds )) throw_system_error( errno, "pipe()" );
+
+            for (int fd: fds) if (fd >= 0) ::close( fd );
+        };
+
+    return { MakeTimer( f ), MakeTimer( &Overhead_void<> ) };
+}
 
 
 struct BlockingPipeTraits

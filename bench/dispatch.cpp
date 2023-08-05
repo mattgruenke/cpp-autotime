@@ -136,6 +136,7 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( overhead_nullary_fn );
     CASE__MAKE_TIMERS( overhead_nullary_ptr );
 
+    CASE__MAKE_TIMERS( pipe_open_close );
     CASE__MAKE_TIMERS( pipe_read );
     CASE__MAKE_TIMERS( pipe_write );
     CASE__MAKE_TIMERS( pipe_write_read_256 );

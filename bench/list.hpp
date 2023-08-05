@@ -192,6 +192,7 @@ enum class Benchmark
     overhead_nullary_ptr,
 
     // pipe:
+    pipe_open_close,
     pipe_read,
     pipe_write,
     pipe_write_read_256,
