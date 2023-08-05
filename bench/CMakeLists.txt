@@ -40,7 +40,11 @@ add_executable( autotime-bench
     work_benchmarks.cpp
 )
 
-#target_compile_options( autotime-bench PRIVATE -O0 )
+target_compile_options( autotime-bench PRIVATE
+    -Wextra
+#    -Wno-unused-parameter
+#    -O0
+)
 
 target_link_libraries( autotime-bench
     autotime
