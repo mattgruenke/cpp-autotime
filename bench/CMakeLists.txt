@@ -5,6 +5,7 @@ set( CMAKE_CXX_EXTENSIONS OFF )
 
 find_package( Boost
     COMPONENTS REQUIRED
+        filesystem
         program_options
         system
 )
@@ -48,6 +49,7 @@ target_compile_options( autotime-bench PRIVATE
 
 target_link_libraries( autotime-bench
     autotime
+    Boost::filesystem
     Boost::program_options
     Boost::system
     Threads::Threads
