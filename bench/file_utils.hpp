@@ -44,6 +44,16 @@ void Close( int fd );
 void Unlink( const char *filename );
 
 
+    //! Wraps write(), looping until all bytes are written.
+    /*!
+        @throws std::system_error upon failure.
+
+        @note
+        Returns 0, in case of EINTR or EAGAIN.
+    */
+void Write( int fd, const void *buf, size_t count );
+
+
     //! Wraps write().
     /*!
         @throws std::system_error upon failure.
@@ -53,7 +63,7 @@ void Unlink( const char *filename );
         @note
         Returns 0, in case of EINTR or EAGAIN.
     */
-size_t Write( int fd, const void *buf, size_t count );
+size_t WriteSome( int fd, const void *buf, size_t count );
 
 
     //! Fills the file with random data.

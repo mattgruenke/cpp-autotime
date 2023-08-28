@@ -31,7 +31,7 @@ namespace bench
 
 int OpenFile( const char *filename, int flags )
 {
-    static constexpr mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+    constexpr mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
     int fd = open( filename, flags, mode );
     if (fd < 0) throw_system_error( errno, "open()" );
 
@@ -51,7 +51,14 @@ void Unlink( const char *filename )
 }
 
 
-size_t Write( int fd, const void *buf, size_t count )
+void Write( int fd, const void *buf, size_t count )
+{
+    size_t ofs = 0;
+    while (ofs < count) ofs += WriteSome( fd, (uint8_t *) buf + ofs, count - ofs );
+}
+
+
+size_t WriteSome( int fd, const void *buf, size_t count )
 {
     ssize_t written = write( fd, buf, count );
     if (written < 0)
@@ -80,7 +87,7 @@ void FillFile( int fd, size_t size )
 {
     static const auto array = MakeData();
     size_t remain = size;
-    while (remain > 0) remain -= Write( fd, array.data(), std::min( array.size(), remain ) );
+    while (remain > 0) remain -= WriteSome( fd, array.data(), std::min( array.size(), remain ) );
 }
 
 
