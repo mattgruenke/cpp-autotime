@@ -23,6 +23,7 @@ add_executable( autotime-bench
     dispatch.cpp
     exception_benchmarks.cpp
     exception_utils.cpp
+    file_benchmarks.cpp
     file_utils.cpp
     function_benchmarks.cpp
     function_utils.cpp

@@ -62,6 +62,20 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( exception_noexcept );
     CASE__MAKE_TIMERS( exception_try );
 
+    CASE__MAKE_TIMERS( file_append );
+    CASE__MAKE_TIMERS( file_close );
+    CASE__MAKE_TIMERS( file_create );
+    CASE__MAKE_TIMERS( file_fsync_0 );
+    CASE__MAKE_TIMERS( file_fsync_1 );
+    CASE__MAKE_TIMERS( file_fsync_block );
+    CASE__MAKE_TIMERS( file_open_nonexistent );
+    CASE__MAKE_TIMERS( file_open_ro );
+    CASE__MAKE_TIMERS( file_open_rw );
+    CASE__MAKE_TIMERS( file_open_trunc );
+    CASE__MAKE_TIMERS( file_stat );
+    CASE__MAKE_TIMERS( file_stat_nonexistent );
+    CASE__MAKE_TIMERS( file_unlink );
+
     CASE__MAKE_TIMERS( function_args0 );
     CASE__MAKE_TIMERS( function_args1 );
     CASE__MAKE_TIMERS( function_args2 );

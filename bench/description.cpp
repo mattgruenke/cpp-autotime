@@ -29,6 +29,20 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( asio_reset );
     CASE__DESCRIBE( asio_run );
 
+    CASE__DESCRIBE( file_append );
+    CASE__DESCRIBE( file_close );
+    CASE__DESCRIBE( file_create );
+    CASE__DESCRIBE( file_fsync_0 );
+    CASE__DESCRIBE( file_fsync_1 );
+    CASE__DESCRIBE( file_fsync_block );
+    CASE__DESCRIBE( file_open_nonexistent );
+    CASE__DESCRIBE( file_open_ro );
+    CASE__DESCRIBE( file_open_rw );
+    CASE__DESCRIBE( file_open_trunc );
+    CASE__DESCRIBE( file_stat );
+    CASE__DESCRIBE( file_stat_nonexistent );
+    CASE__DESCRIBE( file_unlink );
+
     CASE__DESCRIBE( pipe_open_close );
 
 #undef CASE__DESCRIBE
@@ -50,6 +64,7 @@ Description Describe( Category category )
         return Describe< Category::n >()
 
     CASE__DESCRIBE( asio );
+    CASE__DESCRIBE( file );
     CASE__DESCRIBE( pipe );
 
 #undef CASE__DESCRIBE

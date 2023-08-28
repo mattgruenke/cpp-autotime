@@ -110,6 +110,21 @@ enum class Benchmark
     exception_noexcept,
     exception_try,
 
+    // file:
+    file_append,
+    file_close,
+    file_create,
+    file_fsync_0,
+    file_fsync_1,
+    file_fsync_block,
+    file_open_nonexistent,
+    file_open_ro,
+    file_open_rw,
+    file_open_trunc,
+    file_stat,
+    file_stat_nonexistent,
+    file_unlink,
+
     // function:
     function_args0,
     function_args1,

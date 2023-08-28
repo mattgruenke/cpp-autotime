@@ -167,6 +167,20 @@ const char *ToCStr( Benchmark b )
     CASE( exception_noexcept );
     CASE( exception_try );
 
+    CASE( file_append );
+    CASE( file_close );
+    CASE( file_create );
+    CASE( file_fsync_0 );
+    CASE( file_fsync_1 );
+    CASE( file_fsync_block );
+    CASE( file_open_nonexistent );
+    CASE( file_open_ro );
+    CASE( file_open_rw );
+    CASE( file_open_trunc );
+    CASE( file_stat );
+    CASE( file_stat_nonexistent );
+    CASE( file_unlink );
+
     CASE( function_args0 );
     CASE( function_args1 );
     CASE( function_args2 );
@@ -610,6 +624,24 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::exception_catch_std,
                     Benchmark::exception_noexcept,
                     Benchmark::exception_try,
+                },
+            },
+            {
+                Category::file,
+                {
+                    Benchmark::file_append,
+                    Benchmark::file_close,
+                    Benchmark::file_create,
+                    Benchmark::file_fsync_0,
+                    Benchmark::file_fsync_1,
+                    Benchmark::file_fsync_block,
+                    Benchmark::file_open_nonexistent,
+                    Benchmark::file_open_ro,
+                    Benchmark::file_open_rw,
+                    Benchmark::file_open_trunc,
+                    Benchmark::file_stat,
+                    Benchmark::file_stat_nonexistent,
+                    Benchmark::file_unlink,
                 },
             },
             {
