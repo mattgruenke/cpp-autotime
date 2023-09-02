@@ -44,12 +44,30 @@ void Close( int fd );
 void Unlink( const char *filename );
 
 
-    //! Wraps write(), looping until all bytes are written.
+    //! Wraps lseek().
+    /*!
+        @throws std::system_error upon failure.
+    */
+size_t LSeek( int fd, ssize_t offset, int whence );
+
+    //! Wraps read(), looping until all requested bytes are read.
+    /*!
+        @throws std::system_error upon failure.
+    */
+void Read( int fd, void *buf, size_t count );
+
+    //! Wraps read().
     /*!
         @throws std::system_error upon failure.
 
         @note
         Returns 0, in case of EINTR or EAGAIN.
+    */
+size_t ReadSome( int fd, void *buf, size_t count );
+
+    //! Wraps write(), looping until all bytes are written.
+    /*!
+        @throws std::system_error upon failure.
     */
 void Write( int fd, const void *buf, size_t count );
 
@@ -125,15 +143,18 @@ value_type ReadFromFile(
     */
 struct ScopedFile
 {
-    static const int flags;
-    const std::string filename;
+    static const int default_flags;     // O_CREAT | O_RDWR
+
+    const int flags = default_flags;
+    std::string filename;
     int fd = -1;
 
         //! Instantiates with a uniquely-named file in the CWD.
-    ScopedFile();
+    explicit ScopedFile( int flags = default_flags );
 
         //! Opens the specified filename for read/write, creating if necessary.
-    explicit ScopedFile( const std::string &filename );
+    explicit ScopedFile(
+        const std::string &filename, int flags = default_flags );
 
         //! Closes (if open) and unlinks the file.
     ~ScopedFile();

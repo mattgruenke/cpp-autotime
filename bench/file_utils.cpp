@@ -51,6 +51,30 @@ void Unlink( const char *filename )
 }
 
 
+size_t LSeek( int fd, ssize_t offset, int whence )
+{
+    off_t ofs = lseek( fd, offset, whence );
+    if (ofs < 0) throw_system_error( errno, "lseek()" );
+    return static_cast< size_t >( ofs );
+}
+
+
+void Read( int fd, void *buf, size_t count )
+{
+    size_t ofs = 0;
+    while (ofs < count) ofs += ReadSome( fd, (uint8_t *) buf + ofs, count - ofs );
+}
+
+
+size_t ReadSome( int fd, void *buf, size_t count )
+{
+    ssize_t rtn = read( fd, buf, count );
+    if (rtn < 0 && errno != EAGAIN && errno != EINTR) throw_system_error( errno, "read()" );
+
+    return static_cast< size_t >( std::max< ssize_t >( 0, rtn ) );
+}
+
+
 void Write( int fd, const void *buf, size_t count )
 {
     size_t ofs = 0;
@@ -101,18 +125,19 @@ std::ifstream OpenIFStream( const std::string &filename, std::ifstream::openmode
 
 
 // struct ScopedFile:
-const int ScopedFile::flags = O_CREAT | O_RDWR;
+const int ScopedFile::default_flags = O_CREAT | O_RDWR;
 
 
-ScopedFile::ScopedFile()
+ScopedFile::ScopedFile( int flags )
 :
-    ScopedFile( filesystem::unique_path().native() )
+    ScopedFile( filesystem::unique_path().native(), flags )
 {
 }
 
 
-ScopedFile::ScopedFile( const std::string &filename )
+ScopedFile::ScopedFile( const std::string &filename, int flags )
 :
+    flags( flags ),
     filename( filename ),
     fd( OpenFile( filename.c_str(), flags ) )
 {
@@ -122,7 +147,7 @@ ScopedFile::ScopedFile( const std::string &filename )
 ScopedFile::~ScopedFile()
 {
     this->close();
-    Unlink( filename.c_str() );
+    if (!filename.empty()) Unlink( filename.c_str() );
 }
 
 
