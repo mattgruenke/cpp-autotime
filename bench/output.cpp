@@ -13,6 +13,7 @@
 
 #include "output.hpp"
 #include "enum_impl.hpp"
+#include "format_utils.hpp"
 
 #include <cmath>
 #include <stdexcept>
@@ -99,6 +100,19 @@ PrettyOutputFormatter::PrettyOutputFormatter( std::ostream &ostream )
 :
     ostream_( ostream )
 {
+}
+
+
+std::ostream &PrettyPrintSizeof( std::ostream &ostream, size_t size )
+{
+    const std::vector< std::string > prefixes = { "", "ki", "Mi", "Gi", "Ti" };
+    double exp = log2( size );
+    long int prefix_idx = lrint( std::min< double >( floor( exp / 10 ), prefixes.size() - 1 ) );
+    double scale = exp2( prefix_idx * 10 );
+    double scaled = size / scale;
+    if (floor( scaled ) == scaled) ostream << lrint( scaled );
+    else ostream << scaled;
+    return ostream << " " << prefixes.at( prefix_idx );
 }
 
 
