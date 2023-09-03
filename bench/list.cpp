@@ -170,16 +170,38 @@ const char *ToCStr( Benchmark b )
     CASE( file_append );
     CASE( file_close );
     CASE( file_create );
+    CASE( file_fdatasync_0 );
+    CASE( file_fdatasync_1 );
+    CASE( file_fdatasync_block );
     CASE( file_fsync_0 );
     CASE( file_fsync_1 );
     CASE( file_fsync_block );
+    CASE( file_lseek_random );
     CASE( file_open_nonexistent );
     CASE( file_open_ro );
     CASE( file_open_rw );
     CASE( file_open_trunc );
+    CASE( file_read_256 );
+    CASE( file_read_4k );
+    CASE( file_read_64k );
+    CASE( file_read_1M );
+    CASE( file_read_16M );
+    CASE( file_read_direct_4k );
+    CASE( file_read_direct_64k );
+    CASE( file_read_direct_1M );
+    CASE( file_read_direct_16M );
     CASE( file_stat );
     CASE( file_stat_nonexistent );
     CASE( file_unlink );
+    CASE( file_write_256 );
+    CASE( file_write_4k );
+    CASE( file_write_64k );
+    CASE( file_write_1M );
+    CASE( file_write_16M );
+    CASE( file_write_direct_4k );
+    CASE( file_write_direct_64k );
+    CASE( file_write_direct_1M );
+    CASE( file_write_direct_16M );
 
     CASE( function_args0 );
     CASE( function_args1 );
@@ -632,16 +654,38 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::file_append,
                     Benchmark::file_close,
                     Benchmark::file_create,
+                    Benchmark::file_fdatasync_0,
+                    Benchmark::file_fdatasync_1,
+                    Benchmark::file_fdatasync_block,
                     Benchmark::file_fsync_0,
                     Benchmark::file_fsync_1,
                     Benchmark::file_fsync_block,
+                    Benchmark::file_lseek_random,
                     Benchmark::file_open_nonexistent,
                     Benchmark::file_open_ro,
                     Benchmark::file_open_rw,
                     Benchmark::file_open_trunc,
+                    Benchmark::file_read_256,
+                    Benchmark::file_read_4k,
+                    Benchmark::file_read_64k,
+                    Benchmark::file_read_1M,
+                    Benchmark::file_read_16M,
+                    Benchmark::file_read_direct_4k,
+                    Benchmark::file_read_direct_64k,
+                    Benchmark::file_read_direct_1M,
+                    Benchmark::file_read_direct_16M,
                     Benchmark::file_stat,
                     Benchmark::file_stat_nonexistent,
                     Benchmark::file_unlink,
+                    Benchmark::file_write_256,
+                    Benchmark::file_write_4k,
+                    Benchmark::file_write_64k,
+                    Benchmark::file_write_1M,
+                    Benchmark::file_write_16M,
+                    Benchmark::file_write_direct_4k,
+                    Benchmark::file_write_direct_64k,
+                    Benchmark::file_write_direct_1M,
+                    Benchmark::file_write_direct_16M,
                 },
             },
             {

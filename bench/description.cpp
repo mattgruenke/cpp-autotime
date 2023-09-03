@@ -32,16 +32,38 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( file_append );
     CASE__DESCRIBE( file_close );
     CASE__DESCRIBE( file_create );
+    CASE__DESCRIBE( file_fdatasync_0 );
+    CASE__DESCRIBE( file_fdatasync_1 );
+    CASE__DESCRIBE( file_fdatasync_block );
     CASE__DESCRIBE( file_fsync_0 );
     CASE__DESCRIBE( file_fsync_1 );
     CASE__DESCRIBE( file_fsync_block );
+    CASE__DESCRIBE( file_lseek_random );
     CASE__DESCRIBE( file_open_nonexistent );
     CASE__DESCRIBE( file_open_ro );
     CASE__DESCRIBE( file_open_rw );
     CASE__DESCRIBE( file_open_trunc );
+    CASE__DESCRIBE( file_read_256 );
+    CASE__DESCRIBE( file_read_4k );
+    CASE__DESCRIBE( file_read_64k );
+    CASE__DESCRIBE( file_read_1M );
+    CASE__DESCRIBE( file_read_16M );
+    CASE__DESCRIBE( file_read_direct_4k );
+    CASE__DESCRIBE( file_read_direct_64k );
+    CASE__DESCRIBE( file_read_direct_1M );
+    CASE__DESCRIBE( file_read_direct_16M );
     CASE__DESCRIBE( file_stat );
     CASE__DESCRIBE( file_stat_nonexistent );
     CASE__DESCRIBE( file_unlink );
+    CASE__DESCRIBE( file_write_256 );
+    CASE__DESCRIBE( file_write_4k );
+    CASE__DESCRIBE( file_write_64k );
+    CASE__DESCRIBE( file_write_1M );
+    CASE__DESCRIBE( file_write_16M );
+    CASE__DESCRIBE( file_write_direct_4k );
+    CASE__DESCRIBE( file_write_direct_64k );
+    CASE__DESCRIBE( file_write_direct_1M );
+    CASE__DESCRIBE( file_write_direct_16M );
 
     CASE__DESCRIBE( pipe_open_close );
 
