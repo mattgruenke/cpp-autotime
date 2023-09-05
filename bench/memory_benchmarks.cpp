@@ -17,6 +17,8 @@
 #include "autotime/time.hpp"
 #include "autotime/work.hpp"
 
+#include <array>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -28,13 +30,73 @@ namespace bench
 
 
 template<
+    typename t,
+    size_t size
+>
+static std::array< t, size > MakeRandomArray()
+{
+    static_assert( (RAND_MAX & (RAND_MAX + 1LL)) == 0 ); // Ensure RAND_MAX + 1 is a power of 2.
+    const int rand_bits = static_cast< int >( lrint( log2( RAND_MAX + 1.0 ) ) );
+    constexpr int t_bits = sizeof( t ) * 8;
+    constexpr t t_mask = static_cast< t >( (1LL << t_bits) - 1 );
+
+    std::array< t, size > a;
+    uint64_t r = 0;
+    int n = 0;
+    for (auto &e: a)
+    {
+        if (n < t_bits)
+        {
+            r |= (random() << n);
+            n += rand_bits;
+        }
+
+        e = static_cast< t >( r & t_mask );
+        r = r >> t_bits;
+        n = n - t_bits;
+    }
+
+    return a;
+}
+
+
+static constexpr size_t RandomBlockSize = 4096;
+static constexpr size_t RandomBlockMask = RandomBlockSize - 1;
+
+template<
+    typename t
+>
+using RandomBlock = std::array< t, RandomBlockSize >;
+
+
+template<
+    typename t
+>
+static const RandomBlock< t > &GetRandomBlock()
+{
+    static const RandomBlock< t > a = MakeRandomArray< t, RandomBlockSize >();
+    return a;
+}
+
+
+static std::vector< uint8_t > MakeRandomVector( size_t size )
+{
+    const RandomBlock< uint8_t > &rand_block = GetRandomBlock< uint8_t >();
+    std::vector< uint8_t > v( size );
+    for (size_t i = 0; i < size; ++i) v[i] = rand_block[i & RandomBlockMask];
+
+    return v;
+}
+
+
+template<
     size_t size
 >
 autotime::Timer MakeMemCopy()
 {
     return []( int num_iters )
         {
-            const static std::vector< uint8_t > src( size );
+            const static std::vector< uint8_t > src = MakeRandomVector( size );
             static std::vector< uint8_t > dst( size );
 
             std::function< void() > f = []()
@@ -154,7 +216,7 @@ autotime::Timer MakeMemSet()
 
             std::function< void() > f = []()
                 {
-                    memset( dst.data(), 0, size );
+                    memset( dst.data(), 0xcc, size );
                 };
 
             return Time( f, num_iters );
