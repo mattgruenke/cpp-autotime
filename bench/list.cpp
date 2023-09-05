@@ -243,12 +243,26 @@ const char *ToCStr( Benchmark b )
     CASE( memcpy_1M   );
     CASE( memcpy_16M  );
     CASE( memcpy_256M );
+    CASE( strcmp_16   );
+    CASE( strcmp_256  );
+    CASE( strcmp_4k   );
+    CASE( strcmp_64k  );
+    CASE( strcmp_1M   );
+    CASE( strcmp_16M  );
+    CASE( strcmp_256M  );
     CASE( strlen_256  );
     CASE( strlen_4k   );
     CASE( strlen_64k  );
     CASE( strlen_1M   );
     CASE( strlen_16M  );
     CASE( strlen_256M );
+    CASE( strncpy_16   );
+    CASE( strncpy_256  );
+    CASE( strncpy_4k   );
+    CASE( strncpy_64k  );
+    CASE( strncpy_1M   );
+    CASE( strncpy_16M  );
+    CASE( strncpy_256M  );
     CASE( memset_256  );
     CASE( memset_4k   );
     CASE( memset_64k  );
@@ -743,12 +757,26 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::memcpy_1M,
                     Benchmark::memcpy_16M,
                     Benchmark::memcpy_256M,
+                    Benchmark::strcmp_16,
+                    Benchmark::strcmp_256,
+                    Benchmark::strcmp_4k,
+                    Benchmark::strcmp_64k,
+                    Benchmark::strcmp_1M,
+                    Benchmark::strcmp_16M,
+                    Benchmark::strcmp_256M,
                     Benchmark::strlen_256,
                     Benchmark::strlen_4k,
                     Benchmark::strlen_64k,
                     Benchmark::strlen_1M,
                     Benchmark::strlen_16M,
                     Benchmark::strlen_256M,
+                    Benchmark::strncpy_16,
+                    Benchmark::strncpy_256,
+                    Benchmark::strncpy_4k,
+                    Benchmark::strncpy_64k,
+                    Benchmark::strncpy_1M,
+                    Benchmark::strncpy_16M,
+                    Benchmark::strncpy_256M,
                     Benchmark::memset_256,
                     Benchmark::memset_4k,
                     Benchmark::memset_64k,
