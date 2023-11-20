@@ -171,10 +171,10 @@ template< typename container_t >
     for (int count = 0; count < num_iters; ++count)
     {
         TimePoints start_times = Start();
-        container_t container = Insert< container_t >( data.get(), n );
+        container_t tmp = Insert< container_t >( data.get(), n );
         durations += End( start_times );
 
-        Writable< container_t >() = container;
+        tmp.swap( Writable< container_t >() );
     }
 
     return durations;
