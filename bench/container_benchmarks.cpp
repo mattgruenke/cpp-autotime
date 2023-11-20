@@ -25,6 +25,7 @@
 #include "autotime/overhead.hpp"
 #include "autotime/time.hpp"
 
+#include "container_utils.hpp"
 #include "dispatch.hpp"
 #include "list.hpp"
 
@@ -39,27 +40,6 @@ namespace bench
 // Test data generation:
 ////////////////////////////////
 
-template< typename elem_t > static elem_t MakeElement( size_t i )
-{
-    return static_cast< elem_t >( i );
-}
-
-
-template<> std::string MakeElement< std::string >( size_t i )
-{
-    static std::vector< std::string > words = []()
-        {
-            std::vector< std::string > result;
-            std::ifstream file( "/usr/share/dict/words" );  // TO_DO: make this a CLI parameter.
-            std::string word;
-            while (std::getline( file,word )) result.push_back( word );
-            return result;
-        }();
-
-    return words.at( i );
-}
-
-
 template< typename elem_t > static bool CheckElement( const elem_t &val )
 {
     return val >= 0;
@@ -69,35 +49,6 @@ template< typename elem_t > static bool CheckElement( const elem_t &val )
 template<> bool CheckElement< std::string >( const std::string &val )
 {
     return !val.empty();
-}
-
-
-template< typename elem_t > std::shared_ptr< elem_t[] > MakeData( size_t n )
-{
-    srandom( 1 );   // TO_DO: make this a commandline parameter.
-
-#if 0
-    std::multimap< int, elem_t > shuffled_vals;
-    for (size_t i = 0; i < n; ++i)
-    {
-        shuffled_vals.insert( { static_cast< int >( random() ), MakeElement< elem_t >( i ) } );
-    }
-
-#else   // Both work, but below is marginally faster than above.
-
-    std::vector< std::pair< int, elem_t > > shuffled_vals;
-    for (size_t i = 0; i < n; ++i)
-    {
-        shuffled_vals.push_back( { static_cast< int >( random() ), MakeElement< elem_t >( i ) } );
-    }
-    std::sort( shuffled_vals.begin(), shuffled_vals.end() );
-#endif
-
-    std::shared_ptr< elem_t[] > result{ new elem_t[n] };
-    auto shuffled_iter = shuffled_vals.begin();
-    for (size_t i = 0; i < n; ++i) result[i] = (shuffled_iter++)->second;
-
-    return result;
 }
 
 
