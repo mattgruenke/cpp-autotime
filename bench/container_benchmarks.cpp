@@ -173,6 +173,8 @@ template< typename container_t >
         TimePoints start_times = Start();
         container_t container = Insert< container_t >( data.get(), n );
         durations += End( start_times );
+
+        Writable< container_t >() = container;
     }
 
     return durations;
