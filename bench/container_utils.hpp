@@ -54,6 +54,7 @@ template< typename elem_t > std::shared_ptr< elem_t[] > MakeData( size_t n )
 #else   // Both work, but below is marginally faster than above.
 
     std::vector< std::pair< int, elem_t > > shuffled_vals;
+    shuffled_vals.reserve( n );
     for (size_t i = 0; i < n; ++i)
     {
         shuffled_vals.push_back( { static_cast< int >( random() ), MakeElement< elem_t >( i ) } );
@@ -69,6 +70,14 @@ template< typename elem_t > std::shared_ptr< elem_t[] > MakeData( size_t n )
 
     return result;
 }
+
+
+    //! Returns a shared array of fixed-length strings.
+    /*!
+        The resulting content is arbitrary and in somewhat unsorted order, but
+        not highly varied (i.e. contains just lowercase letters and spaces).
+    */
+std::shared_ptr< std::string[] > MakeStringData( size_t len, size_t n );
 
 
 } // namespace bench

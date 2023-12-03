@@ -29,7 +29,29 @@ template<> std::string MakeElement< std::string >( size_t i )
             return result;
         }();
 
-    return words.at( i );
+    return words[i % words.size()];
+}
+
+
+std::shared_ptr< std::string[] > MakeStringData( size_t len, size_t n )
+{
+    std::shared_ptr< std::string[] > result{ new std::string[n] };
+
+    std::ifstream file( "/usr/share/dict/words" );  // TO_DO: make this a CLI parameter.
+    std::string read_buf( len, ' ' );
+    for (size_t i = 0; i < n; ++i)
+    {
+        size_t got = 0;
+        while (got < len)
+        {
+            got += file.readsome( const_cast< char * >( read_buf.data() + got ), len - got );
+            if (got < len) file.seekg( 0 );
+        }
+
+        result[i] = read_buf;
+    }
+
+    return result;
 }
 
 
