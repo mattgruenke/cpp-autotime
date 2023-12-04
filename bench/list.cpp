@@ -270,6 +270,12 @@ const char *ToCStr( Benchmark b )
     CASE( memset_1M   );
     CASE( memset_16M  );
     CASE( memset_256M );
+    CASE( memread_256  );
+    CASE( memread_4k   );
+    CASE( memread_64k  );
+    CASE( memread_1M   );
+    CASE( memread_16M  );
+    CASE( memread_256M );
 
     CASE( mutex_create_destroy );
     CASE( mutex_lock_release );
@@ -796,6 +802,12 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::memset_1M,
                     Benchmark::memset_16M,
                     Benchmark::memset_256M,
+                    Benchmark::memread_256,
+                    Benchmark::memread_4k,
+                    Benchmark::memread_64k,
+                    Benchmark::memread_1M,
+                    Benchmark::memread_16M,
+                    Benchmark::memread_256M,
                 },
             },
             {

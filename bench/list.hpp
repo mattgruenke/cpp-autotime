@@ -218,6 +218,12 @@ enum class Benchmark
     memset_1M,
     memset_16M,
     memset_256M,
+    memread_256,
+    memread_4k,
+    memread_64k,
+    memread_1M,
+    memread_16M,
+    memread_256M,
 
     // mutex:
     mutex_create_destroy,

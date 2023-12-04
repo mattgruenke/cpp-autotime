@@ -395,5 +395,84 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::memset_256M >()
 }
 
 
+template<
+    size_t size
+>
+autotime::Timer MakeMemRead()
+{
+    return []( int num_iters )
+        {
+#if 0
+            using element_type = uint64_t;
+#elif 1
+            // g++ 7.5.0 implements this by emitting a movdqu instruction,
+            //  which reads an unaligned "double quad word" (i.e. 128-bit) in one shot.
+
+            // On Sandybridge, this is twice as fast as using uint64_t, in the 256-byte case.
+            using element_type = std::array< uint64_t, 2 >;
+#elif 0
+            // Forces movaps - reads aligned "packed single" (i.e. 128-bit) in one shot.
+            // On Sandbridge, the only way this seems to deliver a real gain is if the loop is
+            //  unrolled by 2.  In that case, the gain is up to a further 2x over movdqu.
+            using element_type = __m128;  // requires xmmintrin.h
+#else
+            // Forces movdqa - reads aligned "double quad-word" (i.e. 128-bit) in one shot.
+            // On Sandybridge, this seems to perform about the same as movaps.
+            //  Might be more energy-efficient, as it could avoid setting FP flags?
+            using element_type = __v2du;  // requires emmintrin.h
+#endif
+            constexpr size_t n = size / sizeof( element_type );
+            std::vector< element_type > src( n );
+            volatile element_type *data = src.data();
+
+            std::function< void() > f = [data]()
+                {
+                    // On Sandybridge, unrolling this by 4 can yield 3.2x and 2.1x speedups,
+                    //  when using one of the aligned types (above), on the 256 and 4k cases.
+                    //  Diminishing returns, beyond that.
+                    for (size_t i = 0; i < n; ++i) data[i];
+                };
+
+            return Time( f, num_iters );
+        };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_256 >()
+{
+    return { MakeMemRead< 1 << 8 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_4k >()
+{
+    return { MakeMemRead< 1 << 12 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_64k >()
+{
+    return { MakeMemRead< 1 << 16 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_1M >()
+{
+    return { MakeMemRead< 1 << 20 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_16M >()
+{
+    return { MakeMemRead< 1 << 24 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::memread_256M >()
+{
+    return { MakeMemRead< 1 << 28 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
 } // namespace bench
 
