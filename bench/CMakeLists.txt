@@ -28,6 +28,7 @@ add_executable( autotime-bench
     file_utils.cpp
     function_benchmarks.cpp
     function_utils.cpp
+    hash_benchmarks.cpp
     heap_benchmarks.cpp
     list.cpp
     main.cpp

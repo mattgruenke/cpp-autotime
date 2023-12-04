@@ -50,6 +50,7 @@ enum class Category
     string_from,
     string_to,
     std_deque,
+    std_hash,
     std_hashset,
     std_list,
     std_set,
@@ -316,6 +317,19 @@ enum class Benchmark
     deque_string_find64k,
     deque_string_insert4k,
     deque_string_iterate64k,
+
+    // std_hash
+    hash_int8,
+    hash_int16,
+    hash_int32,
+    hash_int64,
+    hash_float,
+    hash_double,
+    hash_string_1,
+    hash_string_16,
+    hash_string_256,
+    hash_string_4k,
+    hash_string_64k,
 
     // std_hashset
     hashset_int32_copy16,

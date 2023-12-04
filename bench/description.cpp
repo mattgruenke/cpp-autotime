@@ -67,6 +67,18 @@ Description Describe( Benchmark benchmark )
 
     CASE__DESCRIBE( pipe_open_close );
 
+    CASE__DESCRIBE( hash_int8 );
+    CASE__DESCRIBE( hash_int16 );
+    CASE__DESCRIBE( hash_int32 );
+    CASE__DESCRIBE( hash_int64 );
+    CASE__DESCRIBE( hash_float );
+    CASE__DESCRIBE( hash_double );
+    CASE__DESCRIBE( hash_string_1 );
+    CASE__DESCRIBE( hash_string_16 );
+    CASE__DESCRIBE( hash_string_256 );
+    CASE__DESCRIBE( hash_string_4k );
+    CASE__DESCRIBE( hash_string_64k );
+
 #undef CASE__DESCRIBE
 
     default:
@@ -88,6 +100,7 @@ Description Describe( Category category )
     CASE__DESCRIBE( asio );
     CASE__DESCRIBE( file );
     CASE__DESCRIBE( pipe );
+    CASE__DESCRIBE( std_hash );
 
 #undef CASE__DESCRIBE
 

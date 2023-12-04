@@ -258,6 +258,18 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( deque_string_insert4k );
     CASE__MAKE_TIMERS( deque_string_iterate64k );
 
+    CASE__MAKE_TIMERS( hash_int8 );
+    CASE__MAKE_TIMERS( hash_int16 );
+    CASE__MAKE_TIMERS( hash_int32 );
+    CASE__MAKE_TIMERS( hash_int64 );
+    CASE__MAKE_TIMERS( hash_float );
+    CASE__MAKE_TIMERS( hash_double );
+    CASE__MAKE_TIMERS( hash_string_1 );
+    CASE__MAKE_TIMERS( hash_string_16 );
+    CASE__MAKE_TIMERS( hash_string_256 );
+    CASE__MAKE_TIMERS( hash_string_4k );
+    CASE__MAKE_TIMERS( hash_string_64k );
+
     CASE__MAKE_TIMERS( hashset_int32_copy16 );
     CASE__MAKE_TIMERS( hashset_int32_copy256 );
     CASE__MAKE_TIMERS( hashset_int32_copy4k );

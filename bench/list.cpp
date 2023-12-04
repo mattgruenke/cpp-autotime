@@ -66,6 +66,7 @@ const char *ToCStr( Category c )
     CASE( process );
     CASE( socket );
     CASE( std_deque );
+    CASE( std_hash );
     CASE( std_hashset );
     CASE( std_list );
     CASE( std_set );
@@ -362,6 +363,18 @@ const char *ToCStr( Benchmark b )
     CASE( deque_string_find64k );
     CASE( deque_string_insert4k );
     CASE( deque_string_iterate64k );
+
+    CASE( hash_int8 );
+    CASE( hash_int16 );
+    CASE( hash_int32 );
+    CASE( hash_int64 );
+    CASE( hash_float );
+    CASE( hash_double );
+    CASE( hash_string_1 );
+    CASE( hash_string_16 );
+    CASE( hash_string_256 );
+    CASE( hash_string_4k );
+    CASE( hash_string_64k );
 
     CASE( hashset_int32_copy16 );
     CASE( hashset_int32_copy256 );
@@ -896,6 +909,22 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::deque_string_find64k,
                     Benchmark::deque_string_insert4k,
                     Benchmark::deque_string_iterate64k,
+                },
+            },
+            {
+                Category::std_hash,
+                {
+                    Benchmark::hash_int8,
+                    Benchmark::hash_int16,
+                    Benchmark::hash_int32,
+                    Benchmark::hash_int64,
+                    Benchmark::hash_float,
+                    Benchmark::hash_double,
+                    Benchmark::hash_string_1,
+                    Benchmark::hash_string_16,
+                    Benchmark::hash_string_256,
+                    Benchmark::hash_string_4k,
+                    Benchmark::hash_string_64k,
                 },
             },
             {
