@@ -93,18 +93,27 @@ static int AutoselectSecondaryCoreId( int core0 )
 }
 
 
-static std::chrono::microseconds WarmupCore( int coreId, double min, double slop, int limit_ms )
+struct WarmupParams
+{
+    double min = 0.875;
+    double slop = 0.125;
+    int limit_ms = 125;
+    bool secondary = false;
+};
+
+
+static std::chrono::microseconds WarmupCore( int coreId, const WarmupParams &warmup )
 {
     // Try to warmup the core to near-peak clock speed.
     std::unique_ptr< ICoreWarmupMonitor > warmupMonitor = ICoreWarmupMonitor::create( coreId );
-    warmupMonitor->minClockSpeed( min );
-    warmupMonitor->maxClockSpeedDecrease( slop );
+    warmupMonitor->minClockSpeed( warmup.min );
+    warmupMonitor->maxClockSpeedDecrease( warmup.slop );
 
     steady_clock::time_point start = steady_clock::now();
     steady_clock::time_point finish =
         IterateUntil(
             [](){ Mandelbrot( 0.1f, 256 ); },
-            start + std::chrono::milliseconds{ limit_ms },
+            start + std::chrono::milliseconds{ warmup.limit_ms },
             std::chrono::milliseconds{ 1 },
             std::bind( &ICoreWarmupMonitor::operator(), warmupMonitor.get() ) );
 
@@ -112,13 +121,13 @@ static std::chrono::microseconds WarmupCore( int coreId, double min, double slop
 }
 
 
-static std::thread WarmupCoreInThread( int coreId, double min, double slop, int limit_ms )
+static std::thread WarmupCoreInThread( int coreId, const WarmupParams &warmup )
 {
     return std::thread{
-        [coreId, min, slop, limit_ms]()
+        [coreId, warmup]()
         {
             SetCoreAffinity( coreId );
-            WarmupCore( coreId, min, slop, limit_ms );
+            WarmupCore( coreId, warmup );
         } };
 }
 
@@ -129,10 +138,7 @@ int main( int argc, char *argv[] )
     bool verbose = false;
     int core0 = -1;
     int core1 = -1;
-    double warmup_min = 0.875;
-    double warmup_slop = 0.125;
-    int warmup_limit_ms = 125;
-    bool warmup_secondary = false;
+    WarmupParams warmup;
     std::string spec = "all";
     boost::optional< ListMode > list_mode;
     boost::optional< ListMode > describe_mode;
@@ -165,16 +171,16 @@ int main( int argc, char *argv[] )
           prog_opts::value( &core1 )->value_name( "N" ),
           "Which core to use for secondary thread (-1 -> auto)." )
         ( "warmup-limit",
-          prog_opts::value( &warmup_limit_ms )->value_name( "ms" )->default_value( warmup_limit_ms ),
+          prog_opts::value( &warmup.limit_ms )->value_name( "ms" )->default_value( warmup.limit_ms ),
           "Core warmup time limit." )
         ( "warmup-target",
-          prog_opts::value( &warmup_min )->value_name( "F" )->default_value( warmup_min ),
+          prog_opts::value( &warmup.min )->value_name( "F" )->default_value( warmup.min ),
           "Core warmup normalized frequency threshold." )
         ( "warmup-slop",
-          prog_opts::value( &warmup_slop )->value_name( "F" )->default_value( warmup_slop ),
+          prog_opts::value( &warmup.slop )->value_name( "F" )->default_value( warmup.slop ),
           "Core warmup normalized frequency regression limit." )
         ( "warmup-coreB",
-          prog_opts::bool_switch( &warmup_secondary ),
+          prog_opts::bool_switch( &warmup.secondary ),
           "Also perform warmup on secondary thread's core." )
         ( "select",
           prog_opts::value( &spec )->value_name( "spec" )->default_value( spec ),
@@ -246,13 +252,11 @@ int main( int argc, char *argv[] )
     if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
 
     std::thread warmup2_thread;
-    if (warmup_secondary) warmup2_thread =
-            WarmupCoreInThread( core1, warmup_min, warmup_slop, warmup_limit_ms );
+    if (warmup.secondary) warmup2_thread = WarmupCoreInThread( core1, warmup );
 
-    std::chrono::microseconds warmup_dur_us =
-        WarmupCore( core0, warmup_min, warmup_slop, warmup_limit_ms );
+    std::chrono::microseconds warmup_dur_us = WarmupCore( core0, warmup );
     if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
-    if (warmup_secondary) warmup2_thread.join();
+    if (warmup.secondary) warmup2_thread.join();
 
     // Setup output handler.
     std::unique_ptr< IOutputFormatter > output = IOutputFormatter::create( std::cout, format );
