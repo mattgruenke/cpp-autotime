@@ -166,6 +166,7 @@ int SetCoreAffinity( int core_id )
     {
         core_id = GetCurrentCoreId();
         if (core_id < 0) return -1;
+        AUTOTIME_DEBUG( "Autoselected core " << core_id );
     }
     else need_switch = (GetCurrentCoreId() != core_id);
 
