@@ -49,6 +49,50 @@ static int GetTermWidth()
 }
 
 
+static int AutoselectSecondaryCoreId( int core0 )
+{
+    int core1 = -1;
+    int choose_core1_attempt = 0;
+    while (core1 == -1)
+    {
+        if (choose_core1_attempt++ >= 3)
+        {
+            core1 = core0;
+            std::cerr
+                << "Warning:\n"
+                << "  Core autoselection picked core " << core1
+                << " for the secondary thread that the\n"
+                << "  primary will also use.  Multithreaded benchmarks might be impaired.\n\n";
+            break;
+        }
+
+        // Let the scheduler pick which core to use for the secondary,
+        //  as long as it differs from the primary.
+        std::promise< void > done_promise;
+        std::future< void > done_future = done_promise.get_future();
+        std::thread thread{ [core0, &core1, &done_promise]()
+            {
+                int c = GetCurrentCoreId();
+
+                // Perhaps a better way to do this would be to set a full affinity mask,
+                //  but exclude core0 and any of its SMT siblings.
+                if (c != core0) core1 = c;
+
+                done_promise.set_value();
+            } };
+
+        // Keep the current thread busy, while waiting for the child thread,
+        //  to minimize the chance of it getting run on the same core.
+        constexpr auto d = std::chrono::seconds::zero();
+        while (std::future_status::ready != done_future.wait_for( d )) Mandelbrot( 0.1f, 256 );
+
+        thread.join();
+    }
+
+    return core1;
+}
+
+
 int main( int argc, char *argv[] )
 {
     // Defaults
@@ -156,42 +200,7 @@ int main( int argc, char *argv[] )
     // Find out what core the main thread will be using, to ensure the secondary is different.
     if (core0 == -1) core0 = GetCurrentCoreId();
 
-    int choose_core1_attempt = 0;
-    while (core1 == -1)
-    {
-        if (choose_core1_attempt++ >= 3)
-        {
-            core1 = core0;
-            std::cerr
-                << "Warning:\n"
-                << "  Core autoselection picked core " << core1
-                << " for the secondary thread that the\n"
-                << "  primary will also use.  Multithreaded benchmarks might be impaired.\n\n";
-            break;
-        }
-
-        // Let the scheduler pick which core to use for the secondary,
-        //  as long as it differs from the primary.
-        std::promise< void > done_promise;
-        std::future< void > done_future = done_promise.get_future();
-        std::thread thread{ [core0, &core1, &done_promise]()
-            {
-                int c = GetCurrentCoreId();
-
-                // Perhaps a better way to do this would be to set a full affinity mask,
-                //  but exclude core0 and any of its SMT siblings.
-                if (c != core0) core1 = c;
-
-                done_promise.set_value();
-            } };
-
-        // Keep the current thread busy, while waiting for the child thread,
-        //  to minimize the chance of it getting run on the same core.
-        constexpr auto d = std::chrono::seconds::zero();
-        while (std::future_status::ready != done_future.wait_for( d )) Mandelbrot( 0.1f, 256 );
-
-        thread.join();
-    }
+    if (core1 == -1) core1 = AutoselectSecondaryCoreId( core0 );
 
     // Try to stay on a specific core - must follow picking a core1 to avoid that thread
     //  inheriting the affinity we're setting for this one.
