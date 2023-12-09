@@ -132,6 +132,31 @@ static std::thread WarmupCoreInThread( int coreId, const WarmupParams &warmup )
 }
 
 
+static void SetupCores( bool verbose, int &core0, int &core1, const WarmupParams &warmup )
+{
+    // Find out what core the main thread will be using, to ensure the secondary is different.
+    if (core0 == -1) core0 = GetCurrentCoreId();
+
+    // Pick a core for the secondary thread - must precede setting affinity of primary thread.
+    if (core1 == -1) core1 = AutoselectSecondaryCoreId( core0 );
+
+    // Try to stay on a specific core - must follow picking a core1 to avoid that thread
+    //  inheriting the affinity we're setting for this one.
+    SetCoreAffinity( core0 );
+    if (verbose) std::cerr << "Running on core " << core0 << "\n";
+
+    SetSecondaryCoreId( core1 );
+    if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
+
+    std::thread warmup2_thread;
+    if (warmup.secondary) warmup2_thread = WarmupCoreInThread( core1, warmup );
+
+    std::chrono::microseconds warmup_dur_us = WarmupCore( core0, warmup );
+    if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
+    if (warmup.secondary) warmup2_thread.join();
+}
+
+
 int main( int argc, char *argv[] )
 {
     // Defaults
@@ -237,26 +262,8 @@ int main( int argc, char *argv[] )
         if (!run) return 0;
     }
 
-    // Find out what core the main thread will be using, to ensure the secondary is different.
-    if (core0 == -1) core0 = GetCurrentCoreId();
-
-    // Pick a core for the secondary thread - must precede setting affinity of primary thread.
-    if (core1 == -1) core1 = AutoselectSecondaryCoreId( core0 );
-
-    // Try to stay on a specific core - must follow picking a core1 to avoid that thread
-    //  inheriting the affinity we're setting for this one.
-    SetCoreAffinity( core0 );
-    if (verbose) std::cerr << "Running on core " << core0 << "\n";
-
-    SetSecondaryCoreId( core1 );
-    if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
-
-    std::thread warmup2_thread;
-    if (warmup.secondary) warmup2_thread = WarmupCoreInThread( core1, warmup );
-
-    std::chrono::microseconds warmup_dur_us = WarmupCore( core0, warmup );
-    if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
-    if (warmup.secondary) warmup2_thread.join();
+    // Nail down core selections, perform core warmup, and set main thread affinity.
+    SetupCores( verbose, core0, core1, warmup );
 
     // Setup output handler.
     std::unique_ptr< IOutputFormatter > output = IOutputFormatter::create( std::cout, format );
