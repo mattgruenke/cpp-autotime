@@ -21,8 +21,10 @@
 
 #include <cstdio>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include <sys/ioctl.h>
 
@@ -33,6 +35,7 @@
 #include "dispatch.hpp"
 #include "list.hpp"
 #include "output.hpp"
+#include "thread_utils.hpp"
 
 
 using namespace autotime;
@@ -50,7 +53,8 @@ int main( int argc, char *argv[] )
 {
     // Defaults
     bool verbose = false;
-    int coreId = -1;
+    int core0 = -1;
+    int core1 = -1;
     double warmup_min = 0.875;
     double warmup_slop = 0.125;
     int warmup_limit_ms = 125;
@@ -80,8 +84,11 @@ int main( int argc, char *argv[] )
           ),
           "Print debugging messages to stderr." )
         ( "core",
-          prog_opts::value( &coreId )->value_name( "N" ),
+          prog_opts::value( &core0 )->value_name( "N" ),
           "Which core to use (-1 -> auto)." )
+        ( "coreB",
+          prog_opts::value( &core1 )->value_name( "N" ),
+          "Which core to use for secondary thread (-1 -> auto)." )
         ( "warmup-limit",
           prog_opts::value( &warmup_limit_ms )->value_name( "ms" )->default_value( warmup_limit_ms ),
           "Core warmup time limit." )
@@ -146,12 +153,56 @@ int main( int argc, char *argv[] )
         if (!run) return 0;
     }
 
-    // Try to stay on a specific core.
-    coreId = SetCoreAffinity( coreId );
-    if (verbose) std::cerr << "Running on core " << coreId << "\n";
+    // Find out what core the main thread will be using, to ensure the secondary is different.
+    if (core0 == -1) core0 = GetCurrentCoreId();
+
+    int choose_core1_attempt = 0;
+    while (core1 == -1)
+    {
+        if (choose_core1_attempt++ >= 3)
+        {
+            core1 = core0;
+            std::cerr
+                << "Warning:\n"
+                << "  Core autoselection picked core " << core1
+                << " for the secondary thread that the\n"
+                << "  primary will also use.  Multithreaded benchmarks might be impaired.\n\n";
+            break;
+        }
+
+        // Let the scheduler pick which core to use for the secondary,
+        //  as long as it differs from the primary.
+        std::promise< void > done_promise;
+        std::future< void > done_future = done_promise.get_future();
+        std::thread thread{ [core0, &core1, &done_promise]()
+            {
+                int c = GetCurrentCoreId();
+
+                // Perhaps a better way to do this would be to set a full affinity mask,
+                //  but exclude core0 and any of its SMT siblings.
+                if (c != core0) core1 = c;
+
+                done_promise.set_value();
+            } };
+
+        // Keep the current thread busy, while waiting for the child thread,
+        //  to minimize the chance of it getting run on the same core.
+        constexpr auto d = std::chrono::seconds::zero();
+        while (std::future_status::ready != done_future.wait_for( d )) Mandelbrot( 0.1f, 256 );
+
+        thread.join();
+    }
+
+    // Try to stay on a specific core - must follow picking a core1 to avoid that thread
+    //  inheriting the affinity we're setting for this one.
+    SetCoreAffinity( core0 );
+    if (verbose) std::cerr << "Running on core " << core0 << "\n";
+
+    SetSecondaryCoreId( core1 );
+    if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
 
     // Try to warmup the core to near-peak clock speed.
-    std::unique_ptr< ICoreWarmupMonitor > warmupMonitor = ICoreWarmupMonitor::create( coreId );
+    std::unique_ptr< ICoreWarmupMonitor > warmupMonitor = ICoreWarmupMonitor::create( core0 );
     warmupMonitor->minClockSpeed( warmup_min );
     warmupMonitor->maxClockSpeedDecrease( warmup_slop );
 
@@ -181,7 +232,7 @@ int main( int argc, char *argv[] )
         if (timers.overhead) ovh_dfi = AutoTime( timers.overhead );
 
         // Postprocess and display the results.
-        CpuClockPeriod core_speed = GetCoreClockTick( coreId );
+        CpuClockPeriod core_speed = GetCoreClockTick( core0 );
         NormDurations norm = exp_dfi.normalize() - ovh_dfi.normalize();
         output->write( benchmark, norm, exp_dfi.num_iters, core_speed /*, warnings */ );
     }
