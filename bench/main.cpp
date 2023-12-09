@@ -93,6 +93,36 @@ static int AutoselectSecondaryCoreId( int core0 )
 }
 
 
+static std::chrono::microseconds WarmupCore( int coreId, double min, double slop, int limit_ms )
+{
+    // Try to warmup the core to near-peak clock speed.
+    std::unique_ptr< ICoreWarmupMonitor > warmupMonitor = ICoreWarmupMonitor::create( coreId );
+    warmupMonitor->minClockSpeed( min );
+    warmupMonitor->maxClockSpeedDecrease( slop );
+
+    steady_clock::time_point start = steady_clock::now();
+    steady_clock::time_point finish =
+        IterateUntil(
+            [](){ Mandelbrot( 0.1f, 256 ); },
+            start + std::chrono::milliseconds{ limit_ms },
+            std::chrono::milliseconds{ 1 },
+            std::bind( &ICoreWarmupMonitor::operator(), warmupMonitor.get() ) );
+
+    return std::chrono::duration_cast< std::chrono::microseconds >( finish - start );
+}
+
+
+static std::thread WarmupCoreInThread( int coreId, double min, double slop, int limit_ms )
+{
+    return std::thread{
+        [coreId, min, slop, limit_ms]()
+        {
+            SetCoreAffinity( coreId );
+            WarmupCore( coreId, min, slop, limit_ms );
+        } };
+}
+
+
 int main( int argc, char *argv[] )
 {
     // Defaults
@@ -102,6 +132,7 @@ int main( int argc, char *argv[] )
     double warmup_min = 0.875;
     double warmup_slop = 0.125;
     int warmup_limit_ms = 125;
+    bool warmup_secondary = false;
     std::string spec = "all";
     boost::optional< ListMode > list_mode;
     boost::optional< ListMode > describe_mode;
@@ -142,6 +173,9 @@ int main( int argc, char *argv[] )
         ( "warmup-slop",
           prog_opts::value( &warmup_slop )->value_name( "F" )->default_value( warmup_slop ),
           "Core warmup normalized frequency regression limit." )
+        ( "warmup-coreB",
+          prog_opts::bool_switch( &warmup_secondary ),
+          "Also perform warmup on secondary thread's core." )
         ( "select",
           prog_opts::value( &spec )->value_name( "spec" )->default_value( spec ),
           "Specifies the set of benchmarks (see below)." )
@@ -200,6 +234,7 @@ int main( int argc, char *argv[] )
     // Find out what core the main thread will be using, to ensure the secondary is different.
     if (core0 == -1) core0 = GetCurrentCoreId();
 
+    // Pick a core for the secondary thread - must precede setting affinity of primary thread.
     if (core1 == -1) core1 = AutoselectSecondaryCoreId( core0 );
 
     // Try to stay on a specific core - must follow picking a core1 to avoid that thread
@@ -210,22 +245,14 @@ int main( int argc, char *argv[] )
     SetSecondaryCoreId( core1 );
     if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
 
-    // Try to warmup the core to near-peak clock speed.
-    std::unique_ptr< ICoreWarmupMonitor > warmupMonitor = ICoreWarmupMonitor::create( core0 );
-    warmupMonitor->minClockSpeed( warmup_min );
-    warmupMonitor->maxClockSpeedDecrease( warmup_slop );
+    std::thread warmup2_thread;
+    if (warmup_secondary) warmup2_thread =
+            WarmupCoreInThread( core1, warmup_min, warmup_slop, warmup_limit_ms );
 
-    steady_clock::time_point warmup_start = steady_clock::now();
-    steady_clock::time_point warmup_finish =
-        IterateUntil(
-            [](){ Mandelbrot( 0.1f, 256 ); },
-            warmup_start + std::chrono::milliseconds{ warmup_limit_ms },
-            std::chrono::milliseconds{ 1 },
-            std::bind( &ICoreWarmupMonitor::operator(), warmupMonitor.get() ) );
-
-    steady_clock::duration warmup_dur = warmup_finish - warmup_start;
-    auto warmup_dur_us = std::chrono::duration_cast< std::chrono::microseconds >( warmup_dur );
+    std::chrono::microseconds warmup_dur_us =
+        WarmupCore( core0, warmup_min, warmup_slop, warmup_limit_ms );
     if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
+    if (warmup_secondary) warmup2_thread.join();
 
     // Setup output handler.
     std::unique_ptr< IOutputFormatter > output = IOutputFormatter::create( std::cout, format );
