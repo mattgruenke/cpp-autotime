@@ -224,6 +224,7 @@ enum class Benchmark
     memread_1M,
     memread_16M,
     memread_256M,
+    cache_false_sharing,
 
     // mutex:
     mutex_create_destroy,

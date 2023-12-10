@@ -79,6 +79,8 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( hash_string_4k );
     CASE__DESCRIBE( hash_string_64k );
 
+    CASE__DESCRIBE( cache_false_sharing );
+
 #undef CASE__DESCRIBE
 
     default:

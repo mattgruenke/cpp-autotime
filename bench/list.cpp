@@ -276,6 +276,7 @@ const char *ToCStr( Benchmark b )
     CASE( memread_1M   );
     CASE( memread_16M  );
     CASE( memread_256M );
+    CASE( cache_false_sharing );
 
     CASE( mutex_create_destroy );
     CASE( mutex_lock_release );
@@ -808,6 +809,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::memread_1M,
                     Benchmark::memread_16M,
                     Benchmark::memread_256M,
+                    Benchmark::cache_false_sharing,
                 },
             },
             {

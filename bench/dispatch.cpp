@@ -170,6 +170,7 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( memread_1M );
     CASE__MAKE_TIMERS( memread_16M );
     CASE__MAKE_TIMERS( memread_256M );
+    CASE__MAKE_TIMERS( cache_false_sharing );
 
     CASE__MAKE_TIMERS( mutex_create_destroy );
     CASE__MAKE_TIMERS( mutex_lock_release );

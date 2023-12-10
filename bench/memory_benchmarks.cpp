@@ -13,14 +13,21 @@
 
 #include "dispatch.hpp"
 
+#include "autotime/os.hpp"
 #include "autotime/overhead.hpp"
 #include "autotime/time.hpp"
 #include "autotime/work.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
+#include <future>
+#include <type_traits>
 #include <vector>
+
+#include "description.hpp"
+#include "thread_utils.hpp"
 
 
 using namespace autotime;
@@ -471,6 +478,92 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::memread_16M >()
 template<> autotime::BenchTimers MakeTimers< Benchmark::memread_256M >()
 {
     return { MakeMemRead< 1 << 28 >(), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> Description Describe< Benchmark::cache_false_sharing >()
+{
+    Description desc;
+    desc.measures = "Performance impact of two threads touching the same cache line.";
+    return desc;
+}
+
+
+struct FalselyShared
+{
+    uint64_t a = 0;
+    uint64_t b = 0;
+};
+
+
+union AlignedFalselyShared
+{
+    FalselyShared fs;
+    std::aligned_storage< 64, 64 >::type aligned;
+};
+
+
+autotime::Timer MakeFalseSharing()
+{
+    return []( int num_iters )
+        {
+            constexpr int n = 2;    // The more elements, the less impact is observed?
+            AlignedFalselyShared array[n] = {};
+            std::promise< void > started_promise;
+            std::future< void > started_future = started_promise.get_future();
+            volatile bool stop = false;
+
+#if 0   // On Sandybridge, it doesn't seem to make much difference which is used (at n=128).
+
+            // Shuffle the entries, in case it helps fool the core's prefetcher.
+            std::vector< AlignedFalselyShared * > ptrs( n );
+            for (size_t i = 0; i < n; ++i) ptrs[i] = &array[i];
+            std::random_shuffle( ptrs.begin(), ptrs.end() );
+
+            auto thread = std::thread( [&ptrs, num_iters, &started_promise, &stop]()
+                    {
+                        SetCoreAffinity( GetSecondaryCoreId() );
+                        started_promise.set_value();
+                        while (!stop) for (const auto p: ptrs) ++p->fs.b;
+                    } );
+
+            started_future.get();
+
+            std::function< void() > f = [&ptrs]()
+                {
+                    for (const auto p: ptrs) ++p->fs.a;
+                };
+
+#else
+
+            auto thread = std::thread( [&array, num_iters, &started_promise, &stop]()
+                    {
+                        SetCoreAffinity( GetSecondaryCoreId() );
+                        started_promise.set_value();
+                        while (!stop) for (AlignedFalselyShared &aligned: array) ++aligned.fs.b;
+                    } );
+
+            started_future.get();
+
+            std::function< void() > f = [&array]()
+                {
+                    for (AlignedFalselyShared &aligned: array) ++aligned.fs.a;
+                };
+
+#endif
+
+            Durations durs = Time( f, num_iters ) / n;
+            stop = true;
+            thread.join();
+
+            return durs;
+        };
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::cache_false_sharing >()
+{
+    return { MakeFalseSharing(), MakeTimer( MakeOverheadFn< void >() ) };
 }
 
 
