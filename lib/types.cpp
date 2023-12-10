@@ -19,6 +19,15 @@ namespace autotime
 
 
 // struct Durations:
+Durations &Durations::operator/( int denom )
+{
+    real   /= denom;
+    thread /= denom;
+
+    return *this;
+}
+
+
 Durations &Durations::operator+=( const Durations &rhs )
 {
     real   += rhs.real;
