@@ -93,6 +93,7 @@ static int AutoselectSecondaryCoreId( int core0 )
 }
 
 
+    // Bundles parameters associated with core-warmup.
 struct WarmupParams
 {
     double min = 0.875;
@@ -121,7 +122,7 @@ static std::chrono::microseconds WarmupCore( int coreId, const WarmupParams &war
 }
 
 
-static std::thread WarmupCoreInThread( int coreId, const WarmupParams &warmup )
+static std::thread ThreadedWarmupCore( int coreId, const WarmupParams &warmup )
 {
     return std::thread{
         [coreId, warmup]()
@@ -148,11 +149,13 @@ static void SetupCores( bool verbose, int &core0, int &core1, const WarmupParams
     SetSecondaryCoreId( core1 );
     if (verbose) std::cerr << "Secondary on core " << core1 << "\n";
 
+    // Perform warmup to get the core(s) running in the target frequency range.
     std::thread warmup2_thread;
-    if (warmup.secondary) warmup2_thread = WarmupCoreInThread( core1, warmup );
+    if (warmup.secondary) warmup2_thread = ThreadedWarmupCore( core1, warmup );
 
-    std::chrono::microseconds warmup_dur_us = WarmupCore( core0, warmup );
-    if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_us.count() / 1000.0 << " ms.\n";
+    double warmup_dur_ms = WarmupCore( core0, warmup ).count() / 1000.0;
+    if (verbose) std::cerr << "\nWarmup completed after " << warmup_dur_ms << " ms.\n";
+
     if (warmup.secondary) warmup2_thread.join();
 }
 
