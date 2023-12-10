@@ -265,6 +265,9 @@ int main( int argc, char *argv[] )
         if (!run) return 0;
     }
 
+    // If a core was specified for the secondary thread, assume it needs warmup.
+    if (core1 >= 0 && core1 != core0) warmup.secondary = true;
+
     // Nail down core selections, perform core warmup, and set main thread affinity.
     SetupCores( verbose, core0, core1, warmup );
 
