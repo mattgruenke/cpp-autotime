@@ -141,7 +141,7 @@ std::ostream &PrintParagraph(
     std::ostream &ostream,
     const std::string &name, const std::string &value, const std::string &indent )
 {
-    return ostream << indent << name << ":\n\n  " << indent << value;
+    return ostream << indent << name << ":\n  " << indent << value;
 }
 
 
