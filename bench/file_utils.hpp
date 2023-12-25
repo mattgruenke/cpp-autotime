@@ -159,19 +159,39 @@ struct ScopedFile
 {
     static const int default_flags;     // O_CREAT | O_RDWR
 
-    const int flags = default_flags;
+    int flags = default_flags;
     std::string filename;
     int fd = -1;
+
+        //! Binds to an existing file descriptor, rather than opening a new one.
+    static ScopedFile make_bound(
+        int fd  //!< fd to bind in this instance.
+    );
 
         //! Instantiates with a uniquely-named file in the CWD.
     explicit ScopedFile( int flags = default_flags );
 
         //! Opens the specified filename for read/write, creating if necessary.
+        /*!
+            @note
+            If filename is empty, then no open() is attempted.
+        */
     explicit ScopedFile(
-        const std::string &filename, int flags = default_flags );
+        const std::string &filename,    //!< Path name to open().
+        int flags = default_flags );
+
+    ScopedFile( const ScopedFile & ) = delete;  // noncopyable
+
+        //! Move constructor.
+    ScopedFile( ScopedFile && );
 
         //! Closes (if open) and unlinks the file.
     ~ScopedFile();
+
+    ScopedFile &operator=( const ScopedFile & ) = delete;  // noncopyable.
+
+        //! Move-assignment.
+    ScopedFile &operator=( ScopedFile && );
 
         //! Closes the file (if open).
     void close();

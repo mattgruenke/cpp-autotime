@@ -146,6 +146,14 @@ std::ifstream OpenIFStream( const std::string &filename, std::ifstream::openmode
 const int ScopedFile::default_flags = O_CREAT | O_RDWR;
 
 
+ScopedFile ScopedFile::make_bound( int fd )
+{
+    ScopedFile result{ "" };
+    result.fd = fd;
+    return result;
+}
+
+
 ScopedFile::ScopedFile( int flags )
 :
     ScopedFile( filesystem::unique_path().native(), flags )
@@ -157,8 +165,21 @@ ScopedFile::ScopedFile( const std::string &filename, int flags )
 :
     flags( flags ),
     filename( filename ),
-    fd( OpenFile( filename.c_str(), flags ) )
+    fd( filename.empty() ? -1 : OpenFile( filename.c_str(), flags ) )
 {
+}
+
+
+ScopedFile::ScopedFile( ScopedFile &&orig )
+:
+    flags( orig.flags ),
+    fd( orig.fd )
+{
+    // Transfer contents of orig.
+    filename.swap( orig.filename );
+
+    // Cleanup orig.
+    orig.fd = -1;
 }
 
 
@@ -166,6 +187,24 @@ ScopedFile::~ScopedFile()
 {
     this->close();
     if (!filename.empty()) Unlink( filename.c_str() );
+}
+
+
+ScopedFile &ScopedFile::operator=( ScopedFile &&orig )
+{
+    // Cleanup this instance.
+    this->close();
+
+    // Transfer contents of orig.
+    this->flags = orig.flags;
+    this->filename.swap( orig.filename );
+    this->fd = orig.fd;
+
+    // Cleanup orig.
+    orig.fd = -1;
+    orig.filename.clear();
+
+    return *this;
 }
 
 
