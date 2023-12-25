@@ -189,6 +189,7 @@ const char *ToCStr( Benchmark b )
     CASE( file_fdatasync_0 );
     CASE( file_fdatasync_1 );
     CASE( file_fdatasync_block );
+    CASE( file_fstat );
     CASE( file_fsync_0 );
     CASE( file_fsync_1 );
     CASE( file_fsync_block );
@@ -725,6 +726,7 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::file_fdatasync_0,
                     Benchmark::file_fdatasync_1,
                     Benchmark::file_fdatasync_block,
+                    Benchmark::file_fstat,
                     Benchmark::file_fsync_0,
                     Benchmark::file_fsync_1,
                     Benchmark::file_fsync_block,

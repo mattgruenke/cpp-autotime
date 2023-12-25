@@ -50,6 +50,7 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( file_fdatasync_0 );
     CASE__DESCRIBE( file_fdatasync_1 );
     CASE__DESCRIBE( file_fdatasync_block );
+    CASE__DESCRIBE( file_fstat );
     CASE__DESCRIBE( file_fsync_0 );
     CASE__DESCRIBE( file_fsync_1 );
     CASE__DESCRIBE( file_fsync_block );

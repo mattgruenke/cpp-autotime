@@ -134,6 +134,7 @@ enum class Benchmark
     file_fdatasync_0,
     file_fdatasync_1,
     file_fdatasync_block,
+    file_fstat,
     file_fsync_0,
     file_fsync_1,
     file_fsync_block,

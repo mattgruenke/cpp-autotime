@@ -349,6 +349,29 @@ static autotime::BenchTimers MakeFsyncTimers(
 }
 
 
+template<> Description Describe< Benchmark::file_fstat >()
+{
+    Description desc;
+    desc.measures = "fstat() on a normal file.";
+    return desc;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::file_fstat >()
+{
+    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+
+    std::function< void() > f = [p_file]()
+        {
+            struct stat s{};
+            int rtn = fstat( p_file->fd, &s );
+            if (rtn < 0) throw_system_error( errno, "fstat()" );
+        };
+
+    return { MakeTimer( f ), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
 template<> Description Describe< Benchmark::file_fsync_0 >()
 {
     Description desc;
