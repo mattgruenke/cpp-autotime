@@ -105,6 +105,8 @@ PrettyOutputFormatter::PrettyOutputFormatter( std::ostream &ostream )
 
 std::ostream &PrettyPrintSizeof( std::ostream &ostream, size_t size )
 {
+    if (size == 0) return ostream << size << " ";
+
     const std::vector< std::string > prefixes = { "", "ki", "Mi", "Gi", "Ti" };
     double exp = log2( size );
     long int prefix_idx = lrint( std::min< double >( floor( exp / 10 ), prefixes.size() - 1 ) );
