@@ -29,6 +29,21 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( asio_reset );
     CASE__DESCRIBE( asio_run );
 
+    CASE__DESCRIBE( chmod );
+    CASE__DESCRIBE( chown );
+    CASE__DESCRIBE( directory_iter_0 );
+    CASE__DESCRIBE( directory_iter_1 );
+    CASE__DESCRIBE( directory_iter_64 );
+    CASE__DESCRIBE( directory_iter_4k );
+    CASE__DESCRIBE( flock );
+    CASE__DESCRIBE( inotify );
+    CASE__DESCRIBE( mkdir );
+    CASE__DESCRIBE( readdir_0 );
+    CASE__DESCRIBE( readdir_1 );
+    CASE__DESCRIBE( readdir_64 );
+    CASE__DESCRIBE( readdir_4k );
+    CASE__DESCRIBE( rmdir );
+
     CASE__DESCRIBE( file_append );
     CASE__DESCRIBE( file_close );
     CASE__DESCRIBE( file_create );
@@ -100,6 +115,7 @@ Description Describe( Category category )
         return Describe< Category::n >()
 
     CASE__DESCRIBE( asio );
+    CASE__DESCRIBE( directory );
     CASE__DESCRIBE( file );
     CASE__DESCRIBE( pipe );
     CASE__DESCRIBE( std_hash );

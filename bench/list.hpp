@@ -105,6 +105,22 @@ enum class Benchmark
     condvar_signal,
     condvar_signal_watched,
 
+    // directory:
+    chmod,
+    chown,
+    directory_iter_0,
+    directory_iter_1,
+    directory_iter_64,
+    directory_iter_4k,
+    flock,
+    inotify,
+    mkdir,
+    readdir_0,
+    readdir_1,
+    readdir_64,
+    readdir_4k,
+    rmdir,
+
     // exception:
     exception_catch_all,
     exception_catch_std,

@@ -57,6 +57,21 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( condvar_signal );
     CASE__MAKE_TIMERS( condvar_signal_watched );
 
+    CASE__MAKE_TIMERS( chmod );
+    CASE__MAKE_TIMERS( chown );
+    CASE__MAKE_TIMERS( directory_iter_0 );
+    CASE__MAKE_TIMERS( directory_iter_1 );
+    CASE__MAKE_TIMERS( directory_iter_64 );
+    CASE__MAKE_TIMERS( directory_iter_4k );
+    CASE__MAKE_TIMERS( flock );
+    CASE__MAKE_TIMERS( inotify );
+    CASE__MAKE_TIMERS( mkdir );
+    CASE__MAKE_TIMERS( readdir_0 );
+    CASE__MAKE_TIMERS( readdir_1 );
+    CASE__MAKE_TIMERS( readdir_64 );
+    CASE__MAKE_TIMERS( readdir_4k );
+    CASE__MAKE_TIMERS( rmdir );
+
     CASE__MAKE_TIMERS( exception_catch_all );
     CASE__MAKE_TIMERS( exception_catch_std );
     CASE__MAKE_TIMERS( exception_noexcept );
@@ -68,6 +83,7 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( file_fdatasync_0 );
     CASE__MAKE_TIMERS( file_fdatasync_1 );
     CASE__MAKE_TIMERS( file_fdatasync_block );
+    CASE__MAKE_TIMERS( file_fstat );
     CASE__MAKE_TIMERS( file_fsync_0 );
     CASE__MAKE_TIMERS( file_fsync_1 );
     CASE__MAKE_TIMERS( file_fsync_block );

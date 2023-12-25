@@ -163,6 +163,21 @@ const char *ToCStr( Benchmark b )
     CASE( condvar_signal );
     CASE( condvar_signal_watched );
 
+    CASE( chmod );
+    CASE( chown );
+    CASE( directory_iter_0 );
+    CASE( directory_iter_1 );
+    CASE( directory_iter_64 );
+    CASE( directory_iter_4k );
+    CASE( flock );
+    CASE( inotify );
+    CASE( mkdir );
+    CASE( readdir_0 );
+    CASE( readdir_1 );
+    CASE( readdir_64 );
+    CASE( readdir_4k );
+    CASE( rmdir );
+
     CASE( exception_catch_all );
     CASE( exception_catch_std );
     CASE( exception_noexcept );
@@ -671,6 +686,25 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::condvar_create_destroy,
                     Benchmark::condvar_signal,
                     Benchmark::condvar_signal_watched,
+                },
+            },
+            {
+                Category::directory,
+                {
+                    Benchmark::chmod,
+                    Benchmark::chown,
+                    Benchmark::flock,
+                    Benchmark::inotify,
+                    Benchmark::directory_iter_0,
+                    Benchmark::directory_iter_1,
+                    Benchmark::directory_iter_64,
+                    Benchmark::directory_iter_4k,
+                    Benchmark::readdir_0,
+                    Benchmark::readdir_1,
+                    Benchmark::readdir_64,
+                    Benchmark::readdir_4k,
+                    Benchmark::mkdir,
+                    Benchmark::rmdir,
                 },
             },
             {

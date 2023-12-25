@@ -21,6 +21,7 @@ add_executable( autotime-bench
     container_benchmarks.cpp
     container_utils.cpp
     description.cpp
+    directory_benchmarks.cpp
     dispatch.cpp
     exception_benchmarks.cpp
     exception_utils.cpp
