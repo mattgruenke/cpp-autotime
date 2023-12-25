@@ -18,6 +18,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <sys/stat.h>
+
 #include <boost/filesystem.hpp>
 
 #include "error_utils.hpp"
@@ -27,6 +29,22 @@ namespace filesystem = boost::filesystem;
 
 namespace bench
 {
+
+
+void MakeDir( const char *filename )
+{
+    constexpr mode_t mode =
+        S_IRUSR | S_IWUSR | S_IXUSR |
+        S_IRGRP | S_IWGRP | S_IXGRP |
+        S_IROTH | S_IWOTH | S_IXOTH;
+    if (mkdir( filename, mode ) < 0) throw_system_error( errno, "mkdir()" );
+}
+
+
+void RemoveDir( const char *filename )
+{
+    if (rmdir( filename ) < 0) throw_system_error( errno, "rmdir()" );
+}
 
 
 int OpenFile( const char *filename, int flags )

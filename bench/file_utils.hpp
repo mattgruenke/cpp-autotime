@@ -23,6 +23,20 @@ namespace bench
 {
 
 
+    //! Wraps mkdir().
+    /*!
+        @throws std::system_error upon failure.
+    */
+void MakeDir( const char *filename );
+
+
+    //! Wraps rmdir().
+    /*!
+        @throws std::system_error upon failure.
+    */
+void RemoveDir( const char *filename );
+
+
     //! Wraps open().
     /*!
         @throws std::system_error upon failure.
