@@ -125,7 +125,7 @@ template<> Description Describe< Benchmark::chmod >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::chmod >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     p_file->close();
 
     std::function< void() > f = [p_file]()
@@ -150,7 +150,7 @@ template<> Description Describe< Benchmark::chown >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::chown >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     p_file->close();
     uid_t uid = getuid();
     gid_t gid = getgid();
@@ -177,7 +177,7 @@ template<> Description Describe< Benchmark::flock >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::flock >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
 
     std::function< void() > f = [p_file]()
         {
@@ -200,7 +200,7 @@ template<> Description Describe< Benchmark::inotify >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::inotify >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
 
     int inotify = inotify_init();
     if (inotify < 0) throw_system_error( errno, "inotify_init()" );
@@ -247,13 +247,13 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::inotify >()
 }
 
 
-static std::shared_ptr< std::vector< ScopedFile > > MakeFiles( size_t num )
+static std::shared_ptr< std::vector< ScopedFile > > MakeFiles(
+    const std::string &location, size_t num )
 {
-    // TO_DO: make these in a subdir.
     auto p_files = std::make_shared< std::vector< ScopedFile > >();
     for (size_t i = 0; i < num; ++i)
     {
-        p_files->emplace_back();
+        p_files->emplace_back( ScopedFile::make_random_in( location ) );
         p_files->back().close();
     }
 
@@ -285,23 +285,22 @@ template<
 >
 static autotime::BenchTimers MakeDirIterTimers()
 {
-    // TO_DO: make these in a subdir.
-    auto p_files = MakeFiles( num_files );
+    // Create a temp directory, so it's not affected by any files in the CWD.
+    auto p_subdir =
+        std::make_shared< ScopedFile >( ScopedFile::make_random( O_CREAT | O_DIRECTORY ) );
+    p_subdir->close();
 
-    std::function< void() > f = [p_files]()
+    auto p_files = MakeFiles( p_subdir->filename, num_files );
+
+    std::function< void() > f = [p_subdir, p_files]()
         {
-            filesystem::path dir{ "." };
-#if 1
             const filesystem::directory_iterator end;
-            filesystem::directory_iterator di{ dir };
+            filesystem::directory_iterator di{ p_subdir->filename };
             while (di != end)
             {
                 NumEntries += 1;
                 ++di;
             }
-#else
-            for (auto const &entry: filesystem::directory_iterator{ dir }) NumEntries += 1;
-#endif
         };
 
     return { MakeTimer( f ), MakeTimer( MakeOverheadFn< void >() ) };
@@ -377,13 +376,17 @@ template<
 >
 static autotime::BenchTimers MakeReadDirTimers()
 {
-    // TO_DO: make these in a subdir.
-    auto p_files = MakeFiles( num_files );
+    // Create a temp directory, so it's not affected by any files in the CWD.
+    auto p_subdir =
+        std::make_shared< ScopedFile >( ScopedFile::make_random( O_CREAT | O_DIRECTORY ) );
+    p_subdir->close();
 
-    std::function< void() > f = [p_files]()
+    auto p_files = MakeFiles( p_subdir->filename, num_files );
+
+    std::function< void() > f = [p_subdir, p_files]()
         {
-            filesystem::path dir{ "." };
-            std::unique_ptr< DIR, int(*)(DIR *) > dp{ opendir( dir.c_str() ), &closedir };
+            std::unique_ptr< DIR, int (*)( DIR * ) > dp{
+                opendir( p_subdir->filename.c_str() ), &closedir };
             if (!dp) throw_system_error( errno, "opendir()" );
 
             while (const dirent *entry = readdir( dp.get() )) NumEntries += 1;

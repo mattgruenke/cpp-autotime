@@ -146,27 +146,42 @@ std::ifstream OpenIFStream( const std::string &filename, std::ifstream::openmode
 const int ScopedFile::default_flags = O_CREAT | O_RDWR;
 
 
-ScopedFile ScopedFile::make_bound( int fd )
+ScopedFile ScopedFile::make_random( int flags )
 {
-    ScopedFile result{ "" };
-    result.fd = fd;
-    return result;
+    return ScopedFile{ filesystem::unique_path().native(), flags };
 }
 
 
-ScopedFile::ScopedFile( int flags )
-:
-    ScopedFile( filesystem::unique_path().native(), flags )
+ScopedFile ScopedFile::make_random_in( const std::string &location, int flags )
 {
+    filesystem::path parent = location;
+    return ScopedFile{ (parent / filesystem::unique_path()).native(), flags };
+}
+
+
+ScopedFile ScopedFile::make_bound( int fd )
+{
+    ScopedFile result;
+    result.fd = fd;
+    return result;
 }
 
 
 ScopedFile::ScopedFile( const std::string &filename, int flags )
 :
     flags( flags ),
-    filename( filename ),
-    fd( filename.empty() ? -1 : OpenFile( filename.c_str(), flags ) )
+    filename( filename )
 {
+    if (filename.empty()) return;
+
+    if ((flags & O_DIRECTORY) && (flags & O_CREAT))
+    {
+        if (!filesystem::exists( filename.c_str() )) MakeDir( filename.c_str() );
+
+        flags ^= O_CREAT;
+    }
+
+    this->fd = OpenFile( filename.c_str(), flags );
 }
 
 
@@ -186,7 +201,12 @@ ScopedFile::ScopedFile( ScopedFile &&orig )
 ScopedFile::~ScopedFile()
 {
     this->close();
-    if (!filename.empty()) Unlink( filename.c_str() );
+
+    if (!this->filename.empty())
+    {
+        if (this->flags & O_DIRECTORY) RemoveDir( filename.c_str() );
+        else Unlink( filename.c_str() );
+    }
 }
 
 

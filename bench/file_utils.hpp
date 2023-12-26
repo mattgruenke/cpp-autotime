@@ -163,13 +163,26 @@ struct ScopedFile
     std::string filename;
     int fd = -1;
 
+        //! Creates a file with a random, unique filename.
+    static ScopedFile make_random(
+        int flags = default_flags           //!< open() flags.
+    );
+
+        //! Creates a file with a random, unique filename, in specified dir.
+    static ScopedFile make_random_in(
+        const std::string &location,        //!< Directory path.
+        int flags = default_flags           //!< open() flags.
+    );
+
         //! Binds to an existing file descriptor, rather than opening a new one.
+        /*!
+            As this doesn't set the filename, nothing will be unlinked upon
+            destruction.  This is merely a convenient way to call close() on a
+            fd, at scope exit.
+        */
     static ScopedFile make_bound(
         int fd  //!< fd to bind in this instance.
     );
-
-        //! Instantiates with a uniquely-named file in the CWD.
-    explicit ScopedFile( int flags = default_flags );
 
         //! Opens the specified filename for read/write, creating if necessary.
         /*!
@@ -195,6 +208,10 @@ struct ScopedFile
 
         //! Closes the file (if open).
     void close();
+
+protected:
+        //! Creates an unbound instance.
+    explicit ScopedFile() = default;
 };
 
 

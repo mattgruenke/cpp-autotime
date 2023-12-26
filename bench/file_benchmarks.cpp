@@ -125,7 +125,7 @@ template<> Description Describe< Benchmark::file_append >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_append >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
 
     std::function< void() > f = [p_file]()
         {
@@ -147,7 +147,7 @@ template<> Description Describe< Benchmark::file_close >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_close >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     p_file->close();
 
     std::function< Durations( int ) > timer = [p_file]( int num_iter )
@@ -171,7 +171,7 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::file_close >()
 
 static autotime::BenchTimers MakeOpenTimers( int flags )
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     p_file->close();
 
     std::function< Durations( int ) > timer = [p_file, flags]( int num_iter )
@@ -270,7 +270,7 @@ template<> Description Describe< Benchmark::file_stat >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_stat >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     p_file->close();
 
     std::function< void() > f = [p_file]()
@@ -359,7 +359,7 @@ template<> Description Describe< Benchmark::file_fstat >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fstat >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
 
     std::function< void() > f = [p_file]()
         {
@@ -393,7 +393,8 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::file_fsync_0 >()
 
     return { MakeTimer( f ), MakeTimer( MakeOverheadFn< void >() ) };
 #else
-    return MakeFsyncTimers( std::make_shared< ScopedFile >(), 0, fsync );
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
+    return MakeFsyncTimers( p_file, 0, fsync );
 #endif
 }
 
@@ -408,7 +409,7 @@ template<> Description Describe< Benchmark::file_fsync_1 >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fsync_1 >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     FillFile( p_file->fd, GetBlockSize( p_file->fd ) );
 
     return MakeFsyncTimers( p_file, 1, fsync );
@@ -425,7 +426,7 @@ template<> Description Describe< Benchmark::file_fsync_block >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fsync_block >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     size_t blk_size = GetBlockSize( p_file->fd );
     FillFile( p_file->fd, blk_size );
 
@@ -443,7 +444,8 @@ template<> Description Describe< Benchmark::file_fdatasync_0 >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fdatasync_0 >()
 {
-    return MakeFsyncTimers( std::make_shared< ScopedFile >(), 0, fdatasync );
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
+    return MakeFsyncTimers( p_file, 0, fdatasync );
 }
 
 
@@ -457,7 +459,7 @@ template<> Description Describe< Benchmark::file_fdatasync_1 >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fdatasync_1 >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     FillFile( p_file->fd, GetBlockSize( p_file->fd ) );
 
     return MakeFsyncTimers( p_file, 1, fdatasync );
@@ -474,7 +476,7 @@ template<> Description Describe< Benchmark::file_fdatasync_block >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_fdatasync_block >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     size_t blk_size = GetBlockSize( p_file->fd );
     FillFile( p_file->fd, blk_size );
 
@@ -492,7 +494,7 @@ template<> Description Describe< Benchmark::file_lseek_random >()
 
 template<> autotime::BenchTimers MakeTimers< Benchmark::file_lseek_random >()
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >();
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random() );
     constexpr size_t size = 1 << 20;
     FillFile( p_file->fd, size );
 
@@ -567,7 +569,7 @@ template<
 >
 static autotime::BenchTimers MakeReadTimers( int flags )
 {
-    ScopedFile writing;
+    auto writing = ScopedFile::make_random();
     FillFile( writing.fd, size );
     if (flags & O_DIRECT) fsync( writing.fd );
     writing.close();
@@ -714,7 +716,7 @@ template<
 >
 static autotime::BenchTimers MakeWriteTimers( int flags )
 {
-    std::shared_ptr< ScopedFile > p_file = std::make_shared< ScopedFile >( O_CREAT | flags );
+    auto p_file = std::make_shared< ScopedFile >( ScopedFile::make_random( O_CREAT | flags ) );
 
     size_t blksize = GetBlockSize( p_file->fd );
 
