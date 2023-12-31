@@ -234,6 +234,19 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( pipe_asio_pingpong );
     CASE__MAKE_TIMERS( pipe_asio_pingpong_threaded );
 
+    CASE__MAKE_TIMERS( epoll_1 );
+    CASE__MAKE_TIMERS( epoll_8 );
+    CASE__MAKE_TIMERS( epoll_64 );
+    CASE__MAKE_TIMERS( epoll_768 );
+    CASE__MAKE_TIMERS( poll_1 );
+    CASE__MAKE_TIMERS( poll_8 );
+    CASE__MAKE_TIMERS( poll_64 );
+    CASE__MAKE_TIMERS( poll_768 );
+    CASE__MAKE_TIMERS( select_1 );
+    CASE__MAKE_TIMERS( select_8 );
+    CASE__MAKE_TIMERS( select_64 );
+    CASE__MAKE_TIMERS( select_768 );
+
     CASE__MAKE_TIMERS( deque_int32_copy16 );
     CASE__MAKE_TIMERS( deque_int32_copy256 );
     CASE__MAKE_TIMERS( deque_int32_copy4k );

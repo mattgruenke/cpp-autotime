@@ -63,6 +63,7 @@ const char *ToCStr( Category c )
     CASE( ostream );
     CASE( overhead );
     CASE( pipe );
+    CASE( poll );
     CASE( process );
     CASE( socket );
     CASE( std_deque );
@@ -339,6 +340,19 @@ const char *ToCStr( Benchmark b )
     CASE( pipe_asio_write_read_64k );
     CASE( pipe_asio_pingpong );
     CASE( pipe_asio_pingpong_threaded );
+
+    CASE( epoll_1 );
+    CASE( epoll_8 );
+    CASE( epoll_64 );
+    CASE( epoll_768 );
+    CASE( poll_1 );
+    CASE( poll_8 );
+    CASE( poll_64 );
+    CASE( poll_768 );
+    CASE( select_1 );
+    CASE( select_8 );
+    CASE( select_64 );
+    CASE( select_768 );
 
     CASE( deque_int32_copy16 );
     CASE( deque_int32_copy256 );
@@ -908,6 +922,23 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::pipe_asio_write_read_64k,
                     Benchmark::pipe_asio_pingpong,
                     Benchmark::pipe_asio_pingpong_threaded,
+                },
+            },
+            {
+                Category::poll,
+                {
+                    Benchmark::epoll_1,
+                    Benchmark::epoll_8,
+                    Benchmark::epoll_64,
+                    Benchmark::epoll_768,
+                    Benchmark::poll_1,
+                    Benchmark::poll_8,
+                    Benchmark::poll_64,
+                    Benchmark::poll_768,
+                    Benchmark::select_1,
+                    Benchmark::select_8,
+                    Benchmark::select_64,
+                    Benchmark::select_768,
                 },
             },
             {

@@ -45,6 +45,7 @@ enum class Category
     ostream,
     overhead,
     pipe,
+    poll,
     process,
     socket,
     string_from,
@@ -293,6 +294,20 @@ enum class Benchmark
     pipe_asio_write_read_64k,
     pipe_asio_pingpong,
     pipe_asio_pingpong_threaded,
+
+    // poll:  (note that a max of 768 is used, due to default fd limit of 1024)
+    epoll_1,
+    epoll_8,
+    epoll_64,
+    epoll_768,
+    poll_1,
+    poll_8,
+    poll_64,
+    poll_768,
+    select_1,
+    select_8,
+    select_64,
+    select_768,
 
     // std_deque
     deque_int32_copy16,

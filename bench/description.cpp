@@ -83,6 +83,19 @@ Description Describe( Benchmark benchmark )
 
     CASE__DESCRIBE( pipe_open_close );
 
+    CASE__DESCRIBE( epoll_1 );
+    CASE__DESCRIBE( epoll_8 );
+    CASE__DESCRIBE( epoll_64 );
+    CASE__DESCRIBE( epoll_768 );
+    CASE__DESCRIBE( poll_1 );
+    CASE__DESCRIBE( poll_8 );
+    CASE__DESCRIBE( poll_64 );
+    CASE__DESCRIBE( poll_768 );
+    CASE__DESCRIBE( select_1 );
+    CASE__DESCRIBE( select_8 );
+    CASE__DESCRIBE( select_64 );
+    CASE__DESCRIBE( select_768 );
+
     CASE__DESCRIBE( hash_int8 );
     CASE__DESCRIBE( hash_int16 );
     CASE__DESCRIBE( hash_int32 );
@@ -119,6 +132,7 @@ Description Describe( Category category )
     CASE__DESCRIBE( directory );
     CASE__DESCRIBE( file );
     CASE__DESCRIBE( pipe );
+    CASE__DESCRIBE( poll );
     CASE__DESCRIBE( std_hash );
 
 #undef CASE__DESCRIBE
