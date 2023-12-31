@@ -72,7 +72,7 @@ template<
 static Description DescribeEpoll()
 {
     std::ostringstream oss;
-    PrettyPrintSizeof( oss << "epoll() on ", size ) << " fds, with the last one signalled.";
+    PrettyPrintSizeof( oss << "epoll_wait() on ", size ) << " fds, with the last one signalled.";
 
     Description desc;
     desc.measures = oss.str();
