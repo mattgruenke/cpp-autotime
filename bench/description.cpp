@@ -96,6 +96,9 @@ Description Describe( Benchmark benchmark )
     CASE__DESCRIBE( select_64 );
     CASE__DESCRIBE( select_768 );
 
+    CASE__DESCRIBE( fork );
+    CASE__DESCRIBE( fork_waitpid );
+
     CASE__DESCRIBE( hash_int8 );
     CASE__DESCRIBE( hash_int16 );
     CASE__DESCRIBE( hash_int32 );
@@ -133,6 +136,7 @@ Description Describe( Category category )
     CASE__DESCRIBE( file );
     CASE__DESCRIBE( pipe );
     CASE__DESCRIBE( poll );
+    CASE__DESCRIBE( process );
     CASE__DESCRIBE( std_hash );
 
 #undef CASE__DESCRIBE

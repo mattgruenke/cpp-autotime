@@ -309,6 +309,10 @@ enum class Benchmark
     select_64,
     select_768,
 
+    // process:
+    fork,
+    fork_waitpid,
+
     // std_deque
     deque_int32_copy16,
     deque_int32_copy256,

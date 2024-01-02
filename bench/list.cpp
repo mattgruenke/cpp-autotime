@@ -354,6 +354,9 @@ const char *ToCStr( Benchmark b )
     CASE( select_64 );
     CASE( select_768 );
 
+    CASE( fork );
+    CASE( fork_waitpid );
+
     CASE( deque_int32_copy16 );
     CASE( deque_int32_copy256 );
     CASE( deque_int32_copy4k );
@@ -939,6 +942,13 @@ const std::map< Category, std::set< Benchmark > > &CategoryBenchmarkMap()
                     Benchmark::select_8,
                     Benchmark::select_64,
                     Benchmark::select_768,
+                },
+            },
+            {
+                Category::process,
+                {
+                    Benchmark::fork,
+                    Benchmark::fork_waitpid,
                 },
             },
             {

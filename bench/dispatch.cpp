@@ -247,6 +247,9 @@ autotime::BenchTimers MakeTimers( Benchmark benchmark )
     CASE__MAKE_TIMERS( select_64 );
     CASE__MAKE_TIMERS( select_768 );
 
+    CASE__MAKE_TIMERS( fork );
+    CASE__MAKE_TIMERS( fork_waitpid );
+
     CASE__MAKE_TIMERS( deque_int32_copy16 );
     CASE__MAKE_TIMERS( deque_int32_copy256 );
     CASE__MAKE_TIMERS( deque_int32_copy4k );
