@@ -109,5 +109,51 @@ template<> autotime::BenchTimers MakeTimers< Benchmark::fork_waitpid >()
 }
 
 
+template<> Description Describe< Benchmark::fork_exec_waitpid >()
+{
+    Description desc;
+    desc.measures = "fork(), followed by exec() or waitpid().";
+    return desc;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::fork_exec_waitpid >()
+{
+    std::function< void() > f = []()
+        {
+            const char *cmd = "/bin/true";
+            pid_t pid = fork();
+            if (pid > 0) WaitPid( pid );
+            else if (pid < 0) throw_system_error( errno, "fork()" );
+            else if (execl( cmd, cmd, nullptr )) throw_system_error( errno, "execl()" );
+        };
+
+    return { MakeTimer( f ), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
+template<> Description Describe< Benchmark::system >()
+{
+    Description desc;
+    desc.measures = "system().";
+    return desc;
+}
+
+
+template<> autotime::BenchTimers MakeTimers< Benchmark::system >()
+{
+    std::function< void() > f = []()
+        {
+            const char *cmd = "/bin/true";
+            int status = system( cmd );
+            if (status < 0) throw_system_error( errno, "system()" );
+            if (!WIFEXITED( status )) throw std::runtime_error( "command exited abnormally" );
+            if (WEXITSTATUS( status )) throw std::runtime_error( "nonzero command exit code" );
+        };
+
+    return { MakeTimer( f ), MakeTimer( MakeOverheadFn< void >() ) };
+}
+
+
 } // namespace bench
 

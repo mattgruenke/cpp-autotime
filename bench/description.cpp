@@ -98,6 +98,8 @@ Description Describe( Benchmark benchmark )
 
     CASE__DESCRIBE( fork );
     CASE__DESCRIBE( fork_waitpid );
+    CASE__DESCRIBE( fork_exec_waitpid );
+    CASE__DESCRIBE( system );
 
     CASE__DESCRIBE( hash_int8 );
     CASE__DESCRIBE( hash_int16 );

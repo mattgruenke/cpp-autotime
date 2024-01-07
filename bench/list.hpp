@@ -312,6 +312,8 @@ enum class Benchmark
     // process:
     fork,
     fork_waitpid,
+    fork_exec_waitpid,
+    system,
 
     // std_deque
     deque_int32_copy16,
